@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Barbara Demers Art
 
-## Getting Started
+Portfolio + shop site for Barbara Demers, a painter of animal subjects. Built with Next.js 16 (App Router, React 19), Tailwind CSS v4, Stripe Checkout, and Resend for transactional email. Paintings are defined in a typed data file so adding inventory is a quick code edit today; the data model is shaped so this can be swapped for a CMS later without touching the UI.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, React 19)
+- **Tailwind CSS 4** with `@tailwindcss/typography`
+- **Fraunces** (serif) + **Inter** (sans) via `next/font`
+- **Stripe Checkout** for purchases, plus a webhook for sale notifications
+- **Resend** for commission inquiries + newsletter signups
+- **MDX** blog (`content/blog/*.mdx`) via `next-mdx-remote`
+
+## Local setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.local.example .env.local   # then fill in keys
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Key | Required? | Notes |
+| --- | --- | --- |
+| `STRIPE_SECRET_KEY` | for checkout | Use `sk_test_...` during development. |
+| `STRIPE_WEBHOOK_SECRET` | for sale webhook | Get via `stripe listen --forward-to localhost:3000/api/stripe-webhook`. |
+| `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
+| `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
+| `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
+| `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
-## Learn More
+Without Stripe keys the Buy button will return an error. Without Resend keys the commissions + newsletter forms will return an error. The gallery and blog pages work without either.
 
-To learn more about Next.js, take a look at the following resources:
+## Adding a new painting
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Edit `src/data/paintings.ts`. Each entry looks like:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```ts
+{
+  slug: "red-fox-in-winter",
+  title: "Red Fox in Winter",
+  subject: "Red fox",
+  year: 2026,
+  medium: "Oil on canvas",
+  widthIn: 24,
+  heightIn: 30,
+  priceCents: 145_000,     // $1,450
+  sizeTier: "large",       // drives shipping rate
+  featured: true,          // appears on the home page
+  description: "...",
+  images: ["/paintings/red-fox-in-winter.jpg"],
+}
+```
 
-## Deploy on Vercel
+1. Drop the hi-res image(s) into `public/paintings/`.
+2. Add the object to the `paintings` array.
+3. Commit & push — Vercel will redeploy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`sizeTier` maps to flat-rate shipping in `SHIPPING_RATES` at the top of the same file. Adjust those to match what Barbara actually pays to pack and ship.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Marking a painting as sold
+
+Two options:
+- **Manual (current default):** set `sold: true` on the painting in `src/data/paintings.ts`. The gallery card will show a `Sold` badge and the detail page hides the Buy button.
+- **Automatic (needs a DB):** the Stripe webhook at `/api/stripe-webhook` receives `checkout.session.completed` events and logs the sold painting slug. Wire this to a database (Vercel Postgres, Turso, etc.) to automate the update. Left as a `TODO` in `src/app/api/stripe-webhook/route.ts`.
+
+## Adding a blog post
+
+Create a file in `content/blog/`:
+
+```mdx
+---
+title: Studio notes, April
+date: 2026-04-18
+excerpt: A line or two for the index page.
+cover: /paintings/some-image.jpg
+---
+
+Body written in MDX.
+```
+
+The journal index and individual post routes pick it up automatically on the next build.
+
+## Stripe test flow
+
+```bash
+# Terminal 1
+pnpm dev
+
+# Terminal 2 — forwards Stripe events into the local app
+stripe login
+stripe listen --forward-to localhost:3000/api/stripe-webhook
+```
+
+Copy the `whsec_...` the CLI prints into `STRIPE_WEBHOOK_SECRET`, restart `pnpm dev`, and go to any available painting's detail page. Use card `4242 4242 4242 4242`, any future expiry, any CVC, any ZIP. You'll land back on `/checkout/success` and the terminal running `stripe listen` will log the event.
+
+## Deploying to Vercel
+
+1. Push this repo to GitHub.
+2. Import into Vercel — framework preset is auto-detected.
+3. Add the env vars from `.env.local.example` under **Settings → Environment Variables**.
+4. In production, register a webhook at `https://your-domain.com/api/stripe-webhook` in the Stripe dashboard. Copy the signing secret into Vercel's `STRIPE_WEBHOOK_SECRET`.
+5. Verify a test order with Stripe test mode before switching to live keys.
+
+## Project structure
+
+```
+src/
+  app/
+    layout.tsx           # shell with header/footer
+    page.tsx             # home (hero + featured + newsletter)
+    gallery/
+      page.tsx           # all paintings grid
+      [slug]/page.tsx    # painting detail + Buy button
+    commissions/page.tsx # commission inquiry form
+    about/page.tsx       # artist bio
+    blog/
+      page.tsx           # journal index
+      [slug]/page.tsx    # MDX post renderer
+    checkout/success/page.tsx
+    api/
+      checkout/route.ts       # creates Stripe Checkout Session
+      stripe-webhook/route.ts # receives Stripe events
+      commissions/route.ts    # emails Barbara via Resend
+      newsletter/route.ts     # emails Barbara via Resend
+  components/             # painting card, forms, buy button
+  data/paintings.ts       # the catalog + shipping tiers
+  lib/                    # stripe, resend, blog, utils
+content/blog/             # MDX posts
+public/paintings/         # painting images (placeholders today)
+```
+
+## Next steps (not built yet)
+
+- Persistence layer so the Stripe webhook can automatically flip paintings to sold without a code change
+- Multi-image carousels on the painting detail page
+- Sitemap + proper OG images
+- CMS migration (Payload or Sanity) once the catalog outgrows manual TypeScript editing
+- Proper photography to replace the placeholder SVGs in `public/paintings/`
