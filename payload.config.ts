@@ -21,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     meta: {
-      titleSuffix: " — Barbara Demers Studio",
+      titleSuffix: " — Barbara J Demers Studio",
     },
   },
   collections: [Users, Media, Paintings, JournalPosts],

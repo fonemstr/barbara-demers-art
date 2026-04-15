@@ -16,11 +16,11 @@ const fraunces = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: "Barbara Demers — Animal Paintings",
-    template: "%s · Barbara Demers",
+    default: "Barbara J Demers — Animal Paintings",
+    template: "%s · Barbara J Demers",
   },
   description:
-    "Original animal paintings and commissioned work by Barbara Demers.",
+    "Original animal paintings and commissioned work by Barbara J Demers.",
 };
 
 const navLinks = [
@@ -45,7 +45,7 @@ export default function SiteLayout({
               href="/"
               className="font-serif text-xl tracking-tight text-foreground"
             >
-              Barbara Demers
+              Barbara J Demers
             </Link>
             <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
               {navLinks.map((link) => (
@@ -66,13 +66,13 @@ export default function SiteLayout({
         <footer className="border-t border-border mt-24">
           <div className="mx-auto max-w-6xl px-6 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <p className="font-serif text-lg">Barbara Demers</p>
+              <p className="font-serif text-lg">Barbara J Demers</p>
               <p className="text-sm text-muted-foreground mt-1">
                 Original animal paintings · Commissions welcome
               </p>
             </div>
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Barbara Demers. All artwork
+              © {new Date().getFullYear()} Barbara J Demers. All artwork
               rights reserved.
             </div>
           </div>

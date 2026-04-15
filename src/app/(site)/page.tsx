@@ -19,7 +19,7 @@ export default async function HomePage() {
             the creatures we love.
           </h1>
           <p className="mt-8 text-lg text-muted-foreground max-w-xl leading-relaxed">
-            Barbara Demers paints oils of foxes, otters, barn owls, and the
+            Barbara J Demers paints oils of foxes, otters, barn owls, and the
             horses of her corner of the world. Each piece is one of a kind,
             available here in the studio.
           </p>

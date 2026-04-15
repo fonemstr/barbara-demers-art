@@ -9,7 +9,7 @@ export default function AboutPage() {
         <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
           About the artist
         </p>
-        <h1 className="font-serif text-4xl md:text-5xl">Barbara Demers</h1>
+        <h1 className="font-serif text-4xl md:text-5xl">Barbara J Demers</h1>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -17,7 +17,7 @@ export default function AboutPage() {
           <div className="relative aspect-[4/5] bg-muted">
             <Image
               src="/paintings/placeholder-3.svg"
-              alt="Barbara Demers in the studio"
+              alt="Barbara J Demers in the studio"
               fill
               sizes="(min-width: 768px) 33vw, 100vw"
               className="object-cover"
@@ -27,7 +27,7 @@ export default function AboutPage() {
 
         <div className="md:col-span-2 prose prose-lg max-w-none">
           <p>
-            Barbara Demers is a painter working primarily in oil, focused on
+            Barbara J Demers is a painter working primarily in oil, focused on
             the animals she has known and observed up close — foxes at the
             edge of the treeline, barn owls in rafter light, the horses of
             neighboring pastures.

@@ -1,6 +1,6 @@
-# Barbara Demers Art
+# Barbara J Demers Art
 
-Portfolio + shop site for Barbara Demers, a painter of animal subjects. Built with Next.js 16 (App Router, React 19), Tailwind CSS v4, Stripe Checkout, and Resend for transactional email. Paintings are defined in a typed data file so adding inventory is a quick code edit today; the data model is shaped so this can be swapped for a CMS later without touching the UI.
+Portfolio + shop site for Barbara J Demers, a painter of animal subjects. Built with Next.js 16 (App Router, React 19), Tailwind CSS v4, Stripe Checkout, and Resend for transactional email. Paintings are defined in a typed data file so adding inventory is a quick code edit today; the data model is shaped so this can be swapped for a CMS later without touching the UI.
 
 ## Stack
 
