@@ -1,3 +1,5 @@
+import { getPayloadClient } from "@/lib/payload";
+
 export type SizeTier = "small" | "medium" | "large" | "oversize";
 
 export type Painting = {
@@ -18,17 +20,20 @@ export type Painting = {
 
 // Shipping rates (in cents) keyed by size tier. Barbara packs and ships
 // herself, so these are her flat-rate estimates for domestic US shipping.
-// Override these as needed.
-export const SHIPPING_RATES: Record<SizeTier, { label: string; cents: number }> = {
+export const SHIPPING_RATES: Record<
+  SizeTier,
+  { label: string; cents: number }
+> = {
   small: { label: "Small — up to 12×16 in", cents: 2500 },
   medium: { label: "Medium — up to 20×24 in", cents: 4500 },
   large: { label: "Large — up to 30×40 in", cents: 8500 },
   oversize: { label: "Oversize — over 30×40 in", cents: 15000 },
 };
 
-// Placeholder catalog. Replace image URLs with real ones (or move to
-// /public/paintings/*.jpg and reference as /paintings/filename.jpg).
-export const paintings: Painting[] = [
+// Static seed used as fallback when Payload/Postgres isn't configured
+// locally. Kept here as the "out of the box" gallery so the site works
+// with zero database setup.
+const seedPaintings: Painting[] = [
   {
     slug: "river-otter-study",
     title: "River Otter, Morning Light",
@@ -91,14 +96,91 @@ export const paintings: Painting[] = [
   },
 ];
 
-export function getPainting(slug: string): Painting | undefined {
-  return paintings.find((p) => p.slug === slug);
+type PayloadPainting = {
+  slug: string;
+  title: string;
+  subject?: string;
+  year: number;
+  medium: string;
+  widthIn: number;
+  heightIn: number;
+  priceCents: number;
+  sizeTier: SizeTier;
+  description: string;
+  images?: Array<{ image: { url?: string } | string }>;
+  sold?: boolean;
+  featured?: boolean;
+};
+
+function mapPayloadPainting(p: PayloadPainting): Painting {
+  const images = (p.images ?? [])
+    .map((entry) => {
+      const img = entry.image;
+      if (!img || typeof img === "string") return null;
+      return img.url ?? null;
+    })
+    .filter((url): url is string => !!url);
+
+  return {
+    slug: p.slug,
+    title: p.title,
+    subject: p.subject ?? "",
+    year: p.year,
+    medium: p.medium,
+    widthIn: p.widthIn,
+    heightIn: p.heightIn,
+    priceCents: p.priceCents,
+    sizeTier: p.sizeTier,
+    description: p.description,
+    images: images.length ? images : ["/paintings/placeholder-1.svg"],
+    sold: p.sold ?? false,
+    featured: p.featured ?? false,
+  };
 }
 
-export function getFeaturedPaintings(limit = 3): Painting[] {
-  return paintings.filter((p) => p.featured && !p.sold).slice(0, limit);
+export async function getAllPaintings(): Promise<Painting[]> {
+  const payload = await getPayloadClient();
+  if (!payload) return seedPaintings;
+
+  try {
+    const result = await payload.find({
+      collection: "paintings",
+      depth: 2,
+      limit: 200,
+      sort: "-updatedAt",
+    });
+    return (result.docs as unknown as PayloadPainting[]).map(mapPayloadPainting);
+  } catch (err) {
+    console.error("[paintings] Payload query failed, using seed:", err);
+    return seedPaintings;
+  }
 }
 
-export function getAvailablePaintings(): Painting[] {
-  return paintings.filter((p) => !p.sold);
+export async function getPainting(slug: string): Promise<Painting | undefined> {
+  const payload = await getPayloadClient();
+  if (!payload) return seedPaintings.find((p) => p.slug === slug);
+
+  try {
+    const result = await payload.find({
+      collection: "paintings",
+      depth: 2,
+      limit: 1,
+      where: { slug: { equals: slug } },
+    });
+    const doc = result.docs[0] as unknown as PayloadPainting | undefined;
+    return doc ? mapPayloadPainting(doc) : undefined;
+  } catch (err) {
+    console.error("[paintings] Payload query failed, using seed:", err);
+    return seedPaintings.find((p) => p.slug === slug);
+  }
+}
+
+export async function getFeaturedPaintings(limit = 3): Promise<Painting[]> {
+  const all = await getAllPaintings();
+  return all.filter((p) => p.featured && !p.sold).slice(0, limit);
+}
+
+export async function getAvailablePaintings(): Promise<Painting[]> {
+  const all = await getAllPaintings();
+  return all.filter((p) => !p.sold);
 }

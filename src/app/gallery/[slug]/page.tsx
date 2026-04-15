@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { paintings, getPainting, SHIPPING_RATES } from "@/data/paintings";
+import { getAllPaintings, getPainting, SHIPPING_RATES } from "@/data/paintings";
 import { formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const paintings = await getAllPaintings();
   return paintings.map((p) => ({ slug: p.slug }));
 }
 
@@ -15,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const painting = getPainting(slug);
+  const painting = await getPainting(slug);
   if (!painting) return {};
   return {
     title: painting.title,
@@ -29,7 +30,7 @@ export default async function PaintingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const painting = getPainting(slug);
+  const painting = await getPainting(slug);
   if (!painting) notFound();
 
   const shipping = SHIPPING_RATES[painting.sizeTier];

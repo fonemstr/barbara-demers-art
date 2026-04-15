@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllPosts, getPost } from "@/lib/blog";
+import { LexicalRichText } from "@/components/rich-text";
 
 export async function generateStaticParams() {
   const posts = await getAllPosts();
@@ -49,7 +50,11 @@ export default async function BlogPostPage({
       </header>
 
       <div className="prose prose-lg max-w-none">
-        <MDXRemote source={post.content} />
+        {post.isRichText ? (
+          <LexicalRichText doc={post.richTextDoc} />
+        ) : (
+          <MDXRemote source={post.content} />
+        )}
       </div>
     </article>
   );

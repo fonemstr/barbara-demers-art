@@ -3,8 +3,8 @@ import { getFeaturedPaintings } from "@/data/paintings";
 import { PaintingCard } from "@/components/painting-card";
 import { NewsletterForm } from "@/components/newsletter-form";
 
-export default function HomePage() {
-  const featured = getFeaturedPaintings(3);
+export default async function HomePage() {
+  const featured = await getFeaturedPaintings(3);
 
   return (
     <div>

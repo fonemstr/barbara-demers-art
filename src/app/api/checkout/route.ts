@@ -9,7 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing slug" }, { status: 400 });
     }
 
-    const painting = getPainting(slug);
+    const painting = await getPainting(slug);
     if (!painting) {
       return NextResponse.json({ error: "Painting not found" }, { status: 404 });
     }

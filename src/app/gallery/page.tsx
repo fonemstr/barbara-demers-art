@@ -1,9 +1,11 @@
-import { paintings } from "@/data/paintings";
+import { getAllPaintings } from "@/data/paintings";
 import { PaintingCard } from "@/components/painting-card";
 
 export const metadata = { title: "Gallery" };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const paintings = await getAllPaintings();
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
       <header className="mb-12 max-w-2xl">

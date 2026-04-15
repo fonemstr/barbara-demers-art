@@ -7,9 +7,12 @@ Portfolio + shop site for Barbara Demers, a painter of animal subjects. Built wi
 - **Next.js 16** (App Router, React 19)
 - **Tailwind CSS 4** with `@tailwindcss/typography`
 - **Fraunces** (serif) + **Inter** (sans) via `next/font`
+- **Payload CMS 3** — embedded admin at `/admin` for paintings + journal posts
+- **Postgres** via `@payloadcms/db-postgres` (Neon / Vercel Postgres)
+- **Vercel Blob** for image storage in production (local filesystem in dev)
 - **Stripe Checkout** for purchases, plus a webhook for sale notifications
 - **Resend** for commission inquiries + newsletter signups
-- **MDX** blog (`content/blog/*.mdx`) via `next-mdx-remote`
+- **MDX** blog (`content/blog/*.mdx`) as a fallback when Payload is not connected
 
 ## Local setup
 
@@ -25,6 +28,9 @@ Open <http://localhost:3000>.
 
 | Key | Required? | Notes |
 | --- | --- | --- |
+| `PAYLOAD_SECRET` | for admin | Any long random string. `openssl rand -base64 32` is fine. |
+| `POSTGRES_URL` | for admin | Postgres connection string. Free tier on <https://neon.tech>. |
+| `BLOB_READ_WRITE_TOKEN` | production | Vercel Blob token for uploaded images. Local dev uses filesystem. |
 | `STRIPE_SECRET_KEY` | for checkout | Use `sk_test_...` during development. |
 | `STRIPE_WEBHOOK_SECRET` | for sale webhook | Get via `stripe listen --forward-to localhost:3000/api/stripe-webhook`. |
 | `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
@@ -32,11 +38,32 @@ Open <http://localhost:3000>.
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
-Without Stripe keys the Buy button will return an error. Without Resend keys the commissions + newsletter forms will return an error. The gallery and blog pages work without either.
+Graceful fallbacks:
 
-## Adding a new painting
+- **No `POSTGRES_URL`** — gallery reads from the static seed in `src/data/paintings.ts` and the journal reads from `content/blog/*.mdx`. The `/admin` route will error. This lets you run the site with zero database setup.
+- **No Stripe keys** — the Buy button returns an error; the rest of the site works.
+- **No Resend keys** — the commission + newsletter forms return an error; the rest of the site works.
 
-Edit `src/data/paintings.ts`. Each entry looks like:
+## The admin (Payload)
+
+Once `PAYLOAD_SECRET` and `POSTGRES_URL` are set, visit <http://localhost:3000/admin>. The first visit prompts you to create an admin user — use Barbara's email and any password; it's stored hashed in Postgres.
+
+Collections:
+
+- **Paintings** — title, slug, subject, year, medium, dimensions, price (cents), size tier, description, images, featured, sold
+- **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
+- **Media** — uploaded image files; used by Paintings and Journal Posts
+- **Users** — admin logins; only Barbara (and David) should have accounts
+
+Image uploads land on the local filesystem in dev (`./media/`) and on Vercel Blob in production. The frontend picks up both automatically.
+
+### Seeding from code (optional)
+
+There's no auto-seed yet. When Barbara logs in for the first time she can add her paintings directly. The sample paintings in `src/data/paintings.ts` are a **development fallback**, not a migration — they render only when Postgres is not connected.
+
+## Adding a new painting (without the admin)
+
+If you'd rather skip Payload and manage inventory in code, edit `src/data/paintings.ts`. Each entry looks like:
 
 ```ts
 {
@@ -101,9 +128,13 @@ Copy the `whsec_...` the CLI prints into `STRIPE_WEBHOOK_SECRET`, restart `pnpm 
 
 1. Push this repo to GitHub.
 2. Import into Vercel — framework preset is auto-detected.
-3. Add the env vars from `.env.local.example` under **Settings → Environment Variables**.
-4. In production, register a webhook at `https://your-domain.com/api/stripe-webhook` in the Stripe dashboard. Copy the signing secret into Vercel's `STRIPE_WEBHOOK_SECRET`.
-5. Verify a test order with Stripe test mode before switching to live keys.
+3. From the project's **Storage** tab, add both:
+   - **Vercel Postgres** — sets `POSTGRES_URL` automatically.
+   - **Vercel Blob** — sets `BLOB_READ_WRITE_TOKEN` automatically.
+4. Under **Settings → Environment Variables**, add the remaining keys from `.env.local.example` (`PAYLOAD_SECRET`, Stripe, Resend, `NEXT_PUBLIC_SITE_URL`).
+5. Deploy. Visit `/admin` once live to create Barbara's admin account.
+6. Register a webhook at `https://your-domain.com/api/stripe-webhook` in the Stripe dashboard. Copy the signing secret into Vercel's `STRIPE_WEBHOOK_SECRET` and redeploy.
+7. Verify a test order with Stripe test mode before switching to live keys.
 
 ## Project structure
 
