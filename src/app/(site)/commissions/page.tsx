@@ -56,7 +56,7 @@ export default function CommissionsPage() {
       </Section>
 
       {/* PROCESS — short version */}
-      <Section tone="surface" pad="sm">
+      <Section tone="surface" pad="smt">
         <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {PROCESS_STEPS.map((step, i) => (
             <li

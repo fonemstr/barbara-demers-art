@@ -16,7 +16,7 @@ export function Section({
   style,
 }: {
   tone?: "surface" | "low" | "container" | "variant";
-  pad?: "sm" | "md" | "lg" | "xl";
+  pad?: "sm" | "smt" | "md" | "lg" | "xl";
   maxWidth?: "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "full";
   className?: string;
   innerClassName?: string;
@@ -32,6 +32,7 @@ export function Section({
 
   const padMap = {
     sm: "py-14",
+    smt: "pt-5 pb-14",
     md: "py-20",
     lg: "py-24",
     xl: "py-32",
