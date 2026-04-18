@@ -32,9 +32,11 @@ export default function CommissionsPage() {
   return (
     <>
       {/* HEADER */}
-      <Section tone="surface" pad="md" className="overflow-hidden">
-        <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />
-        <Blob size={220} color="var(--secondary-container)" style={{ right: 60, top: 80, opacity: 0.45 }} />
+      <Section tone="surface" pad="md">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />
+          <Blob size={220} color="var(--secondary-container)" style={{ right: 60, top: 80, opacity: 0.45 }} />
+        </div>
         <div className="relative z-10">
           <PageHeader
             eyebrow="Commissions"
