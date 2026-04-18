@@ -1,5 +1,16 @@
 import type { CollectionConfig } from "payload";
 
+// Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
+// Next's runtime.
+async function revalidatePaintingPaths(slugs: (string | undefined)[]) {
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/");
+  revalidatePath("/gallery");
+  for (const slug of slugs) {
+    if (slug) revalidatePath(`/gallery/${slug}`);
+  }
+}
+
 export const Paintings: CollectionConfig = {
   slug: "paintings",
   admin: {
@@ -9,6 +20,22 @@ export const Paintings: CollectionConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc }) => {
+        // Include the previous slug in case the editor renamed it, so the
+        // old URL stops serving stale HTML.
+        await revalidatePaintingPaths([doc?.slug, previousDoc?.slug]);
+        return doc;
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        await revalidatePaintingPaths([doc?.slug]);
+        return doc;
+      },
+    ],
   },
   fields: [
     {

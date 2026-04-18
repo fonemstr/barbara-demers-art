@@ -6,6 +6,14 @@ import {
   InlineToolbarFeature,
 } from "@payloadcms/richtext-lexical";
 
+async function revalidateJournalPaths(slugs: (string | undefined)[]) {
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/blog");
+  for (const slug of slugs) {
+    if (slug) revalidatePath(`/blog/${slug}`);
+  }
+}
+
 export const JournalPosts: CollectionConfig = {
   slug: "journal-posts",
   labels: {
@@ -16,6 +24,20 @@ export const JournalPosts: CollectionConfig = {
     useAsTitle: "title",
     defaultColumns: ["title", "publishedAt", "updatedAt"],
     description: "Notes from the studio. Published posts appear under /blog.",
+  },
+  hooks: {
+    afterChange: [
+      async ({ doc, previousDoc }) => {
+        await revalidateJournalPaths([doc?.slug, previousDoc?.slug]);
+        return doc;
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        await revalidateJournalPaths([doc?.slug]);
+        return doc;
+      },
+    ],
   },
   access: {
     read: ({ req: { user } }) => {
