@@ -1,12 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Field } from "@/components/ui/field";
+import { RadioGroup } from "@/components/ui/radio-group";
 
 type Status = "idle" | "submitting" | "success" | "error";
+
+const SIZE_OPTIONS = [
+  { value: "small",    label: "Small",    description: "Up to 12×16 in" },
+  { value: "medium",   label: "Medium",   description: "Up to 20×24 in" },
+  { value: "large",    label: "Large",    description: "Up to 30×40 in" },
+  { value: "oversize", label: "Not sure", description: "Let&rsquo;s talk" },
+];
 
 export function CommissionsForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
+  const [size, setSize] = useState<string>("medium");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -28,6 +41,7 @@ export function CommissionsForm() {
       }
       setStatus("success");
       (event.target as HTMLFormElement).reset();
+      setSize("medium");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setStatus("error");
@@ -36,86 +50,82 @@ export function CommissionsForm() {
 
   if (status === "success") {
     return (
-      <div className="border border-border bg-muted p-8 text-center">
-        <p className="font-serif text-2xl">Thank you.</p>
-        <p className="mt-3 text-muted-foreground">
-          Barbara will read your note and get back to you personally within
-          a few days.
+      <div className="rounded-[var(--radius-lg)] bg-primary-container-dim text-on-primary-container p-10 text-center">
+        <p className="font-serif text-3xl">Thank you.</p>
+        <p className="mt-4 text-[16px] leading-relaxed">
+          I&rsquo;ll read your note carefully and write back personally
+          within a few days. If you have reference photos ready, hold onto
+          them — I&rsquo;ll ask for them in my reply.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <Field label="Your name" name="name" required />
-        <Field label="Email" name="email" type="email" required />
+        <Field label="Your name" required>
+          <Input name="name" required autoComplete="name" />
+        </Field>
+        <Field label="Email" required>
+          <Input name="email" type="email" required autoComplete="email" />
+        </Field>
       </div>
 
-      <Field label="Subject of the painting" name="subject" required placeholder="e.g. Our golden retriever, Moose" />
+      <Field label="Subject of the painting" required>
+        <Input
+          name="subject"
+          required
+          placeholder="e.g. Our golden retriever, Moose"
+        />
+      </Field>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <Field label="Preferred size" name="size" placeholder="e.g. 16×20 in" />
-        <Field label="Target timeline" name="timeline" placeholder="e.g. gift for December" />
-      </div>
+      <Field label="Rough size">
+        <RadioGroup
+          name="size"
+          value={size}
+          onChange={setSize}
+          options={SIZE_OPTIONS.map((o) => ({
+            ...o,
+            description: <span dangerouslySetInnerHTML={{ __html: o.description }} />,
+          }))}
+          columns={4}
+        />
+      </Field>
 
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
-          Tell Barbara about your idea
-        </label>
-        <textarea
+      <Field label="Target timeline">
+        <Input
+          name="timeline"
+          placeholder="e.g. holiday gift, no rush, anniversary in May…"
+        />
+      </Field>
+
+      <Field
+        label="Tell me about the animal"
+        required
+      >
+        <Textarea
           name="message"
           required
-          rows={6}
-          placeholder="Who is the animal, what do you love about them, and any reference photos you have. She'll follow up to arrange sharing the photos."
-          className="w-full px-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-foreground"
+          rows={7}
+          placeholder="Who are they, what do you love about them, the funny habits, the rescue story, the photo on your phone you can&rsquo;t stop looking at. Anything that helps me see them."
         />
+      </Field>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-2">
+        <Button type="submit" size="lg" disabled={status === "submitting"}>
+          {status === "submitting" ? "Sending…" : "Send the note"}
+        </Button>
+        <p className="text-[13px] text-on-surface-subtle">
+          I read every inquiry myself. No automated responses.
+        </p>
       </div>
 
-      <button
-        type="submit"
-        disabled={status === "submitting"}
-        className="px-6 py-3 bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors disabled:opacity-60"
-      >
-        {status === "submitting" ? "Sending…" : "Send inquiry"}
-      </button>
-
       {error && (
-        <p className="text-sm text-red-700" role="alert">
+        <p className="text-sm text-[color:var(--error)]" role="alert">
           {error}
         </p>
       )}
     </form>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  required = false,
-  placeholder,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-  placeholder?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-foreground mb-2">
-        {label}
-        {required && <span className="text-muted-foreground"> *</span>}
-      </label>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-foreground"
-      />
-    </div>
   );
 }
