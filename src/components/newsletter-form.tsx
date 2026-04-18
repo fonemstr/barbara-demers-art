@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function NewsletterForm() {
   const [email, setEmail] = useState("");
@@ -32,31 +33,30 @@ export function NewsletterForm() {
 
   if (status === "success") {
     return (
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-on-surface-muted">
         Thank you — you&rsquo;re on the list.
       </p>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col sm:flex-row items-stretch gap-3 p-2 sm:pl-5 sm:pr-2 rounded-full bg-surface-container-lowest shadow-ambient-sm"
+    >
       <input
         type="email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="your@email.com"
-        className="flex-1 px-4 py-3 bg-card border border-border text-sm focus:outline-none focus:border-foreground"
+        placeholder="you@studio.com"
+        className="flex-1 bg-transparent px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-faint focus:outline-none"
       />
-      <button
-        type="submit"
-        disabled={status === "loading"}
-        className="px-6 py-3 bg-foreground text-background text-sm font-medium hover:bg-foreground/90 transition-colors disabled:opacity-60"
-      >
-        {status === "loading" ? "Joining…" : "Subscribe"}
-      </button>
+      <Button type="submit" size="md" disabled={status === "loading"} className="shrink-0">
+        {status === "loading" ? "Joining…" : "Join the studio list"}
+      </Button>
       {error && (
-        <p className="text-sm text-red-700 w-full" role="alert">
+        <p className="text-sm text-[color:var(--error)] w-full px-4" role="alert">
           {error}
         </p>
       )}

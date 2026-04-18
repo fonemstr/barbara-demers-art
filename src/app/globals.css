@@ -1,46 +1,227 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* =========================================================================
+   Barbara J Demers — "The Curated Scrapbook"
+   Sole source of truth for design tokens. Mirrors DESIGN.md.
+   ========================================================================= */
+
 :root {
-  --background: #faf7f2;
-  --foreground: #1a1614;
-  --muted: #f1ebe0;
-  --muted-foreground: #6b5f52;
-  --border: #e5dcc9;
-  --accent: #8b5e3c;
-  --accent-foreground: #faf7f2;
-  --card: #ffffff;
+  /* ---------- SURFACE HIERARCHY (no-line rule) ------------------------ */
+  --surface:                    #fefcf4;
+  --surface-container-lowest:   #ffffff;
+  --surface-container-low:      #fbfaef;
+  --surface-container:          #f5f4e8;
+  --surface-container-high:     #eaebe5;
+  --surface-container-highest:  #e8ead7;
+  --surface-variant:            #fef1d0;
+
+  /* ---------- CONTENT (friendly charcoal, never pure black) ----------- */
+  --on-surface:                 #36392c;
+  --on-surface-muted:           #636657;
+  --on-surface-subtle:          #7f8273;
+  --on-surface-faint:           #9a9c95;
+  --on-surface-inverse:         #eaebe5;
+
+  /* ---------- PRIMARY (oil-paint ochre) ------------------------------- */
+  --primary:                    #845e00;
+  --primary-container:          #fcb812;
+  --primary-container-dim:      #fef1d0;
+  --on-primary:                 #ffffff;
+  --on-primary-container:       #362500;
+
+  --gradient-primary:           linear-gradient(135deg, #845e00 0%, #fcb812 100%);
+  --gradient-primary-hover:     linear-gradient(115deg, #845e00 0%, #fcb812 100%);
+
+  /* ---------- SECONDARY (paw-print pink — love note) ------------------ */
+  --secondary-container:        #ffdad8;
+  --secondary-container-soft:   #fff4f3;
+  --on-secondary-container:     #912f32;
+
+  /* ---------- TERTIARY (sage leaf) ------------------------------------ */
+  --tertiary-container:         #e8ead7;
+  --on-tertiary-container:      #36392c;
+
+  /* ---------- OUTLINE (pencil sketch, never hard ink) ----------------- */
+  --outline:                    #b9bbaa;
+  --outline-variant:            rgba(185, 187, 170, 0.2);
+
+  /* ---------- FEEDBACK ------------------------------------------------ */
+  --error:                      #a03a32;
+  --on-error:                   #ffffff;
+  --success:                    #4f6b3a;
+  --on-success:                 #ffffff;
+
+  /* ---------- SHADOWS — tinted, ambient ------------------------------- */
+  --shadow-color:               54 57 44;
+  --shadow-ambient-sm:          0 4px 12px  0 rgb(var(--shadow-color) / 0.04);
+  --shadow-ambient:             0 8px 30px  0 rgb(var(--shadow-color) / 0.06);
+  --shadow-ambient-lg:          0 20px 60px 0 rgb(var(--shadow-color) / 0.08);
+  --shadow-lifted:              0 2px 8px   0 rgb(var(--shadow-color) / 0.04),
+                                0 20px 40px 0 rgb(var(--shadow-color) / 0.06);
+
+  /* ---------- MOTION -------------------------------------------------- */
+  --ease-out-soft:              cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:                cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:                   160ms;
+  --dur-base:                   240ms;
+  --dur-slow:                   480ms;
+  --dur-gallery:                700ms;
+
+  /* ---------- GLASS --------------------------------------------------- */
+  --glass-surface:              color-mix(in srgb, var(--surface) 72%, transparent);
+  --glass-blur:                 blur(20px) saturate(1.05);
+
+  /* ---------- LEGACY ALIASES — keep old pages compiling ---------------
+     Older routes still reference --background/--foreground/--muted/--accent.
+     Remap them to the new tokens so nothing breaks mid-migration. */
+  --background:                 var(--surface);
+  --foreground:                 var(--on-surface);
+  --muted:                      var(--surface-container);
+  --muted-foreground:           var(--on-surface-muted);
+  --border:                     var(--outline-variant);
+  --accent:                     var(--primary);
+  --accent-foreground:          var(--on-primary);
+  --card:                       var(--surface-container-lowest);
 }
+
+/* =========================================================================
+   Tailwind v4 theme mapping — every token is usable as a utility class
+   (e.g. bg-surface, text-on-surface, rounded-blob, shadow-lifted).
+   ========================================================================= */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-card: var(--card);
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-fraunces);
+  /* colors */
+  --color-surface:                     var(--surface);
+  --color-surface-container-lowest:    var(--surface-container-lowest);
+  --color-surface-container-low:       var(--surface-container-low);
+  --color-surface-container:           var(--surface-container);
+  --color-surface-container-high:      var(--surface-container-high);
+  --color-surface-container-highest:   var(--surface-container-highest);
+  --color-surface-variant:             var(--surface-variant);
+
+  --color-on-surface:                  var(--on-surface);
+  --color-on-surface-muted:            var(--on-surface-muted);
+  --color-on-surface-subtle:           var(--on-surface-subtle);
+  --color-on-surface-faint:            var(--on-surface-faint);
+  --color-on-surface-inverse:          var(--on-surface-inverse);
+
+  --color-primary:                     var(--primary);
+  --color-primary-container:           var(--primary-container);
+  --color-primary-container-dim:       var(--primary-container-dim);
+  --color-on-primary:                  var(--on-primary);
+  --color-on-primary-container:        var(--on-primary-container);
+
+  --color-secondary-container:         var(--secondary-container);
+  --color-secondary-container-soft:    var(--secondary-container-soft);
+  --color-on-secondary-container:      var(--on-secondary-container);
+
+  --color-tertiary-container:          var(--tertiary-container);
+  --color-on-tertiary-container:       var(--on-tertiary-container);
+
+  --color-outline:                     var(--outline);
+  --color-outline-variant:             var(--outline-variant);
+
+  --color-error:                       var(--error);
+  --color-on-error:                    var(--on-error);
+  --color-success:                     var(--success);
+  --color-on-success:                  var(--on-success);
+
+  /* legacy aliases — keep old utility classes working */
+  --color-background:                  var(--surface);
+  --color-foreground:                  var(--on-surface);
+  --color-muted:                       var(--surface-container);
+  --color-muted-foreground:            var(--on-surface-muted);
+  --color-border:                      var(--outline-variant);
+  --color-accent:                      var(--primary);
+  --color-accent-foreground:           var(--on-primary);
+  --color-card:                        var(--surface-container-lowest);
+
+  /* fonts */
+  --font-serif: var(--font-noto-serif), Georgia, "Times New Roman", serif;
+  --font-sans:  var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-note:  var(--font-be-vietnam),  var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /* radii */
+  --radius-sm:       8px;
+  --radius-md:      24px;
+  --radius-lg:      32px;
+  --radius-xl:      48px;
+  --radius-pill: 9999px;
+
+  /* shadows */
+  --shadow-ambient-sm: 0 4px 12px  0 rgb(var(--shadow-color) / 0.04);
+  --shadow-ambient:    0 8px 30px  0 rgb(var(--shadow-color) / 0.06);
+  --shadow-ambient-lg: 0 20px 60px 0 rgb(var(--shadow-color) / 0.08);
+  --shadow-lifted:     0 2px 8px   0 rgb(var(--shadow-color) / 0.04),
+                       0 20px 40px 0 rgb(var(--shadow-color) / 0.06);
+
+  /* motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-feature-settings: "ss01", "cv11";
+/* =========================================================================
+   Base styles
+   ========================================================================= */
+
+html, body {
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-serif), Georgia, serif;
-  font-weight: 500;
+  font-family: var(--font-noto-serif), Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  color: var(--on-surface);
   letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
+p { text-wrap: pretty; }
+
+/* =========================================================================
+   Utility primitives
+   ========================================================================= */
+
+/* The Artist's Blob — organic background shape */
+.blob {
+  position: absolute;
+  border-radius: 60% 40% 30% 70% / 40% 30% 70% 60%;
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Artist Note — rotated sticky-note */
+.artist-note {
+  font-family: var(--font-be-vietnam), var(--font-plus-jakarta), sans-serif;
+  font-size: 14px;
+  color: var(--on-secondary-container);
+  background: var(--secondary-container);
+  padding: 8px 14px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transform: rotate(-1.5deg);
+}
+
+/* Gradient primary button face */
+.btn-primary-face {
+  background: var(--gradient-primary);
+  color: var(--on-primary);
+  transition: filter var(--dur-base) var(--ease-out-soft);
+}
+.btn-primary-face:hover { filter: brightness(1.05); }
+
+/* Prose overrides */
 .prose {
-  --tw-prose-body: var(--foreground);
-  --tw-prose-headings: var(--foreground);
-  --tw-prose-links: var(--accent);
-  --tw-prose-bold: var(--foreground);
+  --tw-prose-body: var(--on-surface-muted);
+  --tw-prose-headings: var(--on-surface);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--on-surface);
 }
