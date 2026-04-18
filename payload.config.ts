@@ -32,8 +32,16 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
+      // Vercel Postgres exposes POSTGRES_URL; the new Neon integration uses
+      // DATABASE_URL; some integrations only set POSTGRES_PRISMA_URL. Accept
+      // any of them so the admin route doesn't silently fall back to
+      // localhost in production.
       connectionString:
-        process.env.POSTGRES_URL || process.env.DATABASE_URL || "",
+        process.env.POSTGRES_URL ||
+        process.env.DATABASE_URL ||
+        process.env.POSTGRES_PRISMA_URL ||
+        process.env.POSTGRES_URL_NON_POOLING ||
+        "",
     },
   }),
   sharp,
