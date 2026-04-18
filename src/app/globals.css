@@ -225,3 +225,29 @@ p { text-wrap: pretty; }
   --tw-prose-links: var(--primary);
   --tw-prose-bold: var(--on-surface);
 }
+
+/* =========================================================================
+   PR 2 — appended to globals.css below the existing PR 1 content.
+   ========================================================================= */
+
+/* Rich text — editorial prose treatment for blog posts + long form copy */
+.rich-text > p:first-child,
+.rich-text > p.first-paragraph {
+  /* restore the "no top gap" on the very first block */
+  margin-top: 0;
+}
+
+.rich-text p.first-paragraph::first-letter {
+  font-family: var(--font-noto-serif), Georgia, serif;
+  font-weight: 700;
+  float: left;
+  font-size: 4.2em;
+  line-height: 0.85;
+  margin: 0.05em 0.08em 0 -0.05em;
+  color: var(--primary);
+  /* Slight italic feels more like a hand-set monograph */
+  font-style: italic;
+}
+
+/* Generous paragraph rhythm only when there's more than one */
+.rich-text > * + * { margin-top: 1.25rem; }

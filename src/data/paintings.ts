@@ -2,10 +2,43 @@ import { getPayloadClient } from "@/lib/payload";
 
 export type SizeTier = "small" | "medium" | "large" | "oversize";
 
+// NEW — coarse species taxonomy used for gallery filtering.
+// Kept deliberately broad so the filter stays useful as the catalogue grows.
+export type SubjectGroup =
+  | "dog"
+  | "cat"
+  | "horse"
+  | "farm"
+  | "wild"
+  | "bird"
+  | "other";
+
+export const SUBJECT_GROUP_LABELS: Record<SubjectGroup, string> = {
+  dog: "Dogs",
+  cat: "Cats",
+  horse: "Horses",
+  farm: "Farm",
+  wild: "Wild",
+  bird: "Birds",
+  other: "Other",
+};
+
+// Canonical order for rendering chips on the gallery page.
+export const SUBJECT_GROUPS: SubjectGroup[] = [
+  "dog",
+  "cat",
+  "horse",
+  "farm",
+  "wild",
+  "bird",
+  "other",
+];
+
 export type Painting = {
   slug: string;
   title: string;
   subject: string;
+  subjectGroup: SubjectGroup;
   year: number;
   medium: string;
   widthIn: number;
@@ -18,8 +51,6 @@ export type Painting = {
   featured?: boolean;
 };
 
-// Shipping rates (in cents) keyed by size tier. Barbara packs and ships
-// herself, so these are her flat-rate estimates for domestic US shipping.
 export const SHIPPING_RATES: Record<
   SizeTier,
   { label: string; cents: number }
@@ -30,14 +61,12 @@ export const SHIPPING_RATES: Record<
   oversize: { label: "Oversize — over 30×40 in", cents: 15000 },
 };
 
-// Static seed used as fallback when Payload/Postgres isn't configured
-// locally. Kept here as the "out of the box" gallery so the site works
-// with zero database setup.
 const seedPaintings: Painting[] = [
   {
     slug: "river-otter-study",
     title: "River Otter, Morning Light",
     subject: "River otter",
+    subjectGroup: "wild",
     year: 2026,
     medium: "Oil on linen",
     widthIn: 16,
@@ -53,6 +82,7 @@ const seedPaintings: Painting[] = [
     slug: "red-fox-in-winter",
     title: "Red Fox in Winter",
     subject: "Red fox",
+    subjectGroup: "wild",
     year: 2026,
     medium: "Oil on canvas",
     widthIn: 24,
@@ -68,6 +98,7 @@ const seedPaintings: Painting[] = [
     slug: "barn-owl-portrait",
     title: "Barn Owl Portrait",
     subject: "Barn owl",
+    subjectGroup: "bird",
     year: 2025,
     medium: "Oil on panel",
     widthIn: 12,
@@ -83,6 +114,7 @@ const seedPaintings: Painting[] = [
     slug: "horse-at-pasture",
     title: "Horse at Pasture",
     subject: "Horse",
+    subjectGroup: "horse",
     year: 2025,
     medium: "Oil on canvas",
     widthIn: 20,
@@ -100,6 +132,7 @@ type PayloadPainting = {
   slug: string;
   title: string;
   subject?: string;
+  subjectGroup?: SubjectGroup;
   year: number;
   medium: string;
   widthIn: number;
@@ -125,6 +158,9 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     slug: p.slug,
     title: p.title,
     subject: p.subject ?? "",
+    // Default to "other" if the field is missing (e.g. rows created before
+    // this field was added). Admin users can reclassify in Payload.
+    subjectGroup: p.subjectGroup ?? "other",
     year: p.year,
     medium: p.medium,
     widthIn: p.widthIn,
@@ -183,4 +219,26 @@ export async function getFeaturedPaintings(limit = 3): Promise<Painting[]> {
 export async function getAvailablePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
   return all.filter((p) => !p.sold);
+}
+
+/**
+ * NEW — filter gallery by subject group. Pass `undefined` or "all" for
+ * the full set. Used by the gallery chip filter in PR 3.
+ */
+export async function getPaintingsByGroup(
+  group?: SubjectGroup | "all"
+): Promise<Painting[]> {
+  const all = await getAllPaintings();
+  if (!group || group === "all") return all;
+  return all.filter((p) => p.subjectGroup === group);
+}
+
+/**
+ * NEW — which subject groups currently have paintings? Drives the
+ * gallery chip list (hide empty chips).
+ */
+export async function getAvailableSubjectGroups(): Promise<SubjectGroup[]> {
+  const all = await getAllPaintings();
+  const present = new Set(all.map((p) => p.subjectGroup));
+  return SUBJECT_GROUPS.filter((g) => present.has(g));
 }

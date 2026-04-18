@@ -4,7 +4,7 @@ export const Paintings: CollectionConfig = {
   slug: "paintings",
   admin: {
     useAsTitle: "title",
-    defaultColumns: ["title", "priceCents", "sold", "sizeTier", "updatedAt"],
+    defaultColumns: ["title", "subjectGroup", "priceCents", "sold", "sizeTier", "updatedAt"],
     description: "Original paintings for sale in the gallery.",
   },
   access: {
@@ -30,7 +30,29 @@ export const Paintings: CollectionConfig = {
       name: "subject",
       type: "text",
       admin: {
-        description: "The animal or main subject — e.g. Red fox",
+        description: "The specific animal or main subject — e.g. Red fox",
+      },
+    },
+    {
+      // NEW — enables gallery filtering by species group.
+      // Values are deliberately broad so the filter stays useful as the
+      // catalogue grows. Add/rename later via this enum (existing rows
+      // keep their old value; migrate them in admin when needed).
+      name: "subjectGroup",
+      label: "Subject group",
+      type: "select",
+      defaultValue: "other",
+      options: [
+        { label: "Dog", value: "dog" },
+        { label: "Cat", value: "cat" },
+        { label: "Horse", value: "horse" },
+        { label: "Farm (cow, pig, sheep, goat, chicken…)", value: "farm" },
+        { label: "Wild (fox, otter, deer, hare, bear…)", value: "wild" },
+        { label: "Bird (raptor, songbird, waterfowl)", value: "bird" },
+        { label: "Other", value: "other" },
+      ],
+      admin: {
+        description: "Used to filter the gallery by species group.",
       },
     },
     {
