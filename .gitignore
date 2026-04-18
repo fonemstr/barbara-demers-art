@@ -42,3 +42,6 @@ next-env.d.ts
 
 # payload local media uploads
 /media/
+
+# claude code
+.claude/

@@ -46,16 +46,32 @@ export default async function PaintingPage({
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mt-8">
         <div className="md:col-span-3">
-          <div className="relative aspect-[4/5] bg-muted">
-            <Image
-              src={painting.images[0]}
-              alt={painting.title}
-              fill
-              sizes="(min-width: 768px) 60vw, 100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
+          <a
+            href={painting.images[0]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group block"
+            title="Click to view full-resolution image"
+          >
+            <div
+              className="relative bg-muted border border-border"
+              style={{ aspectRatio: `${painting.widthIn} / ${painting.heightIn}` }}
+            >
+              <Image
+                src={painting.images[0]}
+                alt={painting.title}
+                fill
+                sizes="(min-width: 768px) 60vw, 100vw"
+                className="object-contain"
+                priority
+              />
+              <div className="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <span className="bg-foreground/90 text-background text-xs tracking-widest uppercase px-3 py-1.5">
+                  View full image
+                </span>
+              </div>
+            </div>
+          </a>
         </div>
 
         <div className="md:col-span-2">
