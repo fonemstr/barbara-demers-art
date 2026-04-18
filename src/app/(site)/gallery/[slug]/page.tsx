@@ -1,9 +1,21 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getAllPaintings, getPainting, SHIPPING_RATES } from "@/data/paintings";
+import {
+  getAllPaintings,
+  getPainting,
+  SHIPPING_RATES,
+  SUBJECT_GROUP_LABELS,
+} from "@/data/paintings";
 import { formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
+import { PaintingCard } from "@/components/painting-card";
+import { Eyebrow } from "@/components/ui/eyebrow";
+import { ArtistNote } from "@/components/ui/artist-note";
+import { Chip } from "@/components/ui/chip";
+import { Blob } from "@/components/ui/blob";
+import { Section } from "@/components/ui/section";
+import { ButtonLink } from "@/components/ui/button";
 
 export async function generateStaticParams() {
   const paintings = await getAllPaintings();
@@ -34,118 +46,174 @@ export default async function PaintingPage({
   if (!painting) notFound();
 
   const shipping = SHIPPING_RATES[painting.sizeTier];
+  const allPaintings = await getAllPaintings();
+  const related = allPaintings
+    .filter(
+      (p) => p.slug !== painting.slug && p.subjectGroup === painting.subjectGroup
+    )
+    .slice(0, 3);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-12">
-      <Link
-        href="/gallery"
-        className="text-sm text-muted-foreground hover:text-foreground"
-      >
-        ← Back to gallery
-      </Link>
+    <>
+      {/* HERO — image + metadata + buy */}
+      <Section tone="surface" pad="md" className="overflow-hidden">
+        <Link
+          href="/gallery"
+          className="relative z-[3] inline-flex items-center gap-1.5 text-sm text-on-surface-muted hover:text-on-surface mb-10"
+        >
+          <span aria-hidden>←</span> Back to the gallery
+        </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mt-8">
-        <div className="md:col-span-3">
-          <a
-            href={painting.images[0]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group block"
-            title="Click to view full-resolution image"
-          >
+        <div className="grid gap-16 md:grid-cols-[1.25fr_1fr] items-start">
+          {/* Image column */}
+          <div className="relative">
+            <Blob
+              size={420}
+              color="var(--surface-variant)"
+              style={{ left: -80, top: 40, opacity: 0.7 }}
+            />
             <div
-              className="relative bg-muted border border-border"
-              style={{ aspectRatio: `${painting.widthIn} / ${painting.heightIn}` }}
+              className="relative z-[1] rounded-[var(--radius-xl)] overflow-hidden shadow-lifted bg-surface-container-lowest"
+              style={{
+                aspectRatio: `${painting.widthIn} / ${painting.heightIn}`,
+              }}
             >
               <Image
                 src={painting.images[0]}
                 alt={painting.title}
                 fill
                 sizes="(min-width: 768px) 60vw, 100vw"
-                className="object-contain"
+                className="object-cover"
                 priority
               />
-              <div className="absolute inset-0 flex items-end justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <span className="bg-foreground/90 text-background text-xs tracking-widest uppercase px-3 py-1.5">
-                  View full image
-                </span>
-              </div>
             </div>
-          </a>
-        </div>
-
-        <div className="md:col-span-2">
-          <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground">
-            {painting.subject} · {painting.year}
-          </p>
-          <h1 className="font-serif text-3xl md:text-4xl mt-3">
-            {painting.title}
-          </h1>
-
-          <dl className="mt-6 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Medium</dt>
-              <dd>{painting.medium}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Dimensions</dt>
-              <dd>
-                {painting.widthIn} × {painting.heightIn} in
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-muted-foreground">Shipping</dt>
-              <dd className="text-right">
-                {formatPrice(shipping.cents)}
-                <br />
-                <span className="text-xs text-muted-foreground">
-                  {shipping.label}
-                </span>
-              </dd>
-            </div>
-          </dl>
-
-          <p className="mt-8 text-muted-foreground leading-relaxed">
-            {painting.description}
-          </p>
-
-          <div className="mt-10 border-t border-border pt-6">
-            {painting.sold ? (
-              <div>
-                <p className="text-2xl font-serif text-muted-foreground line-through">
-                  {formatPrice(painting.priceCents)}
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  This piece has sold. For similar work, consider a{" "}
-                  <Link
-                    href="/commissions"
-                    className="underline underline-offset-4"
+            {/* Thumbnails, if multiple images */}
+            {painting.images.length > 1 && (
+              <div className="relative z-[1] mt-5 grid grid-cols-4 gap-3">
+                {painting.images.map((src, i) => (
+                  <div
+                    key={src + i}
+                    className="relative aspect-square rounded-[16px] overflow-hidden bg-surface-container"
                   >
-                    commission
-                  </Link>
-                  .
-                </p>
+                    <Image
+                      src={src}
+                      alt={`${painting.title} — view ${i + 1}`}
+                      fill
+                      sizes="15vw"
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-            ) : (
-              <>
-                <p className="text-3xl font-serif tabular-nums">
-                  {formatPrice(painting.priceCents)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  + {formatPrice(shipping.cents)} shipping
-                </p>
-                <div className="mt-6">
-                  <BuyButton slug={painting.slug} />
-                </div>
-                <p className="text-xs text-muted-foreground mt-4">
-                  Secure checkout by Stripe. Packed and shipped directly from
-                  the studio within 5 business days.
-                </p>
-              </>
             )}
           </div>
+
+          {/* Metadata + buy column */}
+          <div className="flex flex-col gap-6 md:pt-6">
+            <div className="flex items-center gap-3">
+              <Eyebrow>
+                {painting.subject || SUBJECT_GROUP_LABELS[painting.subjectGroup]} · {painting.year}
+              </Eyebrow>
+              {painting.sold && <Chip>Sold</Chip>}
+            </div>
+
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.015em] text-balance">
+              {painting.title}
+            </h1>
+
+            <p className="text-[17px] leading-relaxed text-on-surface-muted text-pretty">
+              {painting.description}
+            </p>
+
+            <ArtistNote icon="🎨">
+              Painted from three hand-picked reference photos.
+            </ArtistNote>
+
+            {/* Spec rows — no dividers, just tonal shift */}
+            <dl className="mt-2 rounded-[var(--radius-lg)] bg-surface-container-low p-6 grid grid-cols-[auto_1fr] gap-x-10 gap-y-3 text-[15px]">
+              <dt className="text-on-surface-subtle">Medium</dt>
+              <dd className="text-on-surface">{painting.medium}</dd>
+              <dt className="text-on-surface-subtle">Dimensions</dt>
+              <dd className="text-on-surface tabular-nums">
+                {painting.widthIn} × {painting.heightIn} in
+              </dd>
+              <dt className="text-on-surface-subtle">Ships from</dt>
+              <dd className="text-on-surface">The studio · insured · 5 business days</dd>
+              <dt className="text-on-surface-subtle">Shipping</dt>
+              <dd className="text-on-surface tabular-nums">
+                {formatPrice(shipping.cents)}{" "}
+                <span className="text-on-surface-subtle text-[13px]">
+                  ({shipping.label})
+                </span>
+              </dd>
+            </dl>
+
+            {/* Price + buy */}
+            <div className="mt-4 flex flex-col gap-4">
+              {painting.sold ? (
+                <>
+                  <div className="flex items-baseline gap-3">
+                    <p className="font-serif text-3xl text-on-surface-faint line-through tabular-nums">
+                      {formatPrice(painting.priceCents)}
+                    </p>
+                    <p className="font-serif text-xl text-on-surface">
+                      Found a home
+                    </p>
+                  </div>
+                  <p className="text-sm text-on-surface-muted">
+                    Love this one? A commission in the same spirit is the
+                    next best thing.
+                  </p>
+                  <ButtonLink href="/commissions" variant="primary" size="md">
+                    Ask about a similar commission
+                  </ButtonLink>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-3">
+                    <p className="font-serif text-4xl tabular-nums text-on-surface">
+                      {formatPrice(painting.priceCents)}
+                    </p>
+                    <p className="text-sm text-on-surface-subtle">
+                      + {formatPrice(shipping.cents)} shipping
+                    </p>
+                  </div>
+                  <BuyButton slug={painting.slug} />
+                  <p className="text-xs text-on-surface-subtle">
+                    Secure checkout by Stripe. Packed and shipped directly
+                    from the studio within 5 business days.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </Section>
+
+      {/* RELATED — more from the same subject group */}
+      {related.length > 0 && (
+        <Section tone="low" pad="lg">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <Eyebrow>More from the studio</Eyebrow>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
+                Other {SUBJECT_GROUP_LABELS[painting.subjectGroup].toLowerCase()}
+              </h2>
+            </div>
+            <Link
+              href="/gallery"
+              className="text-sm text-on-surface-muted hover:text-on-surface underline underline-offset-[6px] decoration-on-surface-faint"
+            >
+              See all work →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            {related.map((p) => (
+              <PaintingCard key={p.slug} painting={p} />
+            ))}
+          </div>
+        </Section>
+      )}
+    </>
   );
 }

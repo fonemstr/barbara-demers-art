@@ -1,38 +1,14 @@
 import { getPayloadClient } from "@/lib/payload";
+import {
+  SUBJECT_GROUPS,
+  SUBJECT_GROUP_LABELS,
+  type SubjectGroup,
+} from "@/data/subject-groups";
+
+export { SUBJECT_GROUPS, SUBJECT_GROUP_LABELS };
+export type { SubjectGroup };
 
 export type SizeTier = "small" | "medium" | "large" | "oversize";
-
-// NEW — coarse species taxonomy used for gallery filtering.
-// Kept deliberately broad so the filter stays useful as the catalogue grows.
-export type SubjectGroup =
-  | "dog"
-  | "cat"
-  | "horse"
-  | "farm"
-  | "wild"
-  | "bird"
-  | "other";
-
-export const SUBJECT_GROUP_LABELS: Record<SubjectGroup, string> = {
-  dog: "Dogs",
-  cat: "Cats",
-  horse: "Horses",
-  farm: "Farm",
-  wild: "Wild",
-  bird: "Birds",
-  other: "Other",
-};
-
-// Canonical order for rendering chips on the gallery page.
-export const SUBJECT_GROUPS: SubjectGroup[] = [
-  "dog",
-  "cat",
-  "horse",
-  "farm",
-  "wild",
-  "bird",
-  "other",
-];
 
 export type Painting = {
   slug: string;

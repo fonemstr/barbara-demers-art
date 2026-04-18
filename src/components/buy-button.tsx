@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function BuyButton({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(false);
@@ -28,15 +29,16 @@ export function BuyButton({ slug }: { slug: string }) {
 
   return (
     <div>
-      <button
+      <Button
         onClick={handleClick}
         disabled={loading}
-        className="w-full px-6 py-4 bg-foreground text-background text-sm font-medium tracking-wide uppercase hover:bg-foreground/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+        size="lg"
+        className="w-full"
       >
         {loading ? "Starting checkout…" : "Purchase this painting"}
-      </button>
+      </Button>
       {error && (
-        <p className="mt-3 text-sm text-red-700" role="alert">
+        <p className="mt-3 text-sm text-[color:var(--error)]" role="alert">
           {error}
         </p>
       )}
