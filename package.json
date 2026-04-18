@@ -8,8 +8,12 @@
     "dev:clean": "rm -rf .next && next dev",
     "dev:webpack": "next dev --webpack",
     "build": "next build",
+    "vercel-build": "payload migrate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "payload": "payload",
+    "migrate": "payload migrate",
+    "migrate:create": "payload migrate:create"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.83.0",

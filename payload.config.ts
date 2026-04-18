@@ -31,10 +31,6 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "src/payload-types.ts"),
   },
   db: postgresAdapter({
-    // Auto-sync schema. Defaults to true in dev, false in prod — turning it
-    // on in prod here because there are no migration files yet. Once the
-    // schema stabilises, generate migrations and switch this off.
-    push: true,
     pool: {
       // Vercel Postgres exposes POSTGRES_URL; the new Neon integration uses
       // DATABASE_URL; some integrations only set POSTGRES_PRISMA_URL. Accept
