@@ -17,6 +17,11 @@ import { Blob } from "@/components/ui/blob";
 import { Section } from "@/components/ui/section";
 import { ButtonLink } from "@/components/ui/button";
 
+// Known slugs are prerendered at build; new slugs get static-generated on
+// first request (dynamicParams defaults to true) and revalidated every
+// minute so the page reflects edits from admin.
+export const revalidate = 60;
+
 export async function generateStaticParams() {
   const paintings = await getAllPaintings();
   return paintings.map((p) => ({ slug: p.slug }));

@@ -8,6 +8,10 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { ButtonLink } from "@/components/ui/button";
 import { Blob } from "@/components/ui/blob";
 
+// Re-generate at most once a minute so new paintings added in admin appear
+// (hero, testimonial image, latest row) without a redeploy.
+export const revalidate = 60;
+
 export default async function HomePage() {
   const featured = await getFeaturedPaintings(3);
   const all = await getAllPaintings();

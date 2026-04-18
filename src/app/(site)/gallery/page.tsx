@@ -6,6 +6,10 @@ import { Blob } from "@/components/ui/blob";
 
 export const metadata = { title: "Gallery" };
 
+// Re-generate at most once a minute so new paintings appear without a
+// redeploy.
+export const revalidate = 60;
+
 export default async function GalleryPage() {
   const [paintings, groups] = await Promise.all([
     getAllPaintings(),

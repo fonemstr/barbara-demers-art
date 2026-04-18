@@ -7,6 +7,8 @@ import { Blob } from "@/components/ui/blob";
 
 export const metadata = { title: "Journal" };
 
+export const revalidate = 60;
+
 function readingMinutes(text: string): number {
   const words = (text || "").split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 220));
