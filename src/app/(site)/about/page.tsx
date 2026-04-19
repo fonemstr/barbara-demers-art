@@ -3,7 +3,6 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { ArtistNote } from "@/components/ui/artist-note";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = { title: "About" };
@@ -31,26 +30,20 @@ export default function AboutPage() {
       {/* STUDIO PORTRAIT + PULL QUOTE */}
       <Section tone="surface" pad="lg">
         <div className="grid gap-14 md:grid-cols-[0.9fr_1.1fr] items-center">
-          {/* Photo — placeholder until a real studio photo lands */}
           <div className="relative">
             <Blob size={340} color="var(--surface-variant)" style={{ left: -40, top: 20, opacity: 0.8 }} />
             <div
-              className="relative z-[1] aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient-lg bg-surface-container"
+              className="relative z-[1] aspect-square overflow-hidden rounded-[var(--radius-xl)] shadow-ambient-lg bg-surface-container"
               style={{ transform: "rotate(-1deg)" }}
             >
               <Image
-                src="/paintings/placeholder-3.svg"
-                alt="Barbara J Demers in the studio"
+                src="/studio/barbara-at-easel.png"
+                alt="Barbara J Demers at her easel, painting a dog portrait in oil"
                 fill
                 sizes="(min-width: 768px) 40vw, 90vw"
                 className="object-cover"
+                priority
               />
-              <ArtistNote
-                icon="✏️"
-                className="absolute bottom-5 left-5 shadow-ambient"
-              >
-                Studio photo coming soon
-              </ArtistNote>
             </div>
           </div>
 
