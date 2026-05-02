@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Painting } from "@/data/paintings";
 import { SUBJECT_GROUP_LABELS, type SubjectGroup } from "@/data/subject-groups";
 import { PaintingCard } from "@/components/painting-card";
@@ -11,6 +12,10 @@ type Filter = "all" | SubjectGroup;
 /**
  * Gallery with a client-side subject-group chip filter. Paintings are
  * pre-fetched on the server and passed in; chips just narrow the list.
+ *
+ * Reads `?group=<subjectGroup>` once on mount so editorial blocks on the
+ * home page can deep-link in. Chip clicks update the URL via
+ * `history.replaceState` (no router round-trip), keeping links shareable.
  */
 export function GalleryList({
   paintings,
@@ -19,7 +24,31 @@ export function GalleryList({
   paintings: Painting[];
   groups: SubjectGroup[];
 }) {
-  const [filter, setFilter] = useState<Filter>("all");
+  const searchParams = useSearchParams();
+
+  const [filter, setFilter] = useState<Filter>(() => {
+    const param = searchParams.get("group");
+    if (param && (groups as string[]).includes(param)) {
+      return param as SubjectGroup;
+    }
+    return "all";
+  });
+
+  const updateFilter = (next: Filter) => {
+    setFilter(next);
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (next === "all") {
+      params.delete("group");
+    } else {
+      params.set("group", next);
+    }
+    const query = params.toString();
+    const url = query
+      ? `${window.location.pathname}?${query}`
+      : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  };
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: paintings.length };
@@ -46,7 +75,7 @@ export function GalleryList({
         >
           <Chip
             active={filter === "all"}
-            onClick={() => setFilter("all")}
+            onClick={() => updateFilter("all")}
             className={chipBase}
           >
             All work
@@ -56,7 +85,7 @@ export function GalleryList({
             <Chip
               key={g}
               active={filter === g}
-              onClick={() => setFilter(g)}
+              onClick={() => updateFilter(g)}
               className={chipBase}
             >
               {SUBJECT_GROUP_LABELS[g]}

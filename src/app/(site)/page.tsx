@@ -1,6 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFeaturedPaintings, getAllPaintings } from "@/data/paintings";
+import {
+  getAllPaintings,
+  getFeaturedPaintings,
+  type Painting,
+  type SubjectGroup,
+} from "@/data/paintings";
 import { PaintingCard } from "@/components/painting-card";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { ArtistNote } from "@/components/ui/artist-note";
@@ -8,22 +13,68 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { ButtonLink } from "@/components/ui/button";
 import { Blob } from "@/components/ui/blob";
 
-// Re-generate at most once a minute so new paintings added in admin appear
-// (hero, testimonial image, latest row) without a redeploy.
 export const revalidate = 60;
 
+type Collection = {
+  slug: string;
+  title: string;
+  subhead: string;
+  body: string;
+  cta: string;
+  href: string;
+  // Subject groups whose paintings can stand in as the block's hero image.
+  groups: SubjectGroup[];
+};
+
+const COLLECTIONS: Collection[] = [
+  {
+    slug: "wild",
+    title: "The Wild",
+    subhead: "Foxes, hawks, the watchful in-between.",
+    body: "Animals captured in the seconds before they vanish — alert, present, fully themselves.",
+    cta: "See the wild collection",
+    href: "/gallery?group=wild",
+    groups: ["wild", "bird"],
+  },
+  {
+    slug: "pasture",
+    title: "The Pasture",
+    subhead: "Farm and field, soft-eyed and steady.",
+    body: "Cows, horses, sheep, and barn cats — the quiet population of the rural everyday.",
+    cta: "See the pasture collection",
+    href: "/gallery?group=farm",
+    groups: ["farm", "horse"],
+  },
+  {
+    slug: "small-wonders",
+    title: "Small Wonders",
+    subhead: "The bees, butterflies, and tiny lives that hold a whole season.",
+    body: "Studies of insects, blossoms, and small creatures — paintings of attention, of slowing down to look.",
+    cta: "See the small wonders collection",
+    href: "/gallery?group=other",
+    groups: ["other"],
+  },
+];
+
+function pickHeroForCollection(
+  paintings: Painting[],
+  collection: Collection
+): Painting | undefined {
+  const inGroup = paintings.filter((p) =>
+    collection.groups.includes(p.subjectGroup)
+  );
+  return inGroup.find((p) => p.featured && !p.sold) ?? inGroup[0];
+}
+
 export default async function HomePage() {
-  const featured = await getFeaturedPaintings(3);
+  const featured = await getFeaturedPaintings(4);
   const all = await getAllPaintings();
-  // Hero uses the first featured (or first non-sold) painting as the big image.
   const hero = featured[0] ?? all.find((p) => !p.sold) ?? all[0];
-  // Testimonial / "Lover first" block uses the next visually strong painting.
-  const testimonialImg = featured[1]?.images[0] ?? hero?.images[0];
 
   return (
     <div className="overflow-hidden">
       {/* ============================================================
-          HERO — asymmetric grid, overlapping mini-card, organic blobs
+          HERO — brand statement, originals-first
           ============================================================ */}
       <section className="relative mx-auto max-w-6xl px-6 pt-20 pb-28">
         <Blob size={460} color="var(--surface-variant)" style={{ left: -140, top: -40 }} />
@@ -32,23 +83,22 @@ export default async function HomePage() {
         <div className="relative z-10 grid gap-16 md:grid-cols-[1.1fr_1fr] items-center">
           {/* Copy column */}
           <div className="flex flex-col gap-7">
-            <ArtistNote>Artist&rsquo;s Note: Every whisker tells a story.</ArtistNote>
+            <Eyebrow>Original paintings</Eyebrow>
             <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
-              Capturing the{" "}
-              <em className="font-normal italic text-primary">wags</em>, purrs,
-              and head-tilts of your best friends.
+              Painted from a place of{" "}
+              <em className="font-normal italic text-primary">wonder</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
-              Custom fine-art portraits that celebrate the goofy grins, soulful
-              stares, and unique personalities of the animals who share our
-              homes.
+              Original oil paintings of the wild, the bucolic, and the small
+              things easy to miss — each one a single piece, painted slowly in
+              a light-filled Manitoba studio.
             </p>
             <div className="flex flex-wrap gap-4 mt-3">
-              <ButtonLink href="/commissions" size="md">
-                Commission Your Portrait
+              <ButtonLink href="/gallery" size="md">
+                Browse the gallery
               </ButtonLink>
-              <ButtonLink href="/gallery" size="md" variant="secondary">
-                View the Zoo
+              <ButtonLink href="/blog" size="md" variant="secondary">
+                Read the journal
               </ButtonLink>
             </div>
           </div>
@@ -68,7 +118,7 @@ export default async function HomePage() {
                 />
               </div>
               <div className="absolute left-[-20px] bottom-10 z-[2] bg-surface-container-lowest rounded-[32px] p-5 pr-7 shadow-ambient max-w-[260px]">
-                <Eyebrow className="mb-2">Currently on the easel</Eyebrow>
+                <Eyebrow className="mb-2">Latest in the studio</Eyebrow>
                 <p className="font-serif text-lg leading-tight text-on-surface">
                   {hero.title}
                 </p>
@@ -82,26 +132,90 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================================
-          GALLERY OF PERSONALITIES — layered-paper section
+          EDITORIAL COLLECTIONS — three themed blocks
+          ============================================================ */}
+      <section className="bg-surface-container-low py-24">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="max-w-2xl mb-14">
+            <Eyebrow>Collections</Eyebrow>
+            <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
+              Three corners of the studio.
+            </h2>
+            <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
+              The work tends to gather into themes. Step into whichever calls
+              you in.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-10">
+            {COLLECTIONS.map((collection, idx) => {
+              const heroPainting = pickHeroForCollection(all, collection);
+              const reverse = idx % 2 === 1;
+              return (
+                <article
+                  key={collection.slug}
+                  className="grid gap-10 md:grid-cols-2 items-center bg-surface-container-lowest rounded-[var(--radius-lg)] p-6 md:p-10 shadow-ambient-sm"
+                >
+                  {heroPainting && (
+                    <Link
+                      href={collection.href}
+                      className={`relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient ${
+                        reverse ? "md:order-2" : ""
+                      }`}
+                      aria-label={collection.cta}
+                    >
+                      <Image
+                        src={heroPainting.images[0]}
+                        alt={heroPainting.title}
+                        fill
+                        sizes="(min-width: 768px) 45vw, 90vw"
+                        className="object-cover transition-transform duration-[700ms] ease-[cubic-bezier(.22,1,.36,1)] hover:scale-[1.03]"
+                      />
+                    </Link>
+                  )}
+                  <div className="flex flex-col gap-5">
+                    <Eyebrow>{collection.subhead}</Eyebrow>
+                    <h3 className="font-serif text-3xl md:text-4xl leading-tight text-on-surface">
+                      {collection.title}
+                    </h3>
+                    <p className="text-on-surface-muted leading-relaxed">
+                      {collection.body}
+                    </p>
+                    <Link
+                      href={collection.href}
+                      className="self-start text-sm font-medium text-on-surface underline underline-offset-[6px] decoration-on-surface-faint hover:decoration-on-surface"
+                    >
+                      {collection.cta} →
+                    </Link>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          FEATURED ORIGINALS — fresh-from-the-easel strip
           ============================================================ */}
       {featured.length > 0 && (
-        <section className="bg-surface-container-low py-24">
+        <section className="py-24">
           <div className="mx-auto max-w-6xl px-6">
             <div className="flex items-end justify-between mb-14">
               <div className="max-w-xl">
-                <Eyebrow>Gallery of Personalities</Eyebrow>
+                <Eyebrow>Fresh from the easel</Eyebrow>
                 <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em] text-on-surface">
-                  Currently in the studio
+                  New originals in the studio.
                 </h2>
               </div>
               <Link
                 href="/gallery"
                 className="text-sm text-on-surface-muted hover:text-on-surface underline underline-offset-[6px] decoration-on-surface-faint"
               >
-                See all work →
+                Browse all originals →
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
               {featured.map((painting) => (
                 <PaintingCard key={painting.slug} painting={painting} />
               ))}
@@ -111,86 +225,28 @@ export default async function HomePage() {
       )}
 
       {/* ============================================================
-          LOVER FIRST, ARTIST SECOND — testimonial block with rotated note
+          COMMISSIONS TEASER — small, present but not centered
           ============================================================ */}
-      <section className="relative mx-auto max-w-6xl px-6 py-28">
-        <div className="grid gap-16 md:grid-cols-[1fr_1.05fr] items-center">
-          {/* Image side */}
-          {testimonialImg && (
-            <div className="relative">
-              <Blob size={320} color="var(--surface-variant)" style={{ left: -60, top: 40, opacity: 0.6 }} />
-              <div className="relative z-[1] aspect-[5/6] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient-lg">
-                <Image
-                  src={testimonialImg}
-                  alt="A painting in progress"
-                  fill
-                  sizes="(min-width: 768px) 45vw, 90vw"
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Copy side */}
-          <div className="flex flex-col gap-7">
-            <Eyebrow>A lover first, an artist second</Eyebrow>
-            <h2 className="font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-              I paint the animals I&rsquo;d want to share a couch with.
-            </h2>
-            <p className="text-lg text-on-surface-muted leading-relaxed">
-              Every portrait starts with three or four photos and a long phone
-              call. I want to know the rescue story, the bad-habit quirks, and
-              the exact sound they make when they hear the treat jar open. The
-              paint comes second.
-            </p>
-            <div
-              className="self-start rounded-[28px] bg-primary-container-dim text-on-primary-container px-7 py-5 max-w-md"
-              style={{ transform: "rotate(-1.2deg)" }}
-            >
-              <p className="font-serif italic text-xl leading-snug">
-                &ldquo;She captured Biscuit&rsquo;s eyebrows so perfectly I
-                cried. I cried! Over eyebrows!&rdquo;
-              </p>
-              <p className="mt-3 text-sm font-medium">— Maren, Portland</p>
-            </div>
+      <section className="bg-surface-container-low py-20">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <Eyebrow>Also available</Eyebrow>
+          <h2 className="mt-4 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
+            Yes, I do commissions too.
+          </h2>
+          <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
+            A small number of custom portraits each year, when the originals
+            leave room for them.
+          </p>
+          <div className="mt-8">
+            <ButtonLink href="/commissions" size="md" variant="secondary">
+              Learn about commissions
+            </ButtonLink>
           </div>
         </div>
       </section>
 
       {/* ============================================================
-          PROCESS — 4 steps on a layered surface
-          ============================================================ */}
-      <section className="bg-surface-container-low py-24">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="max-w-2xl mb-14">
-            <Eyebrow>How it works</Eyebrow>
-            <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-              Four steps, one painting that looks like them.
-            </h2>
-          </div>
-          <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {PROCESS_STEPS.map((step, i) => (
-              <li
-                key={step.title}
-                className="rounded-[var(--radius-lg)] bg-surface-container-lowest p-7 shadow-ambient-sm"
-              >
-                <div className="font-serif italic text-5xl text-primary leading-none">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
-                <h3 className="mt-5 font-serif text-2xl leading-tight text-on-surface">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-[15px] text-on-surface-muted leading-relaxed">
-                  {step.body}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* ============================================================
-          JOIN THE PACK — newsletter
+          NEWSLETTER — studio dispatches
           ============================================================ */}
       <section className="relative mx-auto max-w-3xl px-6 py-28 text-center">
         <Blob size={260} color="var(--secondary-container)" style={{ left: "50%", top: 0, transform: "translateX(-50%)", opacity: 0.4 }} />
@@ -199,11 +255,12 @@ export default async function HomePage() {
             Two emails a month, max.
           </ArtistNote>
           <h2 className="mt-6 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-            Join the pack.
+            Studio dispatches.
           </h2>
           <p className="mt-5 text-lg text-on-surface-muted">
-            Occasional notes from the easel — new paintings, commissions
-            reopening, and the occasional progress photo.
+            Quiet notes from the studio: new originals as they&rsquo;re
+            finished, the occasional in-progress photo, and the rare
+            commission opening.
           </p>
           <div className="mt-9 max-w-lg mx-auto">
             <NewsletterForm />
@@ -213,22 +270,3 @@ export default async function HomePage() {
     </div>
   );
 }
-
-const PROCESS_STEPS = [
-  {
-    title: "Send me their photos",
-    body: "Three or four favourites — the silly ones, the serious ones, the one where the light is perfect. I'll pick the reference together with you.",
-  },
-  {
-    title: "We talk personality",
-    body: "A short call so I can learn the story. What makes them them? What do you want the painting to remember?",
-  },
-  {
-    title: "Oil on linen",
-    body: "I build the painting up in thin glazes over a warm underpainting. You'll get progress photos at the block-in and finish stages.",
-  },
-  {
-    title: "Shipped from the studio",
-    body: "Packed by hand, insured, on its way within 4–6 weeks. A little thank-you note is already in the box.",
-  },
-];

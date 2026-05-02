@@ -25,11 +25,11 @@ const beVietnam = Be_Vietnam_Pro({
 
 export const metadata: Metadata = {
   title: {
-    default: "Barbara J Demers — Animal Paintings",
+    default: "Barbara J Demers — Original Paintings of the Wild and the Quiet",
     template: "%s · Barbara J Demers",
   },
   description:
-    "Original animal paintings and commissioned work by Barbara J Demers.",
+    "Original oil paintings of wild animals, farm animals, and the small wonders of the natural world — painted by Barbara J Demers in her Manitoba studio.",
 };
 
 const navLinks = [

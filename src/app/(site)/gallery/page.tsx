@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getAllPaintings, getAvailableSubjectGroups } from "@/data/paintings";
 import { GalleryList } from "@/components/gallery-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -39,7 +40,9 @@ export default async function GalleryPage() {
       </Section>
 
       <Section tone="low" pad="lg">
-        <GalleryList paintings={paintings} groups={groups} />
+        <Suspense fallback={null}>
+          <GalleryList paintings={paintings} groups={groups} />
+        </Suspense>
       </Section>
     </>
   );
