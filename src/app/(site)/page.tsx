@@ -31,7 +31,7 @@ const COLLECTIONS: Collection[] = [
     slug: "wild",
     title: "The Wild",
     subhead: "Foxes, hawks, the watchful in-between.",
-    body: "Animals captured in the seconds before they vanish — alert, present, fully themselves.",
+    body: "Wild beings held in the charged second before they vanish — alert, present, and fully themselves.",
     cta: "See the wild collection",
     href: "/gallery?group=wild",
     groups: ["wild", "bird"],
@@ -40,7 +40,7 @@ const COLLECTIONS: Collection[] = [
     slug: "pasture",
     title: "The Pasture",
     subhead: "Farm and field, soft-eyed and steady.",
-    body: "Cows, horses, sheep, and barn cats — the quiet population of the rural everyday.",
+    body: "Cows, horses, sheep, and the animals of rural life — seen with the dignity and presence usually reserved for companions.",
     cta: "See the pasture collection",
     href: "/gallery?group=farm",
     groups: ["farm", "horse"],
@@ -49,7 +49,7 @@ const COLLECTIONS: Collection[] = [
     slug: "small-wonders",
     title: "Small Wonders",
     subhead: "The bees, butterflies, and tiny lives that hold a whole season.",
-    body: "Studies of insects, blossoms, and small creatures — paintings of attention, of slowing down to look.",
+    body: "Insects, blossoms, and small creatures painted as lives worth noticing — tiny presences that hold entire seasons together.",
     cta: "See the small wonders collection",
     href: "/gallery?group=other",
     groups: ["other"],
@@ -83,19 +83,19 @@ export default async function HomePage() {
         <div className="relative z-10 grid gap-16 md:grid-cols-[1.1fr_1fr] items-center">
           {/* Copy column */}
           <div className="flex flex-col gap-7">
-            <Eyebrow>Original paintings</Eyebrow>
+            <Eyebrow>Original expressive realism paintings</Eyebrow>
             <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
-              Painted from a place of{" "}
-              <em className="font-normal italic text-primary">wonder</em>.
+              Original paintings that ask us to{" "}<br className="hidden sm:block" />
+              <em className="font-normal italic text-primary">look again</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
-              Original oil paintings of the wild, the bucolic, and the small
-              things easy to miss — each one a single piece, painted slowly in
-              a light-filled Manitoba studio.
+              Barbara J Demers creates paintings of animals, insects, and the
+              natural world using bold color, symbolic detail, and narrative
+              titles to reveal the living presence in every being.
             </p>
             <div className="flex flex-wrap gap-4 mt-3">
               <ButtonLink href="/gallery" size="md">
-                Browse the gallery
+                View available work
               </ButtonLink>
               <ButtonLink href="/blog" size="md" variant="secondary">
                 Read the journal
@@ -118,7 +118,7 @@ export default async function HomePage() {
                 />
               </div>
               <div className="absolute left-[-20px] bottom-10 z-[2] bg-surface-container-lowest rounded-[32px] p-5 pr-7 shadow-ambient max-w-[260px]">
-                <Eyebrow className="mb-2">Latest in the studio</Eyebrow>
+                <Eyebrow className="mb-2">Original from the studio</Eyebrow>
                 <p className="font-serif text-lg leading-tight text-on-surface">
                   {hero.title}
                 </p>
@@ -139,11 +139,11 @@ export default async function HomePage() {
           <div className="max-w-2xl mb-14">
             <Eyebrow>Collections</Eyebrow>
             <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-              Three corners of the studio.
+              Three ways of looking closer.
             </h2>
             <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
-              The work tends to gather into themes. Step into whichever calls
-              you in.
+              The work gathers around lives we often pass too quickly: the
+              wild, the pasture, and the small wonders underfoot.
             </p>
           </div>
 
@@ -212,7 +212,7 @@ export default async function HomePage() {
                 href="/gallery"
                 className="text-sm text-on-surface-muted hover:text-on-surface underline underline-offset-[6px] decoration-on-surface-faint"
               >
-                Browse all originals →
+                Browse available work →
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -225,17 +225,49 @@ export default async function HomePage() {
       )}
 
       {/* ============================================================
+          STUDIO ETHIC — values without turning the page into a lecture
+          ============================================================ */}
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-6 grid gap-10 md:grid-cols-[1fr_1.1fr] items-start">
+          <div>
+            <Eyebrow>How the paintings speak</Eyebrow>
+            <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em] text-on-surface">
+              Beyond the photo mold.
+            </h2>
+          </div>
+          <div className="text-lg text-on-surface-muted leading-relaxed space-y-5">
+            <p>
+              Barbara describes her work as expressive realism. The animal,
+              insect, or natural subject remains recognizable, but heightened
+              color and symbolic choices carry the feeling beyond a literal
+              reference.
+            </p>
+            <p>
+              Each title is part of the painting&apos;s voice — an invitation to
+              pause, look again, and recognize the heart that beats in all
+              living beings.
+            </p>
+            <p className="rounded-[var(--radius-lg)] bg-primary-container-dim px-6 py-5 font-medium text-on-primary-container">
+              10% of profits from every original painting are donated to animal
+              welfare.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
           COMMISSIONS TEASER — small, present but not centered
           ============================================================ */}
       <section className="bg-surface-container-low py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <Eyebrow>Also available</Eyebrow>
           <h2 className="mt-4 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
-            Yes, I do commissions too.
+            Selective commissions.
           </h2>
           <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
-            A small number of custom portraits each year, when the originals
-            leave room for them.
+            Barbara occasionally accepts custom animal portraits when the
+            subject, story, and timing feel aligned with the spirit of the
+            studio.
           </p>
           <div className="mt-8">
             <ButtonLink href="/commissions" size="md" variant="secondary">
@@ -255,12 +287,11 @@ export default async function HomePage() {
             Two emails a month, max.
           </ArtistNote>
           <h2 className="mt-6 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-            Studio dispatches.
+            Join the collector list.
           </h2>
           <p className="mt-5 text-lg text-on-surface-muted">
-            Quiet notes from the studio: new originals as they&rsquo;re
-            finished, the occasional in-progress photo, and the rare
-            commission opening.
+            First access to new originals, collection releases, the stories
+            behind the paintings, and the occasional commission opening.
           </p>
           <div className="mt-9 max-w-lg mx-auto">
             <NewsletterForm />

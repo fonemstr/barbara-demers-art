@@ -17,7 +17,7 @@ const TRUST = [
   },
   {
     title: "Within 5 business days",
-    body: "Originals ship from the studio in the north-east US within five working days. Commissions follow their own timeline.",
+    body: "Available originals ship from the studio within five working days. Commissions follow their own timeline.",
   },
 ];
 
@@ -70,7 +70,7 @@ export default function CheckoutSuccessPage() {
 
         <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4">
           <ButtonLink href="/gallery" variant="secondary" size="md">
-            Back to the gallery
+            Back to available work
           </ButtonLink>
           <Link
             href="/commissions"
