@@ -196,89 +196,49 @@ export interface Media {
   };
 }
 /**
- * Original paintings shown on Available Work and individual artwork pages.
+ * Original paintings for sale in the gallery.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "paintings".
  */
 export interface Painting {
   id: number;
-  /**
-   * The exact painting title. Barbara's titles carry the emotional meaning of the work.
-   */
   title: string;
   /**
-   * URL-friendly identifier. Lowercase, dashes instead of spaces (e.g. you-are-not-a-number-you-are-love).
+   * URL-friendly identifier. Lowercase, dashes instead of spaces (e.g. red-fox-in-winter).
    */
   slug: string;
   /**
-   * The specific animal, insect, or main subject — e.g. Bull, Chimpanzee, Honeybee.
+   * The specific animal or main subject — e.g. Red fox
    */
   subject?: string | null;
   /**
-   * Used to filter Available Work by subject group.
+   * Used to filter the gallery by species group.
    */
   subjectGroup?: ('dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
   year: number;
-  /**
-   * Use the actual medium for this piece, e.g. Acrylic on canvas, Oil on panel. Avoid making the whole site sound oil-first.
-   */
   medium: string;
   widthIn: number;
   heightIn: number;
   /**
-   * One or two sentences shown on artwork cards and used as fallback SEO text.
-   */
-  description: string;
-  /**
-   * Optional short hook for cards/social-style previews, e.g. 'A bull seen beyond the tag, beyond the number.'
-   */
-  storyTeaser?: string | null;
-  /**
-   * The narrative shown on the individual artwork page: why it was created, what the title means, and what details viewers should notice.
-   */
-  story?: string | null;
-  /**
-   * Put the main full-painting image first. Add detail photos afterward for the 'Look closer' section.
-   */
-  images: {
-    image: number | Media;
-    /**
-     * Helps Barbara organize which photos are full artwork views versus detail areas.
-     */
-    role?: ('main' | 'detail' | 'scale' | 'signature') | null;
-    /**
-     * Optional caption for detail photos, e.g. 'LOVE replacing the numbered ear tag.'
-     */
-    caption?: string | null;
-    id?: string | null;
-  }[];
-  /**
-   * Controls the badge and whether the page shows checkout, inquiry, or release/list language.
-   */
-  availabilityStatus: 'available' | 'reserved' | 'sold' | 'comingSoon' | 'inStudio';
-  /**
-   * Use 'visible' for direct checkout. Use inquire/hidden for larger or not-yet-released originals.
-   */
-  priceDisplay: 'visible' | 'inquire' | 'hidden';
-  /**
-   * Price in cents. $1,450 = 145000. Still required even if price is hidden.
+   * Price in cents. $1,450 = 145000
    */
   priceCents: number;
   /**
    * Determines the shipping rate charged at checkout
    */
   sizeTier: 'small' | 'medium' | 'large' | 'oversize';
-  /**
-   * Optional note shown near the CTA, e.g. 'Available after the studio preview on June 12.'
-   */
-  availabilityNote?: string | null;
+  description: string;
+  images: {
+    image: number | Media;
+    id?: string | null;
+  }[];
   /**
    * Show on the home page
    */
   featured?: boolean | null;
   /**
-   * Legacy sold flag. Prefer Availability status = Sold for new edits; this remains so older records keep working.
+   * Hide the Buy button and show a sold badge
    */
   sold?: boolean | null;
   updatedAt: string;
@@ -495,22 +455,15 @@ export interface PaintingsSelect<T extends boolean = true> {
   medium?: T;
   widthIn?: T;
   heightIn?: T;
+  priceCents?: T;
+  sizeTier?: T;
   description?: T;
-  storyTeaser?: T;
-  story?: T;
   images?:
     | T
     | {
         image?: T;
-        role?: T;
-        caption?: T;
         id?: T;
       };
-  availabilityStatus?: T;
-  priceDisplay?: T;
-  priceCents?: T;
-  sizeTier?: T;
-  availabilityNote?: T;
   featured?: T;
   sold?: T;
   updatedAt?: T;
