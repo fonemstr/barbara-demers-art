@@ -77,7 +77,7 @@ export default async function CommissionsPage() {
           {hero && (
             <div className="relative self-stretch min-h-[520px]">
               <Blob size={380} color="var(--surface-container-highest)" style={{ right: -40, top: 60 }} />
-              <div className="relative z-[1] ml-auto w-[92%] aspect-[4/5] max-h-[560px] overflow-hidden rounded-[var(--radius-xl)] shadow-lifted">
+              <div className="relative z-[1] ml-auto w-[92%] aspect-[4/5] max-h-[560px] overflow-hidden shadow-lifted">
                 <Image
                   src={hero.images[0]}
                   alt={hero.title}
@@ -109,7 +109,7 @@ export default async function CommissionsPage() {
           {testimonialImg && (
             <div className="relative">
               <Blob size={320} color="var(--surface-variant)" style={{ left: -60, top: 40, opacity: 0.6 }} />
-              <div className="relative z-[1] aspect-[5/6] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient-lg">
+              <div className="relative z-[1] aspect-[5/6] overflow-hidden shadow-ambient-lg">
                 <Image
                   src={testimonialImg}
                   alt="A commission in progress"

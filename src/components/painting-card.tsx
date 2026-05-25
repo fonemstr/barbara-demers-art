@@ -9,9 +9,9 @@ export function PaintingCard({ painting }: { painting: Painting }) {
       href={`/gallery/${painting.slug}`}
       className="group block"
     >
-      {/* Lifted-paper image container — no border, rounded-xl for the
-          "soft window into the pet's life" feel (DESIGN.md §6 Do's). */}
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] bg-surface-container shadow-ambient">
+      {/* Artwork image container — square corners so the paintings themselves
+          set the visual shape, rather than a soft UI frame. */}
+      <div className="relative aspect-[4/5] overflow-hidden bg-surface-container shadow-ambient">
         <Image
           src={painting.images[0]}
           alt={painting.title}

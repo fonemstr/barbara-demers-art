@@ -107,7 +107,7 @@ export default async function HomePage() {
           {hero && (
             <div className="relative self-stretch min-h-[520px]">
               <Blob size={380} color="var(--surface-container-highest)" style={{ right: -40, top: 60 }} />
-              <div className="relative z-[1] ml-auto w-[92%] aspect-[4/5] max-h-[560px] overflow-hidden rounded-[var(--radius-xl)] shadow-lifted">
+              <div className="relative z-[1] ml-auto w-[92%] aspect-[4/5] max-h-[560px] overflow-hidden shadow-lifted">
                 <Image
                   src={hero.images[0]}
                   alt={hero.title}
@@ -159,7 +159,7 @@ export default async function HomePage() {
                   {heroPainting && (
                     <Link
                       href={collection.href}
-                      className={`relative aspect-[4/5] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient ${
+                      className={`relative aspect-[4/5] overflow-hidden shadow-ambient ${
                         reverse ? "md:order-2" : ""
                       }`}
                       aria-label={collection.cta}

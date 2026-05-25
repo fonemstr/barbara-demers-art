@@ -78,7 +78,7 @@ export default async function PaintingPage({
               style={{ left: -80, top: 40, opacity: 0.7 }}
             />
             <div
-              className="relative z-[1] rounded-[var(--radius-xl)] overflow-hidden shadow-lifted bg-surface-container-lowest"
+              className="relative z-[1] overflow-hidden shadow-lifted bg-surface-container-lowest"
               style={{
                 aspectRatio: `${painting.widthIn} / ${painting.heightIn}`,
               }}
@@ -100,7 +100,7 @@ export default async function PaintingPage({
                   {painting.images.map((src, i) => (
                     <div
                       key={src + i}
-                      className="relative aspect-square rounded-[16px] overflow-hidden bg-surface-container"
+                      className="relative aspect-square overflow-hidden bg-surface-container"
                     >
                       <Image
                         src={src}

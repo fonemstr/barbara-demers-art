@@ -70,7 +70,7 @@ export default async function BlogPostPage({
         </header>
 
         {post.cover && (
-          <div className="relative mt-12 aspect-[16/10] overflow-hidden rounded-[var(--radius-xl)] shadow-ambient-lg">
+          <div className="relative mt-12 aspect-[16/10] overflow-hidden shadow-ambient-lg">
             <Image
               src={post.cover}
               alt=""

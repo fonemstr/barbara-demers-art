@@ -60,7 +60,7 @@ export default async function BlogIndexPage() {
                 href={`/blog/${lead.slug}`}
                 className="group grid gap-10 md:grid-cols-[1.1fr_1fr] items-center"
               >
-                <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden rounded-[var(--radius-xl)] bg-surface-container">
+                <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden bg-surface-container">
                   <Image
                     src={lead.cover ?? "/paintings/placeholder-1.svg"}
                     alt={lead.title}
