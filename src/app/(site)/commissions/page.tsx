@@ -17,15 +17,15 @@ export const revalidate = 60;
 const PROCESS_STEPS = [
   {
     title: "Send me their photos",
-    body: "Three or four favourites — the silly ones, the serious ones, the one where the light is perfect. I'll pick the reference together with you.",
+    body: "Share a few strong reference photos and the story of the animal. Barbara will look for the image with the most presence and feeling.",
   },
   {
-    title: "We talk personality",
-    body: "A short call so I can learn the story. What makes them them? What do you want the painting to remember?",
+    title: "We talk about fit",
+    body: "Because originals are the heart of the studio, commissions are accepted selectively when the subject and timing feel aligned.",
   },
   {
-    title: "Oil on linen",
-    body: "I build the painting up in thin glazes over a warm underpainting. You'll get progress photos at the block-in and finish stages.",
+    title: "Expressive realism",
+    body: "The painting stays rooted in likeness, but Barbara uses color, gesture, and symbolic choices to move beyond the photo mold.",
   },
   {
     title: "Shipped from the studio",
@@ -52,24 +52,23 @@ export default async function CommissionsPage() {
           {/* Copy column */}
           <div className="flex flex-col gap-7">
             <ArtistNote icon="✉️" rotate={-1.2}>
-              Open for inquiries — no waitlist right now.
+              Selective inquiries welcome.
             </ArtistNote>
             <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
-              Capturing the{" "}
-              <em className="font-normal italic text-primary">wags</em>, purrs,
-              and head-tilts of your best friends.
+              Custom work in the spirit of Barbara&apos;s{" "}
+              <em className="font-normal italic text-primary">originals</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
-              Custom fine-art portraits that celebrate the goofy grins, soulful
-              stares, and unique personalities of the animals who share our
-              homes.
+              Barbara&apos;s primary focus is original expressive realism
+              paintings. She occasionally accepts commissions when the subject,
+              story, and timing feel aligned with that way of seeing.
             </p>
             <div className="flex flex-wrap gap-4 mt-3">
               <ButtonLink href="#inquiry" size="md">
                 Start your inquiry
               </ButtonLink>
               <ButtonLink href="/gallery" size="md" variant="secondary">
-                View past work
+                View available work
               </ButtonLink>
             </div>
           </div>
@@ -103,7 +102,7 @@ export default async function CommissionsPage() {
       </section>
 
       {/* ============================================================
-          A LOVER FIRST, AN ARTIST SECOND — testimonial block
+          COMMISSION PHILOSOPHY
           ============================================================ */}
       <section className="relative mx-auto max-w-6xl px-6 py-28">
         <div className="grid gap-16 md:grid-cols-[1fr_1.05fr] items-center">
@@ -123,25 +122,23 @@ export default async function CommissionsPage() {
           )}
 
           <div className="flex flex-col gap-7">
-            <Eyebrow>A lover first, an artist second</Eyebrow>
+            <Eyebrow>Before you inquire</Eyebrow>
             <h2 className="font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-              I paint the animals I&rsquo;d want to share a couch with.
+              A commission should still feel like Barbara&apos;s work.
             </h2>
             <p className="text-lg text-on-surface-muted leading-relaxed">
-              Every portrait starts with three or four photos and a long phone
-              call. I want to know the rescue story, the bad-habit quirks, and
-              the exact sound they make when they hear the treat jar open. The
-              paint comes second.
+              The strongest commissions begin with trust in Barbara&apos;s eye:
+              bold color, expressive realism, and a desire to reveal the living
+              presence of the animal rather than simply copy a photograph.
             </p>
             <div
               className="self-start rounded-[28px] bg-primary-container-dim text-on-primary-container px-7 py-5 max-w-md"
               style={{ transform: "rotate(-1.2deg)" }}
             >
               <p className="font-serif italic text-xl leading-snug">
-                &ldquo;She captured Biscuit&rsquo;s eyebrows so perfectly I
-                cried. I cried! Over eyebrows!&rdquo;
+                &ldquo;The goal is not a static likeness. The goal is a living
+                presence.&rdquo;
               </p>
-              <p className="mt-3 text-sm font-medium">— Maren, Portland</p>
             </div>
           </div>
         </div>
@@ -155,7 +152,7 @@ export default async function CommissionsPage() {
           <div className="max-w-2xl mb-14">
             <Eyebrow>How it works</Eyebrow>
             <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
-              Four steps, one painting that looks like them.
+              Four steps, one painting with presence.
             </h2>
           </div>
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -187,12 +184,12 @@ export default async function CommissionsPage() {
           <div className="rounded-[var(--radius-lg)] bg-surface-container-lowest p-8 md:p-10 shadow-ambient-sm">
             <Eyebrow>Start the conversation</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-tight">
-              Tell me about your animal.
+              Tell me about the animal.
             </h2>
             <p className="mt-3 text-on-surface-muted leading-relaxed">
-              The more you can tell me about who they are, the better the
-              first conversation goes. No pressure to know your size or
-              budget yet — we&rsquo;ll work that out together.
+              Share the story, the reference photos, and what draws you to
+              Barbara&apos;s way of painting. If the project feels like a fit,
+              she&rsquo;ll write back with next steps.
             </p>
             <div className="mt-8">
               <CommissionsForm />
@@ -205,9 +202,9 @@ export default async function CommissionsPage() {
                 What&rsquo;s included
               </p>
               <ul className="mt-3 flex flex-col gap-2 text-[14px] text-on-surface-muted leading-relaxed">
-                <li>· An original oil painting on linen or panel</li>
-                <li>· Progress photos at block-in and finish</li>
-                <li>· Small adjustments before final varnish</li>
+                <li>· An original expressive realism painting</li>
+                <li>· Medium and surface chosen to suit the piece</li>
+                <li>· Progress photos during the painting process</li>
                 <li>· Insured shipping, packed by hand</li>
                 <li>· A handwritten note in the box</li>
               </ul>

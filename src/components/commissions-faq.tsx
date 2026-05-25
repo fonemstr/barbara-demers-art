@@ -6,11 +6,11 @@ import { cn } from "@/lib/utils";
 const FAQ = [
   {
     q: "How long does a commission take?",
-    a: "Typically 4–6 weeks from when reference photos are approved. Holiday season (October onward) fills up early, so reach out by August if you want a December delivery.",
+    a: "Timing depends on Barbara's original-painting schedule, the size of the work, and the complexity of the subject. If the project is a fit, she'll give you a clear timeline before a deposit is taken.",
   },
   {
     q: "What about pricing?",
-    a: "Price depends on size, subject complexity, and number of figures — I'd rather quote you on the specific painting than throw a number you'll have to caveat. Send the note, I'll write back with a real estimate within a few days.",
+    a: "Price depends on size, subject complexity, medium, and number of figures. Send the note and reference photos; Barbara will respond with a specific estimate if the commission feels aligned.",
   },
   {
     q: "What kind of reference photos do I need?",
@@ -26,7 +26,7 @@ const FAQ = [
   },
   {
     q: "Can I see the painting before it ships?",
-    a: "Always. You'll get progress photos at the block-in stage and again at the finish. Small adjustments are part of the process — I want you to love it.",
+    a: "Yes. You'll receive progress photos during the painting process and a final photo before shipping. The piece remains an original artwork in Barbara's expressive realism style, rather than a literal photo copy.",
   },
 ];
 

@@ -66,7 +66,7 @@ export default async function PaintingPage({
           href="/gallery"
           className="relative z-[3] inline-flex items-center gap-1.5 text-sm text-on-surface-muted hover:text-on-surface mb-10"
         >
-          <span aria-hidden>←</span> Back to the gallery
+          <span aria-hidden>←</span> Back to available work
         </Link>
 
         <div className="grid gap-16 md:grid-cols-[1.25fr_1fr] items-start">
@@ -92,23 +92,26 @@ export default async function PaintingPage({
                 priority
               />
             </div>
-            {/* Thumbnails, if multiple images */}
+            {/* Detail images, if multiple images */}
             {painting.images.length > 1 && (
-              <div className="relative z-[1] mt-5 grid grid-cols-4 gap-3">
-                {painting.images.map((src, i) => (
-                  <div
-                    key={src + i}
-                    className="relative aspect-square rounded-[16px] overflow-hidden bg-surface-container"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${painting.title} — view ${i + 1}`}
-                      fill
-                      sizes="15vw"
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
+              <div className="relative z-[1] mt-6">
+                <Eyebrow>Look closer</Eyebrow>
+                <div className="mt-3 grid grid-cols-4 gap-3">
+                  {painting.images.map((src, i) => (
+                    <div
+                      key={src + i}
+                      className="relative aspect-square rounded-[16px] overflow-hidden bg-surface-container"
+                    >
+                      <Image
+                        src={src}
+                        alt={`${painting.title} — ${i === 0 ? "full painting" : `detail ${i}`}`}
+                        fill
+                        sizes="15vw"
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -131,8 +134,19 @@ export default async function PaintingPage({
             </p>
 
             <ArtistNote icon="🎨">
-              Painted from three hand-picked reference photos.
+              An original expressive realism painting — created to move beyond
+              the photo reference and let the living presence come forward.
             </ArtistNote>
+
+            <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6">
+              <Eyebrow>The story behind the painting</Eyebrow>
+              <p className="mt-3 text-[16px] leading-relaxed text-on-surface-muted text-pretty">
+                The title is part of the work. Barbara uses narrative titles,
+                bold color, and symbolic detail to invite a slower look — not
+                just at the subject&apos;s likeness, but at the feeling and life
+                held inside the painting.
+              </p>
+            </div>
 
             {/* Spec rows — no dividers, just tonal shift */}
             <dl className="mt-2 rounded-[var(--radius-lg)] bg-surface-container-low p-6 grid grid-cols-[auto_1fr] gap-x-10 gap-y-3 text-[15px]">
@@ -187,6 +201,10 @@ export default async function PaintingPage({
                   <p className="text-xs text-on-surface-subtle">
                     Secure checkout by Stripe. Packed and shipped directly
                     from the studio within 5 business days.
+                  </p>
+                  <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
+                    10% of profits from this painting are donated to animal
+                    welfare.
                   </p>
                 </>
               )}

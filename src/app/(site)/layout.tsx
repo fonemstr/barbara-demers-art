@@ -25,18 +25,18 @@ const beVietnam = Be_Vietnam_Pro({
 
 export const metadata: Metadata = {
   title: {
-    default: "Barbara J Demers — Original Paintings of the Wild and the Quiet",
+    default: "Barbara J Demers — Original Expressive Realism Paintings",
     template: "%s · Barbara J Demers",
   },
   description:
-    "Original oil paintings of wild animals, farm animals, and the small wonders of the natural world — painted by Barbara J Demers in her Manitoba studio.",
+    "Original expressive realism paintings of animals, insects, and the natural world — created with bold color, symbolic detail, and narrative titles by Barbara J Demers.",
 };
 
 const navLinks = [
-  { href: "/gallery", label: "Gallery" },
-  { href: "/commissions", label: "Commissions" },
+  { href: "/gallery", label: "Available Work" },
   { href: "/blog", label: "Journal" },
   { href: "/about", label: "About" },
+  { href: "/commissions", label: "Commissions" },
 ];
 
 export default function SiteLayout({
@@ -68,10 +68,10 @@ export default function SiteLayout({
                 </Link>
               ))}
               <Link
-                href="/commissions"
+                href="/gallery"
                 className="btn-primary-face inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold"
               >
-                Commission a piece
+                View available work
               </Link>
             </nav>
           </div>
@@ -87,7 +87,7 @@ export default function SiteLayout({
                 Barbara J Demers
               </p>
               <p className="text-sm text-on-surface-muted mt-1">
-                Original animal paintings · Commissions welcome
+                Original expressive realism paintings · 10% of profits donated to animal welfare
               </p>
             </div>
             <div className="text-sm text-on-surface-subtle">

@@ -33,6 +33,12 @@ export function PaintingCard({ painting }: { painting: Painting }) {
           <p className="text-sm text-on-surface-muted mt-1.5">
             {painting.medium} · {painting.widthIn}×{painting.heightIn} in
           </p>
+          <p className="text-sm text-on-surface-subtle mt-2 line-clamp-2">
+            {painting.description}
+          </p>
+          <p className="mt-3 text-sm font-medium text-primary underline underline-offset-[6px] decoration-primary/30 group-hover:decoration-primary">
+            Read the story
+          </p>
         </div>
         <p className="font-serif text-xl tabular-nums text-on-surface">
           {painting.sold ? "—" : formatPrice(painting.priceCents)}
