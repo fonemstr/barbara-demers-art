@@ -7,6 +7,7 @@ import {
   SHIPPING_RATES,
   SUBJECT_GROUP_LABELS,
 } from "@/data/paintings";
+import { AVAILABILITY_STATUS_LABELS } from "@/data/availability";
 import { formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
 import { PaintingCard } from "@/components/painting-card";
@@ -51,6 +52,11 @@ export default async function PaintingPage({
   if (!painting) notFound();
 
   const shipping = SHIPPING_RATES[painting.sizeTier];
+  const isSold = painting.availabilityStatus === "sold" || painting.sold;
+  const isAvailable = painting.availabilityStatus === "available" && !isSold;
+  const canCheckout = isAvailable && painting.priceDisplay === "visible";
+  const showPrice = painting.priceDisplay !== "hidden";
+  const story = painting.story || painting.description;
   const allPaintings = await getAllPaintings();
   const related = allPaintings
     .filter(
@@ -97,18 +103,25 @@ export default async function PaintingPage({
               <div className="relative z-[1] mt-6">
                 <Eyebrow>Look closer</Eyebrow>
                 <div className="mt-3 grid grid-cols-4 gap-3">
-                  {painting.images.map((src, i) => (
-                    <div
-                      key={src + i}
-                      className="relative aspect-square overflow-hidden bg-surface-container"
-                    >
-                      <Image
-                        src={src}
-                        alt={`${painting.title} — ${i === 0 ? "full painting" : `detail ${i}`}`}
-                        fill
-                        sizes="15vw"
-                        className="object-cover"
-                      />
+                  {painting.imageDetails.map((image, i) => (
+                    <div key={image.src + i}>
+                      <div className="relative aspect-square overflow-hidden bg-surface-container">
+                        <Image
+                          src={image.src}
+                          alt={
+                            image.caption ||
+                            `${painting.title} — ${i === 0 ? "full painting" : `detail ${i}`}`
+                          }
+                          fill
+                          sizes="15vw"
+                          className="object-cover"
+                        />
+                      </div>
+                      {image.caption && (
+                        <p className="mt-2 text-xs leading-snug text-on-surface-subtle">
+                          {image.caption}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -122,7 +135,7 @@ export default async function PaintingPage({
               <Eyebrow>
                 {painting.subject || SUBJECT_GROUP_LABELS[painting.subjectGroup]} · {painting.year}
               </Eyebrow>
-              {painting.sold && <Chip>Sold</Chip>}
+              <Chip>{AVAILABILITY_STATUS_LABELS[painting.availabilityStatus]}</Chip>
             </div>
 
             <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.015em] text-balance">
@@ -130,7 +143,7 @@ export default async function PaintingPage({
             </h1>
 
             <p className="text-[17px] leading-relaxed text-on-surface-muted text-pretty">
-              {painting.description}
+              {painting.storyTeaser || painting.description}
             </p>
 
             <ArtistNote icon="🎨">
@@ -141,10 +154,7 @@ export default async function PaintingPage({
             <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6">
               <Eyebrow>The story behind the painting</Eyebrow>
               <p className="mt-3 text-[16px] leading-relaxed text-on-surface-muted text-pretty">
-                The title is part of the work. Barbara uses narrative titles,
-                bold color, and symbolic detail to invite a slower look — not
-                just at the subject&apos;s likeness, but at the feeling and life
-                held inside the painting.
+                {story}
               </p>
             </div>
 
@@ -160,21 +170,29 @@ export default async function PaintingPage({
               <dd className="text-on-surface">The studio · insured · 5 business days</dd>
               <dt className="text-on-surface-subtle">Shipping</dt>
               <dd className="text-on-surface tabular-nums">
-                {formatPrice(shipping.cents)}{" "}
-                <span className="text-on-surface-subtle text-[13px]">
-                  ({shipping.label})
-                </span>
+                {canCheckout ? (
+                  <>
+                    {formatPrice(shipping.cents)}{" "}
+                    <span className="text-on-surface-subtle text-[13px]">
+                      ({shipping.label})
+                    </span>
+                  </>
+                ) : (
+                  "Quoted with inquiry"
+                )}
               </dd>
             </dl>
 
             {/* Price + buy */}
             <div className="mt-4 flex flex-col gap-4">
-              {painting.sold ? (
+              {isSold ? (
                 <>
                   <div className="flex items-baseline gap-3">
-                    <p className="font-serif text-3xl text-on-surface-faint line-through tabular-nums">
-                      {formatPrice(painting.priceCents)}
-                    </p>
+                    {showPrice && (
+                      <p className="font-serif text-3xl text-on-surface-faint line-through tabular-nums">
+                        {formatPrice(painting.priceCents)}
+                      </p>
+                    )}
                     <p className="font-serif text-xl text-on-surface">
                       Found a home
                     </p>
@@ -187,7 +205,7 @@ export default async function PaintingPage({
                     Ask about a similar commission
                   </ButtonLink>
                 </>
-              ) : (
+              ) : canCheckout ? (
                 <>
                   <div className="flex items-baseline gap-3">
                     <p className="font-serif text-4xl tabular-nums text-on-surface">
@@ -202,6 +220,31 @@ export default async function PaintingPage({
                     Secure checkout by Stripe. Packed and shipped directly
                     from the studio within 5 business days.
                   </p>
+                  <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
+                    10% of profits from this painting are donated to animal
+                    welfare.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-baseline gap-3">
+                    {showPrice && (
+                      <p className="font-serif text-4xl tabular-nums text-on-surface">
+                        {formatPrice(painting.priceCents)}
+                      </p>
+                    )}
+                    <p className="text-sm text-on-surface-subtle">
+                      {AVAILABILITY_STATUS_LABELS[painting.availabilityStatus]}
+                    </p>
+                  </div>
+                  {painting.availabilityNote && (
+                    <p className="text-sm text-on-surface-muted">
+                      {painting.availabilityNote}
+                    </p>
+                  )}
+                  <ButtonLink href="/commissions" variant="primary" size="md">
+                    Inquire about this painting
+                  </ButtonLink>
                   <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
                     10% of profits from this painting are donated to animal
                     welfare.

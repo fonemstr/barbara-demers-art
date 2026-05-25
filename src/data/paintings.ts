@@ -4,11 +4,17 @@ import {
   SUBJECT_GROUP_LABELS,
   type SubjectGroup,
 } from "@/data/subject-groups";
+import type { AvailabilityStatus, PriceDisplay } from "@/data/availability";
 
 export { SUBJECT_GROUPS, SUBJECT_GROUP_LABELS };
 export type { SubjectGroup };
 
 export type SizeTier = "small" | "medium" | "large" | "oversize";
+export type PaintingImage = {
+  src: string;
+  role?: "main" | "detail" | "scale" | "signature";
+  caption?: string;
+};
 
 export type Painting = {
   slug: string;
@@ -20,9 +26,15 @@ export type Painting = {
   widthIn: number;
   heightIn: number;
   priceCents: number;
+  priceDisplay: PriceDisplay;
   sizeTier: SizeTier;
   description: string;
+  storyTeaser?: string;
+  story?: string;
   images: string[];
+  imageDetails: PaintingImage[];
+  availabilityStatus: AvailabilityStatus;
+  availabilityNote?: string;
   sold?: boolean;
   featured?: boolean;
 };
@@ -48,11 +60,17 @@ const seedPaintings: Painting[] = [
     widthIn: 30,
     heightIn: 40,
     priceCents: 85000,
+    priceDisplay: "visible",
     sizeTier: "large",
+    availabilityStatus: "available",
     featured: true,
+    storyTeaser: "A bull seen beyond the tag, beyond the number.",
     description:
       "A bull seen beyond the ear tag and beyond the number. The tag's number becomes LOVE, shifting the portrait toward recognition, compassion, and living presence.",
+    story:
+      "In the reference image, the bull wore an ear tag with a number. In this painting, Barbara replaced the number with the word LOVE. That change became the heart of the piece. The bull is no longer seen as a unit, a label, or a possession, but as a living being worthy of recognition and tenderness.",
     images: ["/paintings/placeholder-1.svg"],
+    imageDetails: [{ src: "/paintings/placeholder-1.svg", role: "main" }],
   },
   {
     slug: "eyes-of-a-different-you",
@@ -64,11 +82,17 @@ const seedPaintings: Painting[] = [
     widthIn: 24,
     heightIn: 30,
     priceCents: 145000,
+    priceDisplay: "visible",
     sizeTier: "large",
+    availabilityStatus: "available",
     featured: true,
+    storyTeaser: "A gaze that asks us to recognize another life.",
     description:
       "A chimpanzee's gaze meets the viewer directly, suggesting both difference and kinship — another life, another way of being, and something familiar looking back.",
+    story:
+      "A chimpanzee looks outward, meeting the viewer directly. The gaze is not passive. It asks for recognition. The title speaks to both difference and connection — another being, another life, another way of moving through the world, yet with something deeply familiar looking back.",
     images: ["/paintings/placeholder-2.svg"],
+    imageDetails: [{ src: "/paintings/placeholder-2.svg", role: "main" }],
   },
   {
     slug: "the-kindness-of-one",
@@ -80,11 +104,17 @@ const seedPaintings: Painting[] = [
     widthIn: 20,
     heightIn: 24,
     priceCents: 52000,
+    priceDisplay: "visible",
     sizeTier: "medium",
+    availabilityStatus: "available",
     featured: true,
+    storyTeaser: "A single gesture of comfort in a passing world.",
     description:
       "A pig moves through a human world where most pass by. One person reaches out, and that small gesture becomes the emotional center of the painting.",
+    story:
+      "In this painting, a pig moves through a human world where most people do not notice. Only one person reaches out in comfort. That small gesture changes the emotional center of the painting. The work is about the power of a single act of kindness toward another living being.",
     images: ["/paintings/placeholder-3.svg"],
+    imageDetails: [{ src: "/paintings/placeholder-3.svg", role: "main" }],
   },
   {
     slug: "small-wonder-study",
@@ -96,13 +126,23 @@ const seedPaintings: Painting[] = [
     widthIn: 20,
     heightIn: 24,
     priceCents: 110000,
+    priceDisplay: "visible",
     sizeTier: "medium",
+    availabilityStatus: "sold",
     description:
       "A small life enlarged through color and attention — a reminder that wonder is often waiting in the beings easiest to overlook.",
+    storyTeaser: "A small life enlarged through color and attention.",
     images: ["/paintings/placeholder-4.svg"],
+    imageDetails: [{ src: "/paintings/placeholder-4.svg", role: "main" }],
     sold: true,
   },
 ];
+
+type PayloadPaintingImage = {
+  image: { url?: string } | string;
+  role?: PaintingImage["role"];
+  caption?: string;
+};
 
 type PayloadPainting = {
   slug: string;
@@ -114,21 +154,33 @@ type PayloadPainting = {
   widthIn: number;
   heightIn: number;
   priceCents: number;
+  priceDisplay?: PriceDisplay;
   sizeTier: SizeTier;
   description: string;
-  images?: Array<{ image: { url?: string } | string }>;
+  storyTeaser?: string;
+  story?: string;
+  images?: PayloadPaintingImage[];
+  availabilityStatus?: AvailabilityStatus;
+  availabilityNote?: string;
   sold?: boolean;
   featured?: boolean;
 };
 
 function mapPayloadPainting(p: PayloadPainting): Painting {
-  const images = (p.images ?? [])
-    .map((entry) => {
-      const img = entry.image;
-      if (!img || typeof img === "string") return null;
-      return img.url ?? null;
-    })
-    .filter((url): url is string => !!url);
+  const imageDetails: PaintingImage[] = (p.images ?? []).flatMap((entry) => {
+    const img = entry.image;
+    if (!img || typeof img === "string" || !img.url) return [];
+    return [
+      {
+        src: img.url,
+        role: entry.role,
+        caption: entry.caption,
+      },
+    ];
+  });
+
+  const images = imageDetails.map((image) => image.src);
+  const legacySold = p.sold ?? false;
 
   return {
     slug: p.slug,
@@ -142,10 +194,18 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     widthIn: p.widthIn,
     heightIn: p.heightIn,
     priceCents: p.priceCents,
+    priceDisplay: p.priceDisplay ?? "visible",
     sizeTier: p.sizeTier,
     description: p.description,
+    storyTeaser: p.storyTeaser,
+    story: p.story,
     images: images.length ? images : ["/paintings/placeholder-1.svg"],
-    sold: p.sold ?? false,
+    imageDetails: imageDetails.length
+      ? imageDetails
+      : [{ src: "/paintings/placeholder-1.svg", role: "main" }],
+    availabilityStatus: legacySold ? "sold" : p.availabilityStatus ?? "available",
+    availabilityNote: p.availabilityNote,
+    sold: legacySold,
     featured: p.featured ?? false,
   };
 }
@@ -189,12 +249,14 @@ export async function getPainting(slug: string): Promise<Painting | undefined> {
 
 export async function getFeaturedPaintings(limit = 3): Promise<Painting[]> {
   const all = await getAllPaintings();
-  return all.filter((p) => p.featured && !p.sold).slice(0, limit);
+  return all
+    .filter((p) => p.featured && p.availabilityStatus !== "sold")
+    .slice(0, limit);
 }
 
 export async function getAvailablePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
-  return all.filter((p) => !p.sold);
+  return all.filter((p) => p.availabilityStatus !== "sold");
 }
 
 /**
