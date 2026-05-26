@@ -283,7 +283,7 @@ export default async function HomePage() {
       <section className="relative mx-auto max-w-3xl px-6 py-28 text-center">
         <Blob size={260} color="var(--secondary-container)" style={{ left: "50%", top: 0, transform: "translateX(-50%)", opacity: 0.4 }} />
         <div className="relative z-10">
-          <ArtistNote icon="💌" rotate={1.5} className="mx-auto">
+          <ArtistNote icon="💌" className="mx-auto">
             Two emails a month, max.
           </ArtistNote>
           <h2 className="mt-6 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">

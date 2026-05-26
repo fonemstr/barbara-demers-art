@@ -28,7 +28,7 @@ export default function CheckoutSuccessPage() {
         <Blob size={360} color="var(--surface-variant)" style={{ left: "50%", top: -60, transform: "translateX(-50%)", opacity: 0.6 }} />
         <Blob size={220} color="var(--secondary-container)" style={{ right: -40, top: 80, opacity: 0.5 }} />
         <div className="relative z-10 text-center">
-          <ArtistNote icon="🎉" rotate={-1.5} className="mx-auto">
+          <ArtistNote icon="🎉" className="mx-auto">
             Order confirmed.
           </ArtistNote>
           <h1 className="mt-6 font-serif text-5xl md:text-6xl leading-[1.05] tracking-[-0.02em] text-balance">

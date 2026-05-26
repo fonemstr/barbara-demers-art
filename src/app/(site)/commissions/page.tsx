@@ -51,7 +51,7 @@ export default async function CommissionsPage() {
         <div className="relative z-10 grid gap-16 md:grid-cols-[1.1fr_1fr] items-center">
           {/* Copy column */}
           <div className="flex flex-col gap-7">
-            <ArtistNote icon="✉️" rotate={-1.2}>
+            <ArtistNote icon="✉️">
               Selective inquiries welcome.
             </ArtistNote>
             <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
@@ -133,7 +133,6 @@ export default async function CommissionsPage() {
             </p>
             <div
               className="self-start rounded-[28px] bg-primary-container-dim text-on-primary-container px-7 py-5 max-w-md"
-              style={{ transform: "rotate(-1.2deg)" }}
             >
               <p className="font-serif italic text-xl leading-snug">
                 &ldquo;The goal is not a static likeness. The goal is a living

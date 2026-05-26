@@ -148,6 +148,20 @@ export const Paintings: CollectionConfig = {
       name: "description",
       type: "textarea",
       required: true,
+      admin: {
+        description:
+          "Short gallery/card description. Keep this concise; use the story field below for the longer piece-specific narrative.",
+      },
+    },
+    {
+      name: "storyBehindPainting",
+      label: "The story behind the painting",
+      type: "textarea",
+      admin: {
+        description:
+          "Optional longer story shown on the artwork detail page. Leave blank to use the default Barbara/expressive-realism copy.",
+        rows: 7,
+      },
     },
     {
       name: "images",

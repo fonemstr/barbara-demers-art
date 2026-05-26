@@ -228,7 +228,14 @@ export interface Painting {
    * Determines the shipping rate charged at checkout
    */
   sizeTier: 'small' | 'medium' | 'large' | 'oversize';
+  /**
+   * Short gallery/card description. Keep this concise; use the story field below for the longer piece-specific narrative.
+   */
   description: string;
+  /**
+   * Optional longer story shown on the artwork detail page. Leave blank to use the default Barbara/expressive-realism copy.
+   */
+  storyBehindPainting?: string | null;
   images: {
     image: number | Media;
     id?: string | null;
@@ -458,6 +465,7 @@ export interface PaintingsSelect<T extends boolean = true> {
   priceCents?: T;
   sizeTier?: T;
   description?: T;
+  storyBehindPainting?: T;
   images?:
     | T
     | {

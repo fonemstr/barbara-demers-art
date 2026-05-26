@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   getAllPaintings,
   getPainting,
+  DEFAULT_PAINTING_STORY,
   SHIPPING_RATES,
   SUBJECT_GROUP_LABELS,
 } from "@/data/paintings";
@@ -141,10 +142,7 @@ export default async function PaintingPage({
             <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6">
               <Eyebrow>The story behind the painting</Eyebrow>
               <p className="mt-3 text-[16px] leading-relaxed text-on-surface-muted text-pretty">
-                The title is part of the work. Barbara uses narrative titles,
-                bold color, and symbolic detail to invite a slower look — not
-                just at the subject&apos;s likeness, but at the feeling and life
-                held inside the painting.
+                {painting.storyBehindPainting ?? DEFAULT_PAINTING_STORY}
               </p>
             </div>
 

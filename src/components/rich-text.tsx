@@ -101,7 +101,6 @@ function renderBlock(node: LexicalNode, key: number, index: number, isFirstParag
         <blockquote
           key={key}
           className="mt-10 mb-2 rounded-[28px] bg-primary-container-dim text-on-primary-container px-8 py-6 font-serif italic text-2xl leading-snug text-balance"
-          style={{ transform: "rotate(-0.6deg)" }}
         >
           {children.map(renderInline)}
         </blockquote>

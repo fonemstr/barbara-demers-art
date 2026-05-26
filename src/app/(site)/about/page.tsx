@@ -61,7 +61,6 @@ export default function AboutPage() {
 
             <blockquote
               className="self-start rounded-[28px] bg-primary-container-dim text-on-primary-container px-7 py-6 max-w-md font-serif italic text-xl leading-snug"
-              style={{ transform: "rotate(-1deg)" }}
             >
               &ldquo;The title is where the painting speaks.&rdquo;
             </blockquote>

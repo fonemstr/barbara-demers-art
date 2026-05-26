@@ -22,10 +22,14 @@ export type Painting = {
   priceCents: number;
   sizeTier: SizeTier;
   description: string;
+  storyBehindPainting?: string;
   images: string[];
   sold?: boolean;
   featured?: boolean;
 };
+
+export const DEFAULT_PAINTING_STORY =
+  "The title is part of the work. Barbara uses narrative titles, bold color, and symbolic detail to invite a slower look — not just at the subject's likeness, but at the feeling and life held inside the painting.";
 
 export const SHIPPING_RATES: Record<
   SizeTier,
@@ -52,6 +56,8 @@ const seedPaintings: Painting[] = [
     featured: true,
     description:
       "A bull seen beyond the ear tag and beyond the number. The tag's number becomes LOVE, shifting the portrait toward recognition, compassion, and living presence.",
+    storyBehindPainting:
+      "In this painting, the ear tag becomes a place of transformation. What could have been a number becomes LOVE — a small symbolic shift that asks the viewer to meet the bull as an individual life, not an anonymous body.",
     images: ["/paintings/placeholder-1.svg"],
   },
   {
@@ -116,10 +122,16 @@ type PayloadPainting = {
   priceCents: number;
   sizeTier: SizeTier;
   description: string;
+  storyBehindPainting?: string | null;
   images?: Array<{ image: { url?: string } | string }>;
   sold?: boolean;
   featured?: boolean;
 };
+
+function normalizeOptionalText(value?: string | null): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
 
 function mapPayloadPainting(p: PayloadPainting): Painting {
   const images = (p.images ?? [])
@@ -144,6 +156,7 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     priceCents: p.priceCents,
     sizeTier: p.sizeTier,
     description: p.description,
+    storyBehindPainting: normalizeOptionalText(p.storyBehindPainting),
     images: images.length ? images : ["/paintings/placeholder-1.svg"],
     sold: p.sold ?? false,
     featured: p.featured ?? false,
