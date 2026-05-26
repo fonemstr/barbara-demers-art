@@ -13,11 +13,11 @@ export type SubjectGroup =
 export const SUBJECT_GROUP_LABELS: Record<SubjectGroup, string> = {
   dog: "Dogs",
   cat: "Cats",
-  horse: "Horses",
-  farm: "Farm",
-  wild: "Wild",
-  bird: "Birds",
-  other: "Other",
+  horse: "Pasture — Horses",
+  farm: "Pasture — Farm Animals",
+  wild: "The Wild — Land Animals",
+  bird: "The Wild — Birds",
+  other: "Small Wonders — Insects, Flowers, and Other Small Lives",
 };
 
 export const SUBJECT_GROUPS: SubjectGroup[] = [

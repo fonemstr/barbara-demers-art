@@ -72,14 +72,15 @@ export const Paintings: CollectionConfig = {
       options: [
         { label: "Dog", value: "dog" },
         { label: "Cat", value: "cat" },
-        { label: "Horse", value: "horse" },
-        { label: "Farm (cow, pig, sheep, goat, chicken…)", value: "farm" },
-        { label: "Wild (fox, otter, deer, hare, bear…)", value: "wild" },
-        { label: "Bird (raptor, songbird, waterfowl)", value: "bird" },
-        { label: "Other", value: "other" },
+        { label: "Pasture — Horses", value: "horse" },
+        { label: "Pasture — Farm animals (cow, pig, sheep, goat, chicken…)", value: "farm" },
+        { label: "The Wild — Land animals (fox, otter, deer, hare, bear…)", value: "wild" },
+        { label: "The Wild — Birds (raptor, songbird, waterfowl)", value: "bird" },
+        { label: "Small Wonders — Insects, flowers, and other small lives", value: "other" },
       ],
       admin: {
-        description: "Used to filter the gallery by species group.",
+        description:
+          "Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other.",
       },
     },
     {

@@ -154,7 +154,7 @@ export interface User {
 export interface Media {
   id: number;
   /**
-   * Describe the image for screen readers and SEO
+   * Describe the image for screen readers and SEO. Bulk uploads are automatically filled from the filename; edit this after upload when needed.
    */
   alt: string;
   updatedAt: string;
@@ -213,7 +213,7 @@ export interface Painting {
    */
   subject?: string | null;
   /**
-   * Used to filter the gallery by species group.
+   * Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other.
    */
   subjectGroup?: ('dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
   year: number;
