@@ -39,6 +39,19 @@ export async function generateMetadata({
   return {
     title: painting.title,
     description: painting.description,
+    openGraph: {
+      type: "article",
+      siteName: "Barbara J Demers",
+      title: painting.title,
+      description: painting.description,
+      images: [
+        {
+          url: painting.images[0],
+          alt: `${painting.title} — ${painting.medium}, ${painting.widthIn}×${painting.heightIn} in`,
+        },
+      ],
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Noto_Serif, Plus_Jakarta_Sans, Be_Vietnam_Pro } from "next/font/google";
 import Link from "next/link";
+import { getFeaturedPaintings } from "@/data/paintings";
+import { SITE_URL } from "@/lib/site-url";
 import "../globals.css";
 
 const notoSerif = Noto_Serif({
@@ -23,14 +25,35 @@ const beVietnam = Be_Vietnam_Pro({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Barbara J Demers — Original Expressive Realism Paintings",
-    template: "%s · Barbara J Demers",
-  },
-  description:
-    "Original expressive realism paintings of animals, insects, and the natural world — created with bold color, symbolic detail, and narrative titles by Barbara J Demers.",
-};
+const SITE_DESCRIPTION =
+  "Original expressive realism paintings of animals, insects, and the natural world — created with bold color, symbolic detail, and narrative titles by Barbara J Demers.";
+
+// Dynamic so the default social-share image is a real painting rather than
+// a placeholder asset. Pages that define their own `openGraph` (artwork and
+// journal posts) override this wholesale.
+export async function generateMetadata(): Promise<Metadata> {
+  const featured = await getFeaturedPaintings(1);
+  const shareImage = featured[0]?.images[0];
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: "Barbara J Demers — Original Expressive Realism Paintings",
+      template: "%s · Barbara J Demers",
+    },
+    description: SITE_DESCRIPTION,
+    openGraph: {
+      type: "website",
+      siteName: "Barbara J Demers",
+      title: "Barbara J Demers — Original Expressive Realism Paintings",
+      description: SITE_DESCRIPTION,
+      images: shareImage ? [shareImage] : undefined,
+    },
+    twitter: {
+      card: shareImage ? "summary_large_image" : "summary",
+    },
+  };
+}
 
 const navLinks = [
   { href: "/gallery", label: "Available Work" },

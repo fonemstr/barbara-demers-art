@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import type { Painting } from "@/data/paintings";
 import { SUBJECT_GROUP_LABELS, type SubjectGroup } from "@/data/subject-groups";
 import { PaintingCard } from "@/components/painting-card";
@@ -13,8 +12,10 @@ type Filter = "all" | SubjectGroup;
  * Gallery with a client-side subject-group chip filter. Paintings are
  * pre-fetched on the server and passed in; chips just narrow the list.
  *
- * Reads `?group=<subjectGroup>` once on mount so editorial blocks on the
- * home page can deep-link in. Chip clicks update the URL via
+ * Reads `?group=<subjectGroup>` once after mount so editorial blocks on the
+ * home page can deep-link in. Deliberately NOT `useSearchParams` — that would
+ * bail the whole list out of server rendering, leaving crawlers and link
+ * previews an empty page. Chip clicks update the URL via
  * `history.replaceState` (no router round-trip), keeping links shareable.
  */
 export function GalleryList({
@@ -24,15 +25,16 @@ export function GalleryList({
   paintings: Painting[];
   groups: SubjectGroup[];
 }) {
-  const searchParams = useSearchParams();
+  const [filter, setFilter] = useState<Filter>("all");
 
-  const [filter, setFilter] = useState<Filter>(() => {
-    const param = searchParams.get("group");
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("group");
     if (param && (groups as string[]).includes(param)) {
-      return param as SubjectGroup;
+      setFilter(param as SubjectGroup);
     }
-    return "all";
-  });
+    // Deep-link is read once on mount; chips own the state afterwards.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateFilter = (next: Filter) => {
     setFilter(next);

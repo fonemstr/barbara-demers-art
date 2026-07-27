@@ -23,7 +23,18 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) return {};
-  return { title: post.title, description: post.excerpt };
+  return {
+    title: post.title,
+    description: post.excerpt,
+    openGraph: {
+      type: "article",
+      siteName: "Barbara J Demers",
+      title: post.title,
+      description: post.excerpt,
+      images: post.cover ? [post.cover] : undefined,
+    },
+    twitter: { card: post.cover ? "summary_large_image" : "summary" },
+  };
 }
 
 function formatDate(d: string) {
