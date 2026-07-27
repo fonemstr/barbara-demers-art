@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getPayloadClient } from "@/lib/payload";
+import { FROM_EMAIL, TO_EMAIL, resend } from "@/lib/resend";
 import { requireStripe } from "@/lib/stripe";
 
 // Stripe webhooks must read the raw body for signature verification.
@@ -75,6 +76,56 @@ export async function POST(request: Request) {
         console.log(
           `[stripe-webhook] Marked "${slug}" sold (session ${session.id}).`,
         );
+      }
+
+      // Studio notification. The customer's receipt comes from Stripe
+      // (enable "Successful payments" under Settings → Emails); this one
+      // tells Barbara a painting sold and where to ship it. Email failure
+      // must not 500 the webhook — the sale is already recorded.
+      if (resend) {
+        const title =
+          (result.docs[0] as { title?: string } | undefined)?.title ?? slug;
+        const amount =
+          session.amount_total != null
+            ? `$${(session.amount_total / 100).toFixed(2)}`
+            : "amount unavailable";
+        const buyer = session.customer_details;
+        const address = buyer?.address;
+        const addressLines = address
+          ? [
+              address.line1,
+              address.line2,
+              [address.city, address.state, address.postal_code]
+                .filter(Boolean)
+                .join(", "),
+              address.country,
+            ].filter(Boolean)
+          : [];
+        const testNote = event.livemode ? "" : " (TEST MODE — not a real sale)";
+
+        try {
+          await resend.emails.send({
+            from: FROM_EMAIL,
+            to: TO_EMAIL,
+            subject: `Painting sold: ${title}${testNote}`,
+            text: [
+              `"${title}" just sold for ${amount}.${testNote}`,
+              ``,
+              `Buyer: ${buyer?.name ?? "name unavailable"} <${buyer?.email ?? "email unavailable"}>`,
+              addressLines.length
+                ? `Ship to:\n${addressLines.join("\n")}`
+                : `Shipping address: see the Stripe dashboard`,
+              ``,
+              `The painting is now marked sold on the site.`,
+              `Payment details: https://dashboard.stripe.com/payments — session ${session.id}`,
+            ].join("\n"),
+          });
+        } catch (err) {
+          console.error(
+            `[stripe-webhook] Sale email failed for "${slug}" (session ${session.id}):`,
+            err,
+          );
+        }
       }
       break;
     }
