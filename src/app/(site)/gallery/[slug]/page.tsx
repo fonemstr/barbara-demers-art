@@ -171,10 +171,16 @@ export default async function PaintingPage({
               <dd className="text-on-surface">The studio · insured · 5 business days</dd>
               <dt className="text-on-surface-subtle">Shipping</dt>
               <dd className="text-on-surface tabular-nums">
-                {formatPrice(shipping.cents)}{" "}
-                <span className="text-on-surface-subtle text-[13px]">
-                  ({shipping.label})
-                </span>
+                {shipping.cents === 0 ? (
+                  "Free"
+                ) : (
+                  <>
+                    {formatPrice(shipping.cents)}{" "}
+                    <span className="text-on-surface-subtle text-[13px]">
+                      ({shipping.label})
+                    </span>
+                  </>
+                )}
               </dd>
             </dl>
 
@@ -205,7 +211,9 @@ export default async function PaintingPage({
                       {formatPrice(painting.priceCents)}
                     </p>
                     <p className="text-sm text-on-surface-subtle">
-                      + {formatPrice(shipping.cents)} shipping
+                      {shipping.cents === 0
+                        ? "Free shipping"
+                        : `+ ${formatPrice(shipping.cents)} shipping`}
                     </p>
                   </div>
                   <BuyButton slug={painting.slug} />

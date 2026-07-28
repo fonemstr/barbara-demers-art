@@ -134,6 +134,7 @@ export const Paintings: CollectionConfig = {
           required: true,
           defaultValue: "medium",
           options: [
+            { label: "Free shipping", value: "free" },
             { label: "Small — up to 12×16 in", value: "small" },
             { label: "Medium — up to 20×24 in", value: "medium" },
             { label: "Large — up to 30×40 in", value: "large" },

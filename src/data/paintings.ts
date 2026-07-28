@@ -8,7 +8,7 @@ import {
 export { SUBJECT_GROUPS, SUBJECT_GROUP_LABELS };
 export type { SubjectGroup };
 
-export type SizeTier = "small" | "medium" | "large" | "oversize";
+export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
 export type Painting = {
   slug: string;
@@ -35,6 +35,7 @@ export const SHIPPING_RATES: Record<
   SizeTier,
   { label: string; cents: number }
 > = {
+  free: { label: "Free shipping", cents: 0 },
   small: { label: "Small — up to 12×16 in", cents: 2500 },
   medium: { label: "Medium — up to 20×24 in", cents: 4500 },
   large: { label: "Large — up to 30×40 in", cents: 8500 },
