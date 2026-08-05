@@ -103,6 +103,11 @@ Implications:
 - If a migration was committed in a broken state: revert the migration commit and redeploy, then create a corrected migration locally.
 - Verify `POSTGRES_URL` is set and the database is reachable from Vercel.
 
+### `payload migrate` prompts "data loss will occur… proceed? (y/N)" and never migrates
+- The database has a `batch: -1` row in `payload_migrations`, left behind by running Payload in **dev mode** against this database. The prompt can't be answered in Vercel's non-interactive build, so migrate exits without running anything — the build still shows Ready.
+- Fix: baseline the database — delete the `batch = -1` row and insert a row per already-applied migration file — then redeploy. (August 2026: done via a temporary `/api/one-time-baseline-migrations` route, since removed.)
+- Prevention: never point `pnpm dev` at the production `POSTGRES_URL`. Dev mode schema-syncs the database directly and re-creates the marker.
+
 ### `/admin` errors in production
 - Usually `PAYLOAD_SECRET` or `POSTGRES_URL` missing. Check both are set for the Production environment.
 - Check the Function logs in Vercel for the actual error.
