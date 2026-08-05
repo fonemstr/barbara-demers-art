@@ -166,6 +166,47 @@ export const Paintings: CollectionConfig = {
       },
     },
     {
+      name: "printOptions",
+      label: "Print options",
+      type: "array",
+      labels: { singular: "Print size", plural: "Print sizes" },
+      admin: {
+        description:
+          "Giclée print sizes offered for this painting. Leave empty if prints are not (yet) available. Prints stay purchasable after the original sells.",
+      },
+      fields: [
+        {
+          type: "row",
+          fields: [
+            {
+              name: "widthIn",
+              type: "number",
+              label: "Width (in)",
+              required: true,
+              min: 1,
+            },
+            {
+              name: "heightIn",
+              type: "number",
+              label: "Height (in)",
+              required: true,
+              min: 1,
+            },
+            {
+              name: "priceCents",
+              type: "number",
+              label: "Price (cents)",
+              required: true,
+              min: 0,
+              admin: {
+                description: "$75 = 7500",
+              },
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: "images",
       type: "array",
       minRows: 1,

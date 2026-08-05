@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Painting } from "@/data/paintings";
-import { formatPrice } from "@/lib/utils";
+import type { Painting } from "@/data/paintings";
+import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 
 export function PaintingCard({ painting }: { painting: Painting }) {
+  const printsFrom = lowestPrintPriceCents(painting);
   return (
     <Link
       href={`/gallery/${painting.slug}`}
@@ -40,9 +41,16 @@ export function PaintingCard({ painting }: { painting: Painting }) {
             Read the story
           </p>
         </div>
-        <p className="font-serif text-xl tabular-nums text-on-surface">
-          {painting.sold ? "—" : formatPrice(painting.priceCents)}
-        </p>
+        <div className="text-right shrink-0">
+          <p className="font-serif text-xl tabular-nums text-on-surface">
+            {painting.sold ? "—" : formatPrice(painting.priceCents)}
+          </p>
+          {printsFrom !== undefined && (
+            <p className="text-xs text-on-surface-muted mt-1 whitespace-nowrap">
+              Prints from {formatPrice(printsFrom)}
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   );

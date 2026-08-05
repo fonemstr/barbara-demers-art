@@ -50,7 +50,7 @@ Once `PAYLOAD_SECRET` and `POSTGRES_URL` are set, visit <http://localhost:3000/a
 
 Collections:
 
-- **Paintings** — title, slug, subject, year, medium, dimensions, price (cents), size tier, description, images, featured, sold
+- **Paintings** — title, slug, subject, year, medium, dimensions, price (cents), size tier, description, images, print options (giclée sizes + prices), featured, sold
 - **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
 - **Media** — uploaded image files; used by Paintings and Journal Posts
 - **Users** — admin logins; only Barbara (and David) should have accounts
@@ -91,8 +91,19 @@ If you'd rather skip Payload and manage inventory in code, edit `src/data/painti
 ### Marking a painting as sold
 
 Two options:
-- **Manual (current default):** set `sold: true` on the painting in `src/data/paintings.ts`. The gallery card will show a `Sold` badge and the detail page hides the Buy button.
-- **Automatic (needs a DB):** the Stripe webhook at `/api/stripe-webhook` receives `checkout.session.completed` events and logs the sold painting slug. Wire this to a database (Vercel Postgres, Turso, etc.) to automate the update. Left as a `TODO` in `src/app/api/stripe-webhook/route.ts`.
+- **Manual:** set `sold: true` on the painting in `src/data/paintings.ts` (or tick the checkbox in `/admin`). The gallery card will show a `Sold` badge and the detail page hides the Buy button.
+- **Automatic (needs a DB):** the Stripe webhook at `/api/stripe-webhook` receives `checkout.session.completed` events and marks the painting sold in Payload, revalidating the affected pages. Print sales never mark the original sold.
+
+## Giclée prints
+
+Each painting can offer archival giclée prints in any number of sizes — set them per painting in `/admin` under **Print options**, or in code via the `prints` array (`id`, `widthIn`, `heightIn`, `priceCents`). Prints:
+
+- stay purchasable after the original sells (a sold painting with print options keeps earning);
+- show a size picker + buy button on the painting detail page, and "Prints from $X" on gallery cards;
+- ship at a flat rate (`PRINT_SHIPPING_RATE` in `src/data/paintings.ts`), with quantity adjustable in Stripe Checkout;
+- trigger a "Print sold" email to the studio via the Stripe webhook, including size and ship-to address, without touching the original's availability.
+
+Fulfillment is manual by design to start: when the email arrives, order the print from a local fine-art print shop (or print in-studio) and ship it. A print-on-demand API can be wired into the webhook later without changing the storefront.
 
 ## Adding a blog post
 
