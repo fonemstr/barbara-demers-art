@@ -13,6 +13,10 @@ const FAQ = [
     a: "Price depends on size, subject complexity, medium, and number of figures. Send the note and reference photos; Barbara will respond with a specific estimate if the commission feels aligned.",
   },
   {
+    q: "How does the deposit work?",
+    a: "Once Barbara confirms your commission, a deposit reserves your place on the schedule — $150 for small, $250 for medium, $350 for large. It counts toward the final price, and the balance is due when the painting is finished and you've seen the final photo, before it ships.",
+  },
+  {
     q: "What kind of reference photos do I need?",
     a: "Three or four good photos beat thirty bad ones. Natural light, eye-level with the animal, a couple of different angles. Phone photos are fine — I'll help you pick the strongest reference once I see what you have.",
   },
