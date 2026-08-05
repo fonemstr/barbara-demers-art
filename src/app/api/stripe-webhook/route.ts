@@ -39,6 +39,64 @@ export async function POST(request: Request) {
         break;
       }
 
+      // Print sales never mark the original sold — prints are open stock.
+      // Just tell Barbara what to print and where to ship it.
+      const printSize = session.metadata?.print_size;
+      if (session.metadata?.print_option_id) {
+        if (resend) {
+          const { getPainting } = await import("@/data/paintings");
+          const title = (await getPainting(slug))?.title ?? slug;
+          const amount =
+            session.amount_total != null
+              ? `$${(session.amount_total / 100).toFixed(2)}`
+              : "amount unavailable";
+          const buyer = session.customer_details;
+          const address = buyer?.address;
+          const addressLines = address
+            ? [
+                address.line1,
+                address.line2,
+                [address.city, address.state, address.postal_code]
+                  .filter(Boolean)
+                  .join(", "),
+                address.country,
+              ].filter(Boolean)
+            : [];
+          const testNote = event.livemode
+            ? ""
+            : " (TEST MODE — not a real sale)";
+
+          try {
+            await resend.emails.send({
+              from: FROM_EMAIL,
+              to: TO_EMAIL,
+              subject: `Print sold: ${title}${printSize ? ` (${printSize})` : ""}${testNote}`,
+              text: [
+                `A giclée print of "${title}"${printSize ? ` at ${printSize}` : ""} just sold for ${amount}.${testNote}`,
+                ``,
+                `Buyer: ${buyer?.name ?? "name unavailable"} <${buyer?.email ?? "email unavailable"}>`,
+                addressLines.length
+                  ? `Ship to:\n${addressLines.join("\n")}`
+                  : `Shipping address: see the Stripe dashboard`,
+                ``,
+                `Quantity and totals: https://dashboard.stripe.com/payments — session ${session.id}`,
+                `The original painting's availability is unchanged.`,
+              ].join("\n"),
+            });
+          } catch (err) {
+            console.error(
+              `[stripe-webhook] Print sale email failed for "${slug}" (session ${session.id}):`,
+              err,
+            );
+          }
+        } else {
+          console.log(
+            `[stripe-webhook] Print of "${slug}" sold (session ${session.id}); Resend not configured, no email sent.`,
+          );
+        }
+        break;
+      }
+
       const payload = await getPayloadClient();
       if (!payload) {
         // Returning 500 makes Stripe retry, so a transient DB outage

@@ -10,6 +10,13 @@ export type { SubjectGroup };
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
+export type PrintOption = {
+  id: string;
+  widthIn: number;
+  heightIn: number;
+  priceCents: number;
+};
+
 export type Painting = {
   slug: string;
   title: string;
@@ -24,6 +31,7 @@ export type Painting = {
   description: string;
   storyBehindPainting?: string;
   images: string[];
+  prints?: PrintOption[];
   sold?: boolean;
   featured?: boolean;
 };
@@ -41,6 +49,14 @@ export const SHIPPING_RATES: Record<
   large: { label: "Large — up to 30×40 in", cents: 8500 },
   oversize: { label: "Oversize — over 30×40 in", cents: 15000 },
 };
+
+// Prints ship flat or rolled in a tube regardless of size, so a single
+// flat rate covers the whole order.
+export const PRINT_SHIPPING_RATE = {
+  label: "Print shipping — flat rate",
+  cents: 1200,
+};
+
 
 const seedPaintings: Painting[] = [
   {
@@ -60,6 +76,11 @@ const seedPaintings: Painting[] = [
     storyBehindPainting:
       "In this painting, the ear tag becomes a place of transformation. What could have been a number becomes LOVE — a small symbolic shift that asks the viewer to meet the bull as an individual life, not an anonymous body.",
     images: ["/paintings/placeholder-1.svg"],
+    prints: [
+      { id: "8x10", widthIn: 8, heightIn: 10, priceCents: 4500 },
+      { id: "12x16", widthIn: 12, heightIn: 16, priceCents: 7500 },
+      { id: "18x24", widthIn: 18, heightIn: 24, priceCents: 12500 },
+    ],
   },
   {
     slug: "eyes-of-a-different-you",
@@ -108,6 +129,12 @@ const seedPaintings: Painting[] = [
       "A small life enlarged through color and attention — a reminder that wonder is often waiting in the beings easiest to overlook.",
     images: ["/paintings/placeholder-4.svg"],
     sold: true,
+    // The original found a home, but prints keep it available — this is
+    // the core of the supplemental-income model.
+    prints: [
+      { id: "8x10", widthIn: 8, heightIn: 10, priceCents: 4500 },
+      { id: "12x16", widthIn: 12, heightIn: 16, priceCents: 7500 },
+    ],
   },
 ];
 
@@ -125,6 +152,12 @@ type PayloadPainting = {
   description: string;
   storyBehindPainting?: string | null;
   images?: Array<{ image: { url?: string } | string }>;
+  printOptions?: Array<{
+    id?: string | null;
+    widthIn: number;
+    heightIn: number;
+    priceCents: number;
+  }> | null;
   sold?: boolean;
   featured?: boolean;
 };
@@ -159,6 +192,14 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     description: p.description,
     storyBehindPainting: normalizeOptionalText(p.storyBehindPainting),
     images: images.length ? images : ["/paintings/placeholder-1.svg"],
+    prints: (p.printOptions ?? []).map((opt) => ({
+      // Payload array rows always carry an id; the dimension fallback keeps
+      // checkout working if a row ever arrives without one.
+      id: opt.id ?? `${opt.widthIn}x${opt.heightIn}`,
+      widthIn: opt.widthIn,
+      heightIn: opt.heightIn,
+      priceCents: opt.priceCents,
+    })),
     sold: p.sold ?? false,
     featured: p.featured ?? false,
   };

@@ -227,7 +227,7 @@ export interface Painting {
   /**
    * Determines the shipping rate charged at checkout
    */
-  sizeTier: 'small' | 'medium' | 'large' | 'oversize';
+  sizeTier: 'free' | 'small' | 'medium' | 'large' | 'oversize';
   /**
    * Short gallery/card description. Keep this concise; use the story field below for the longer piece-specific narrative.
    */
@@ -236,6 +236,20 @@ export interface Painting {
    * Optional longer story shown on the artwork detail page. Leave blank to use the default Barbara/expressive-realism copy.
    */
   storyBehindPainting?: string | null;
+  /**
+   * Giclée print sizes offered for this painting. Leave empty if prints are not (yet) available. Prints stay purchasable after the original sells.
+   */
+  printOptions?:
+    | {
+        widthIn: number;
+        heightIn: number;
+        /**
+         * $75 = 7500
+         */
+        priceCents: number;
+        id?: string | null;
+      }[]
+    | null;
   images: {
     image: number | Media;
     id?: string | null;
@@ -466,6 +480,14 @@ export interface PaintingsSelect<T extends boolean = true> {
   sizeTier?: T;
   description?: T;
   storyBehindPainting?: T;
+  printOptions?:
+    | T
+    | {
+        widthIn?: T;
+        heightIn?: T;
+        priceCents?: T;
+        id?: T;
+      };
   images?:
     | T
     | {

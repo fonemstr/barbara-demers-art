@@ -5,11 +5,13 @@ import {
   getAllPaintings,
   getPainting,
   DEFAULT_PAINTING_STORY,
+  PRINT_SHIPPING_RATE,
   SHIPPING_RATES,
   SUBJECT_GROUP_LABELS,
 } from "@/data/paintings";
 import { formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
+import { PrintBuy } from "@/components/print-buy";
 import { PaintingCard } from "@/components/painting-card";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ArtistNote } from "@/components/ui/artist-note";
@@ -65,6 +67,7 @@ export default async function PaintingPage({
   if (!painting) notFound();
 
   const shipping = SHIPPING_RATES[painting.sizeTier];
+  const prints = painting.prints ?? [];
   const allPaintings = await getAllPaintings();
   const related = allPaintings
     .filter(
@@ -197,10 +200,15 @@ export default async function PaintingPage({
                     </p>
                   </div>
                   <p className="text-sm text-on-surface-muted">
-                    Love this one? A commission in the same spirit is the
-                    next best thing.
+                    {prints.length > 0
+                      ? "The original has found its home, but archival prints keep this painting available — or ask about a commission in the same spirit."
+                      : "Love this one? A commission in the same spirit is the next best thing."}
                   </p>
-                  <ButtonLink href="/commissions" variant="primary" size="md">
+                  <ButtonLink
+                    href="/commissions"
+                    variant="primary"
+                    size="md"
+                  >
                     Ask about a similar commission
                   </ButtonLink>
                 </>
@@ -228,6 +236,26 @@ export default async function PaintingPage({
                 </>
               )}
             </div>
+
+            {/* Giclée prints — stay available after the original sells */}
+            {prints.length > 0 && (
+              <div className="mt-2 rounded-[var(--radius-lg)] bg-surface-container-low p-6 flex flex-col gap-4">
+                <div>
+                  <Eyebrow>Archival giclée prints</Eyebrow>
+                  <p className="mt-3 text-[15px] leading-relaxed text-on-surface-muted text-pretty">
+                    Museum-quality pigment prints on archival fine-art paper,
+                    made to order and rated to hold their color for decades.
+                  </p>
+                </div>
+                <PrintBuy slug={painting.slug} prints={prints} />
+                <p className="text-xs text-on-surface-subtle">
+                  {PRINT_SHIPPING_RATE.cents === 0
+                    ? "Free shipping on prints."
+                    : `Flat ${formatPrice(PRINT_SHIPPING_RATE.cents)} shipping per print order.`}{" "}
+                  Secure checkout by Stripe.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </Section>
