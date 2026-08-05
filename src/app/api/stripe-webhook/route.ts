@@ -31,6 +31,53 @@ export async function POST(request: Request) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
+
+      // Commission deposits: nothing to update on the site — just tell
+      // Barbara a spot was reserved and by whom.
+      const commissionTier = session.metadata?.commission_tier;
+      if (commissionTier) {
+        if (resend) {
+          const amount =
+            session.amount_total != null
+              ? `$${(session.amount_total / 100).toFixed(2)}`
+              : "amount unavailable";
+          const buyer = session.customer_details;
+          const commissionSubject =
+            session.metadata?.commission_subject ?? "not provided";
+          const testNote = event.livemode
+            ? ""
+            : " (TEST MODE — not a real payment)";
+
+          try {
+            await resend.emails.send({
+              from: FROM_EMAIL,
+              to: TO_EMAIL,
+              subject: `Commission deposit received: ${commissionSubject}${testNote}`,
+              text: [
+                `A ${commissionTier} commission deposit of ${amount} just came in.${testNote}`,
+                ``,
+                `From: ${buyer?.name ?? "name unavailable"} <${buyer?.email ?? "email unavailable"}>`,
+                `Subject of the painting: ${commissionSubject}`,
+                ``,
+                `The deposit reserves their spot and counts toward the final price;`,
+                `the balance is due when the painting is finished, before shipping.`,
+                `Payment details: https://dashboard.stripe.com/payments — session ${session.id}`,
+              ].join("\n"),
+            });
+          } catch (err) {
+            console.error(
+              `[stripe-webhook] Commission deposit email failed (session ${session.id}):`,
+              err,
+            );
+          }
+        } else {
+          console.log(
+            `[stripe-webhook] Commission deposit received (session ${session.id}); Resend not configured, no email sent.`,
+          );
+        }
+        break;
+      }
+
       const slug = session.metadata?.painting_slug;
       if (!slug) {
         console.error(

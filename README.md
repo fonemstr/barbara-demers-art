@@ -105,6 +105,10 @@ Each painting can offer archival giclée prints in any number of sizes — set t
 
 Fulfillment is manual by design to start: when the email arrives, order the print from a local fine-art print shop (or print in-studio) and ship it. A print-on-demand API can be wired into the webhook later without changing the storefront.
 
+## Commission deposits
+
+The commissions page has a two-step flow: the inquiry form (emails Barbara via Resend, as before), and a **Reserve your spot** section for clients whose commission Barbara has already accepted. They pick the agreed size tier, describe the subject, and pay a deposit via Stripe Checkout; the webhook emails the studio a "Commission deposit received" note with the payer and subject. Tiers, guide prices, and deposit amounts live in `src/data/commissions.ts`; the deposit is applied toward the final price and the balance is collected on completion (invoice from the Stripe dashboard, or however Barbara prefers).
+
 ## Adding a blog post
 
 Create a file in `content/blog/`:

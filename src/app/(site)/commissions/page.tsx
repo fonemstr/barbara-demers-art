@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getFeaturedPaintings, getAllPaintings } from "@/data/paintings";
 import { CommissionsForm } from "@/components/commissions-form";
+import { CommissionDeposit } from "@/components/commission-deposit";
 import { CommissionsFAQ } from "@/components/commissions-faq";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -213,9 +214,37 @@ export default async function CommissionsPage() {
       </Section>
 
       {/* ============================================================
-          FAQ
+          DEPOSIT — step two, after Barbara says yes
           ============================================================ */}
       <Section tone="surface" pad="lg">
+        <div id="deposit" className="grid gap-12 lg:grid-cols-[1fr_1.4fr] items-start scroll-mt-24">
+          <div>
+            <Eyebrow>Already heard back from Barbara?</Eyebrow>
+            <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-tight">
+              Reserve your spot on the schedule.
+            </h2>
+            <p className="mt-4 text-on-surface-muted leading-relaxed">
+              Once Barbara has said yes to your commission and confirmed the
+              size and price, a deposit locks in your place. It counts toward
+              the final price, and the balance is due when the painting is
+              finished — before it ships.
+            </p>
+            <p className="mt-3 text-sm text-on-surface-subtle leading-relaxed">
+              Haven&rsquo;t written yet? Start with the inquiry above —
+              commissions are accepted selectively, and Barbara confirms every
+              project personally before a deposit is taken.
+            </p>
+          </div>
+          <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-8 md:p-10">
+            <CommissionDeposit />
+          </div>
+        </div>
+      </Section>
+
+      {/* ============================================================
+          FAQ
+          ============================================================ */}
+      <Section tone="low" pad="lg">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.4fr] items-start">
           <div>
             <Eyebrow>Common questions</Eyebrow>
