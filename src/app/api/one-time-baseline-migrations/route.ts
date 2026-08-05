@@ -17,9 +17,12 @@ export const dynamic = "force-dynamic";
 //   2. deletes the batch -1 dev marker so builds stop prompting
 //   3. records every migration as applied, since the schema then matches them
 //
+// No auth, matching the one-time-create-paintings-from-media precedent:
+// production-only, POST-only, idempotent, creates only state that is
+// supposed to exist, and gets deleted right after use.
+//
 // Usage (once, then delete this file):
-//   curl -X POST https://<domain>/api/one-time-baseline-migrations \
-//     -H "x-baseline-secret: $PAYLOAD_SECRET"
+//   curl -X POST https://<domain>/api/one-time-baseline-migrations
 
 const MIGRATION_NAMES = [
   "20260418_221212_initial",
@@ -28,13 +31,9 @@ const MIGRATION_NAMES = [
   "20260805_add_print_options",
 ];
 
-export async function POST(request: Request) {
+export async function POST() {
   if (process.env.NODE_ENV !== "production") {
     return NextResponse.json({ error: "Only available in production." }, { status: 404 });
-  }
-  const secret = request.headers.get("x-baseline-secret");
-  if (!process.env.PAYLOAD_SECRET || secret !== process.env.PAYLOAD_SECRET) {
-    return NextResponse.json({ error: "Not authorized." }, { status: 401 });
   }
 
   const payload = await getPayload({ config });
