@@ -1,4 +1,6 @@
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig, Payload } from "payload";
+import { sendSocialPost } from "../lib/ayrshare";
+import { buildAnnouncementCaption } from "../lib/social-captions";
 
 // Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
 // Next's runtime.
@@ -8,6 +10,59 @@ async function revalidatePaintingPaths(slugs: (string | undefined)[]) {
   revalidatePath("/gallery");
   for (const slug of slugs) {
     if (slug) revalidatePath(`/gallery/${slug}`);
+  }
+}
+
+type PaintingDoc = {
+  title: string;
+  slug: string;
+  medium?: string | null;
+  widthIn?: number | null;
+  heightIn?: number | null;
+  priceCents?: number | null;
+  collection?: string | null;
+  characterName?: string | null;
+  characterRole?: string | null;
+  announceOnSocial?: boolean | null;
+  images?: Array<{ image?: number | { url?: string | null } | null }> | null;
+};
+
+// Fires when "Announce on social" flips from off to on. The announcement
+// is recorded in Social Posts so there's a visible delivery report, and a
+// failure never blocks saving the painting itself.
+async function announcePainting(payload: Payload, doc: PaintingDoc) {
+  const firstImage = doc.images?.[0]?.image;
+  const imageUrl =
+    firstImage && typeof firstImage === "object" ? (firstImage.url ?? null) : null;
+
+  const caption = buildAnnouncementCaption(doc);
+  const platforms = ["instagram", "facebook"] as const;
+  const result = await sendSocialPost({
+    post: caption,
+    platforms: [...platforms],
+    mediaUrls: imageUrl ? [imageUrl] : [],
+  });
+
+  await payload
+    .create({
+      collection: "social-posts",
+      data: {
+        title: `Auto-announce: ${doc.title}`,
+        message: caption,
+        platforms: [...platforms],
+        status: result.ok ? "posted" : "failed",
+        result: result.summary,
+      },
+      overrideAccess: true,
+    })
+    .catch((err) =>
+      payload.logger.error(`[social] failed to record announcement: ${err}`),
+    );
+
+  if (!result.ok) {
+    payload.logger.error(
+      `[social] auto-announce failed for "${doc.slug}": ${result.summary}`,
+    );
   }
 }
 
@@ -23,10 +78,15 @@ export const Paintings: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      async ({ doc, previousDoc }) => {
+      async ({ doc, previousDoc, req }) => {
         // Include the previous slug in case the editor renamed it, so the
         // old URL stops serving stale HTML.
         await revalidatePaintingPaths([doc?.slug, previousDoc?.slug]);
+
+        // Announce exactly once, on the off→on transition of the checkbox.
+        if (doc?.announceOnSocial && !previousDoc?.announceOnSocial) {
+          await announcePainting(req.payload, doc as PaintingDoc);
+        }
         return doc;
       },
     ],
@@ -278,6 +338,16 @@ export const Paintings: CollectionConfig = {
           defaultValue: false,
           admin: {
             description: "Hide the Buy button and show a sold badge",
+          },
+        },
+        {
+          name: "announceOnSocial",
+          label: "Announce on social",
+          type: "checkbox",
+          defaultValue: false,
+          admin: {
+            description:
+              "Tick and save to post this painting to Instagram + Facebook (via Ayrshare). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.",
           },
         },
       ],
