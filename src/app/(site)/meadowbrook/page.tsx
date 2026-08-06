@@ -13,6 +13,19 @@ export const metadata = {
   title: "The Residents of Meadowbrook",
   description:
     "A growing series of 5×5 inch original character portraits — the animal residents of Meadowbrook, a village rooted in kindness. Collect them all and build the village.",
+  openGraph: {
+    type: "website",
+    siteName: "Barbara J Demers",
+    title: "The Residents of Meadowbrook",
+    description:
+      "A growing series of 5×5 inch original character portraits — the animal residents of Meadowbrook, a village rooted in kindness.",
+    images: [
+      {
+        url: "/meadowbrook/seal.webp",
+        alt: "The Meadowbrook village seal — an oak tree, rooted in kindness",
+      },
+    ],
+  },
 };
 
 // New residents arrive via the admin; refresh often enough that the
@@ -32,35 +45,59 @@ export default async function MeadowbrookPage() {
 
   return (
     <div className="overflow-hidden">
-      {/* HERO — the village introduction */}
+      {/* HERO — the village seal and introduction */}
       <Section tone="surface" pad="lg" className="overflow-hidden">
         <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />
         <Blob size={240} color="var(--secondary-container)" style={{ right: 40, top: 120, opacity: 0.5 }} />
-        <div className="relative z-10 max-w-3xl mx-auto text-center flex flex-col items-center gap-7">
-          <ArtistNote icon="🏡" className="mx-auto">
-            A new collection, one resident at a time.
-          </ArtistNote>
-          <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-balance">
-            The Residents of{" "}
-            <em className="font-normal italic text-primary">Meadowbrook</em>
-          </h1>
-          <p className="text-lg md:text-xl text-on-surface-muted leading-relaxed text-pretty">
-            Somewhere past the last fence post is a village where every
-            resident matters. Meadowbrook is rooted in kindness — and its
-            residents are arriving one small painting at a time. Each
-            portrait is an original 5×5 inch painting introducing one
-            character, their trade, and the object they&rsquo;re never seen
-            without.
-          </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {SERIES_MARKS.map((mark) => (
-              <Chip key={mark}>{mark}</Chip>
-            ))}
+        <div className="relative z-10 grid gap-12 md:grid-cols-[0.85fr_1.15fr] items-center">
+          {/* The village seal */}
+          <div className="relative mx-auto w-[240px] sm:w-[300px] md:w-[380px]">
+            <Blob
+              size={340}
+              color="var(--surface-container-highest)"
+              style={{ left: -50, bottom: -40, opacity: 0.8 }}
+            />
+            <div className="relative z-[1] aspect-square overflow-hidden rounded-full shadow-lifted bg-surface-container-lowest">
+              <Image
+                src="/meadowbrook/seal.webp"
+                alt="The Meadowbrook village seal — a great oak over the motto: rooted in kindness, a village where every resident matters"
+                fill
+                priority
+                sizes="(min-width: 768px) 380px, (min-width: 640px) 300px, 240px"
+                className="object-cover scale-[1.04]"
+              />
+            </div>
           </div>
-          <p className="text-sm text-on-surface-subtle">
-            Originals $95–$125 · prints of every resident · collect them all
-            and build the village
-          </p>
+
+          {/* The introduction */}
+          <div className="flex flex-col gap-6 text-center md:text-left items-center md:items-start">
+            <ArtistNote icon="🏡">
+              A new collection, one resident at a time.
+            </ArtistNote>
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-[-0.02em] text-balance">
+              The Residents of{" "}
+              <em className="font-normal italic text-primary">Meadowbrook</em>
+            </h1>
+            <p className="font-serif italic text-xl md:text-2xl text-primary leading-snug text-balance">
+              Rooted in kindness — a village where every resident matters.
+            </p>
+            <p className="text-lg text-on-surface-muted leading-relaxed text-pretty">
+              Somewhere past the last fence post, Meadowbrook&rsquo;s
+              residents are arriving one small painting at a time. Each
+              portrait is an original 5×5 inch painting introducing one
+              character, their trade, and the object they&rsquo;re never
+              seen without.
+            </p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-2">
+              {SERIES_MARKS.map((mark) => (
+                <Chip key={mark}>{mark}</Chip>
+              ))}
+            </div>
+            <p className="text-sm text-on-surface-subtle">
+              Originals $95–$125 · prints of every resident · collect them
+              all and build the village
+            </p>
+          </div>
         </div>
       </Section>
 
