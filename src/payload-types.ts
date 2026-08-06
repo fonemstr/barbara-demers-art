@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     paintings: Painting;
     'journal-posts': JournalPost;
+    'social-posts': SocialPost;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     paintings: PaintingsSelect<false> | PaintingsSelect<true>;
     'journal-posts': JournalPostsSelect<false> | JournalPostsSelect<true>;
+    'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -274,6 +276,10 @@ export interface Painting {
    * Hide the Buy button and show a sold badge
    */
   sold?: boolean | null;
+  /**
+   * Tick and save to post this painting to Instagram + Facebook (via Ayrshare). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.
+   */
+  announceOnSocial?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -319,6 +325,45 @@ export interface JournalPost {
   createdAt: string;
 }
 /**
+ * Compose once, post everywhere. Set status to “Send” and save — the post goes out now, or at the scheduled time if one is set. Auto-announced paintings appear here too, as a record.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-posts".
+ */
+export interface SocialPost {
+  id: number;
+  /**
+   * Internal label — not part of the post. e.g. “Maisie arrival announcement”
+   */
+  title: string;
+  /**
+   * The post text. Keep under 280 characters if X is selected — longer text is truncated there.
+   */
+  message: string;
+  /**
+   * Optional image. Instagram and Pinterest require one.
+   */
+  image?: (number | null) | Media;
+  /**
+   * Which connected accounts to post to. Accounts are linked in the Ayrshare dashboard.
+   */
+  platforms?: ('instagram' | 'facebook' | 'twitter' | 'pinterest')[] | null;
+  /**
+   * Leave empty to post immediately when sent. Set a future date/time for a timed release.
+   */
+  scheduleAt?: string | null;
+  /**
+   * Set to “Send” and save to deliver. It becomes Posted (or Scheduled), or Failed with the reason below. To retry after a failure, fix the issue and set “Send” again.
+   */
+  status: 'draft' | 'send' | 'scheduled' | 'posted' | 'failed';
+  /**
+   * Delivery report from the last send attempt.
+   */
+  result?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -357,6 +402,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'journal-posts';
         value: number | JournalPost;
+      } | null)
+    | ({
+        relationTo: 'social-posts';
+        value: number | SocialPost;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -511,6 +560,7 @@ export interface PaintingsSelect<T extends boolean = true> {
       };
   featured?: T;
   sold?: T;
+  announceOnSocial?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -526,6 +576,21 @@ export interface JournalPostsSelect<T extends boolean = true> {
   body?: T;
   status?: T;
   publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social-posts_select".
+ */
+export interface SocialPostsSelect<T extends boolean = true> {
+  title?: T;
+  message?: T;
+  image?: T;
+  platforms?: T;
+  scheduleAt?: T;
+  status?: T;
+  result?: T;
   updatedAt?: T;
   createdAt?: T;
 }

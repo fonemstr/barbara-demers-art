@@ -10,6 +10,7 @@ import { Users } from "./src/collections/Users";
 import { Media } from "./src/collections/Media";
 import { Paintings } from "./src/collections/Paintings";
 import { JournalPosts } from "./src/collections/JournalPosts";
+import { SocialPosts } from "./src/collections/SocialPosts";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -24,7 +25,7 @@ export default buildConfig({
       titleSuffix: " — Barbara J Demers Studio",
     },
   },
-  collections: [Users, Media, Paintings, JournalPosts],
+  collections: [Users, Media, Paintings, JournalPosts, SocialPosts],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "insecure-dev-secret-change-me",
   typescript: {

@@ -37,6 +37,7 @@ Open <http://localhost:3000>.
 | `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
 | `RESEND_SEGMENT_ID` | optional | Resend segment to add newsletter signups to. Without it, signups land as plain account-level contacts. |
+| `AYRSHARE_API_KEY` | for social posting | From <https://app.ayrshare.com> — connect Barbara's social accounts there once. Without it, social posts report a clear failure and everything else works. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
 Graceful fallbacks:
@@ -109,6 +110,15 @@ Fulfillment is manual by design to start: when the email arrives, order the prin
 ## The Residents of Meadowbrook
 
 A named collection of 5×5 in character portraits — animal residents of the fictional village of Meadowbrook — with its own landing page at `/meadowbrook`. To add a resident, create a painting in `/admin` and set **Collection** to "The Residents of Meadowbrook"; two extra fields appear for the character's name (e.g. Maisie) and role in the village (e.g. The Pie Maker). Residents appear on the Meadowbrook page (sold ones stay listed — prints keep them purchasable) and in the main gallery like any painting. All the usual machinery applies: pricing, print options, sold state, checkout.
+
+## Social media posting
+
+One Ayrshare API key fans posts out to every social account Barbara connects in the [Ayrshare dashboard](https://app.ayrshare.com) (Instagram, Facebook, X, Pinterest). Two ways to post:
+
+- **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Meadowbrook arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram + Facebook. Fires once per tick; the delivery report lands in **Social Posts**.
+- **Composer:** create a **Social Post** in `/admin` — message, optional image, platform selection, and an optional schedule date. Set status to **Send** and save: it posts now (status → Posted) or at the scheduled time via Ayrshare (status → Scheduled). Failures show the reason in the result field; fix and set Send again to retry.
+
+Notes: Instagram and Pinterest require an image. Keep messages under 280 characters when X is selected. Pinterest may need a default board configured in Ayrshare.
 
 ## Newsletter
 
