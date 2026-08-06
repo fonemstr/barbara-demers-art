@@ -36,6 +36,7 @@ Open <http://localhost:3000>.
 | `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
 | `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
+| `RESEND_SEGMENT_ID` | optional | Resend segment to add newsletter signups to. Without it, signups land as plain account-level contacts. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
 Graceful fallbacks:
@@ -108,6 +109,10 @@ Fulfillment is manual by design to start: when the email arrives, order the prin
 ## The Residents of Meadowbrook
 
 A named collection of 5×5 in character portraits — animal residents of the fictional village of Meadowbrook — with its own landing page at `/meadowbrook`. To add a resident, create a painting in `/admin` and set **Collection** to "The Residents of Meadowbrook"; two extra fields appear for the character's name (e.g. Maisie) and role in the village (e.g. The Pie Maker). Residents appear on the Meadowbrook page (sold ones stay listed — prints keep them purchasable) and in the main gallery like any painting. All the usual machinery applies: pricing, print options, sold state, checkout.
+
+## Newsletter
+
+Signup forms live on the home page and `/meadowbrook`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio), so announcements — a new painting, a new Meadowbrook resident — are sent as **Broadcasts from the Resend dashboard** to the whole list, with unsubscribe handling built in. No code involved per send. Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
 
 ## Commission deposits
 
