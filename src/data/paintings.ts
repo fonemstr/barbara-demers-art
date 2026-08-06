@@ -10,6 +10,8 @@ export type { SubjectGroup };
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
+export type PaintingCollection = "none" | "meadowbrook";
+
 export type PrintOption = {
   id: string;
   widthIn: number;
@@ -32,6 +34,9 @@ export type Painting = {
   storyBehindPainting?: string;
   images: string[];
   prints?: PrintOption[];
+  collection?: PaintingCollection;
+  characterName?: string;
+  characterRole?: string;
   sold?: boolean;
   featured?: boolean;
 };
@@ -136,6 +141,47 @@ const seedPaintings: Painting[] = [
       { id: "12x16", widthIn: 12, heightIn: 16, priceCents: 7500 },
     ],
   },
+  // Sample Meadowbrook residents so the /meadowbrook page has content in
+  // dev without a database. Real residents are added via /admin.
+  {
+    slug: "maisie-the-pie-maker",
+    title: "Maisie, The Pie Maker",
+    subject: "Mouse",
+    subjectGroup: "other",
+    collection: "meadowbrook",
+    characterName: "Maisie",
+    characterRole: "The Pie Maker",
+    year: 2026,
+    medium: "Acrylic on panel",
+    widthIn: 5,
+    heightIn: 5,
+    priceCents: 9500,
+    sizeTier: "small",
+    description:
+      "Maisie carries a tray of fresh pies through the village square. Nobody in Meadowbrook has ever refused a slice, and nobody ever will.",
+    images: ["/paintings/placeholder-2.svg"],
+    prints: [{ id: "5x5", widthIn: 5, heightIn: 5, priceCents: 3500 }],
+  },
+  {
+    slug: "reggie-the-night-watchman",
+    title: "Reggie, The Night Watchman",
+    subject: "Raccoon",
+    subjectGroup: "wild",
+    collection: "meadowbrook",
+    characterName: "Reggie",
+    characterRole: "The Night Watchman",
+    year: 2026,
+    medium: "Acrylic on panel",
+    widthIn: 5,
+    heightIn: 5,
+    priceCents: 12500,
+    sizeTier: "small",
+    description:
+      "Lantern in paw, Reggie makes his rounds while Meadowbrook sleeps. He has never once missed a night, or a midnight snack.",
+    images: ["/paintings/placeholder-3.svg"],
+    sold: true,
+    prints: [{ id: "5x5", widthIn: 5, heightIn: 5, priceCents: 3500 }],
+  },
 ];
 
 type PayloadPainting = {
@@ -158,6 +204,9 @@ type PayloadPainting = {
     heightIn: number;
     priceCents: number;
   }> | null;
+  collection?: PaintingCollection | null;
+  characterName?: string | null;
+  characterRole?: string | null;
   sold?: boolean;
   featured?: boolean;
 };
@@ -200,6 +249,9 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
       heightIn: opt.heightIn,
       priceCents: opt.priceCents,
     })),
+    collection: p.collection ?? "none",
+    characterName: normalizeOptionalText(p.characterName),
+    characterRole: normalizeOptionalText(p.characterRole),
     sold: p.sold ?? false,
     featured: p.featured ?? false,
   };
@@ -250,6 +302,16 @@ export async function getFeaturedPaintings(limit = 3): Promise<Painting[]> {
 export async function getAvailablePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
   return all.filter((p) => !p.sold);
+}
+
+/**
+ * Residents of Meadowbrook — the 5×5 character portrait series. Sold
+ * residents stay listed (prints keep them purchasable), so the village
+ * only ever grows.
+ */
+export async function getMeadowbrookPaintings(): Promise<Painting[]> {
+  const all = await getAllPaintings();
+  return all.filter((p) => p.collection === "meadowbrook");
 }
 
 /**

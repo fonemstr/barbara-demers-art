@@ -2,6 +2,7 @@ import * as migration_20260418_221212_initial from './20260418_221212_initial';
 import * as migration_20260525_add_painting_story from './20260525_add_painting_story';
 import * as migration_20260728_104917_add_free_shipping_tier from './20260728_104917_add_free_shipping_tier';
 import * as migration_20260805_add_print_options from './20260805_add_print_options';
+import * as migration_20260806_add_collections from './20260806_add_collections';
 
 export const migrations = [
   {
@@ -23,5 +24,10 @@ export const migrations = [
     up: migration_20260805_add_print_options.up,
     down: migration_20260805_add_print_options.down,
     name: '20260805_add_print_options',
+  },
+  {
+    up: migration_20260806_add_collections.up,
+    down: migration_20260806_add_collections.down,
+    name: '20260806_add_collections',
   },
 ];

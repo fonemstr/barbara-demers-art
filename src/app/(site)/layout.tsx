@@ -57,6 +57,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const navLinks = [
   { href: "/gallery", label: "Available Work" },
+  { href: "/meadowbrook", label: "Meadowbrook" },
   { href: "/blog", label: "Journal" },
   { href: "/about", label: "About" },
   { href: "/commissions", label: "Commissions" },
