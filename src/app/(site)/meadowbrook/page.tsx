@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getMeadowbrookPaintings } from "@/data/paintings";
+import { MEADOWBROOK_ROSTER } from "@/data/meadowbrook-roster";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Section } from "@/components/ui/section";
@@ -42,6 +43,17 @@ const SERIES_MARKS = [
 
 export default async function MeadowbrookPage() {
   const residents = await getMeadowbrookPaintings();
+  // Roster entries drop off the coming-soon lineup the moment a painting
+  // with a matching character name arrives via the admin.
+  const arrivedNames = new Set(
+    residents
+      .map((p) => p.characterName?.toLowerCase())
+      .filter((n): n is string => !!n),
+  );
+  const comingSoon = MEADOWBROOK_ROSTER.filter(
+    (r) => !arrivedNames.has(r.name.toLowerCase()),
+  );
+  const villageSize = residents.length + comingSoon.length;
 
   return (
     <div className="overflow-hidden">
@@ -108,14 +120,14 @@ export default async function MeadowbrookPage() {
             <Eyebrow>The village so far</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
               {residents.length > 0
-                ? `${residents.length} resident${residents.length === 1 ? "" : "s"} and counting.`
+                ? `${residents.length} of ${villageSize} residents have arrived.`
                 : "The first residents are moving in."}
             </h2>
           </div>
         </div>
 
-        {residents.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {residents.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-16">
             {residents.map((p) => {
               const printsFrom = lowestPrintPriceCents(p);
               return (
@@ -155,16 +167,45 @@ export default async function MeadowbrookPage() {
               );
             })}
           </div>
-        ) : (
-          <div className="rounded-[var(--radius-lg)] bg-surface-container-lowest p-10 text-center max-w-2xl mx-auto">
-            <p className="font-serif text-2xl text-on-surface">
-              Barbara is painting the first portraits now.
-            </p>
-            <p className="mt-3 text-on-surface-muted leading-relaxed">
-              The rooster, the pie maker, the night watchman — the first
-              residents are on the easel. Join the newsletter below and
-              you&rsquo;ll meet each one the day they arrive.
-            </p>
+        )}
+
+        {/* Coming soon — the rest of the census, waiting for their portraits */}
+        {comingSoon.length > 0 && (
+          <div>
+            <div className="max-w-2xl mb-10">
+              <Eyebrow>Still to arrive</Eyebrow>
+              <p className="mt-3 text-on-surface-muted leading-relaxed">
+                Every one of these residents is waiting for their original
+                5×5 portrait. Barbara paints them one at a time — join the
+                newsletter below and you&rsquo;ll know the moment a favorite
+                arrives.
+              </p>
+            </div>
+            <ul className="flex flex-wrap justify-center gap-x-6 gap-y-10">
+              {comingSoon.map((r) => (
+                <li key={r.name} className="flex flex-col items-center w-[120px] md:w-[140px]">
+                  <div className="bg-surface-container-lowest p-1.5 shadow-ambient">
+                    <Image
+                      src={r.image}
+                      alt={`${r.name}, ${r.role} — ${r.animal.toLowerCase()} resident of Meadowbrook, portrait coming soon`}
+                      width={r.width}
+                      height={r.height}
+                      sizes="140px"
+                      className="h-36 md:h-44 w-auto"
+                    />
+                  </div>
+                  <p className="mt-3 font-serif text-base leading-tight text-on-surface text-center">
+                    {r.name}
+                  </p>
+                  <p className="text-xs italic text-on-surface-muted mt-0.5 text-center">
+                    {r.role}
+                  </p>
+                  <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-subtle mt-1.5">
+                    Coming soon
+                  </p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </Section>
