@@ -169,6 +169,59 @@ export default async function MeadowbrookPage() {
         )}
       </Section>
 
+      {/* THE WHOLE VILLAGE — the character sheets */}
+      <Section tone="surface" pad="lg">
+        <div className="max-w-2xl mb-12">
+          <Eyebrow>Meet the whole village</Eyebrow>
+          <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
+            Every resident, waiting for their portrait.
+          </h2>
+          <p className="mt-4 text-on-surface-muted leading-relaxed">
+            These are the character sheets Barbara works from — the full
+            census of Meadowbrook. Each resident steps out of the sheet and
+            into an original 5×5 inch painting, one at a time. If someone
+            here already feels like family, the newsletter below will tell
+            you the moment they arrive.
+          </p>
+        </div>
+        <div className="flex flex-col gap-10 max-w-4xl mx-auto">
+          {[
+            {
+              src: "/meadowbrook/sheet-1.webp",
+              width: 1402,
+              height: 1122,
+              alt: "Character sheet of fifteen Meadowbrook residents, including Rowan the Rooster, Poppy the Forager, Reggie the Night Watchman, and Maisie the Pie Maker",
+            },
+            {
+              src: "/meadowbrook/sheet-2.webp",
+              width: 1402,
+              height: 1122,
+              alt: "Character sheet of ten Meadowbrook residents, including Percival the Pianist, Barnaby the Beekeeper, Mabel the Baker, and Lottie the Librarian",
+            },
+            {
+              src: "/meadowbrook/sheet-3.webp",
+              width: 1254,
+              height: 1254,
+              alt: "Character sheet of twelve Meadowbrook residents, including Henry the Potter, Clara the Florist, Beatrice the Tea Keeper, and Eleanor the Letter Writer",
+            },
+          ].map((sheet) => (
+            <div
+              key={sheet.src}
+              className="bg-surface-container-lowest p-3 md:p-5 shadow-ambient"
+            >
+              <Image
+                src={sheet.src}
+                alt={sheet.alt}
+                width={sheet.width}
+                height={sheet.height}
+                sizes="(min-width: 1024px) 896px, 100vw"
+                className="w-full h-auto"
+              />
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* NEWSLETTER — meet each new arrival */}
       <Section tone="surface" pad="lg" maxWidth="3xl">
         <div className="text-center mb-8">
