@@ -216,6 +216,18 @@ export interface Painting {
    * Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other.
    */
   subjectGroup?: ('dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
+  /**
+   * Part of a named series? Meadowbrook paintings get their own page at /meadowbrook with character name and role.
+   */
+  collection?: ('none' | 'meadowbrook') | null;
+  /**
+   * e.g. Maisie
+   */
+  characterName?: string | null;
+  /**
+   * e.g. The Pie Maker
+   */
+  characterRole?: string | null;
   year: number;
   medium: string;
   widthIn: number;
@@ -472,6 +484,9 @@ export interface PaintingsSelect<T extends boolean = true> {
   slug?: T;
   subject?: T;
   subjectGroup?: T;
+  collection?: T;
+  characterName?: T;
+  characterRole?: T;
   year?: T;
   medium?: T;
   widthIn?: T;

@@ -135,10 +135,15 @@ export default async function PaintingPage({
 
           {/* Metadata + buy column */}
           <div className="flex flex-col gap-6 md:pt-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Eyebrow>
                 {painting.subject || SUBJECT_GROUP_LABELS[painting.subjectGroup]} · {painting.year}
               </Eyebrow>
+              {painting.collection === "meadowbrook" && (
+                <Link href="/meadowbrook">
+                  <Chip>🏡 Resident of Meadowbrook</Chip>
+                </Link>
+              )}
               {painting.sold && <Chip>Sold</Chip>}
             </div>
 

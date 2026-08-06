@@ -84,6 +84,46 @@ export const Paintings: CollectionConfig = {
       },
     },
     {
+      // Named, curated series — different axis from subjectGroup. A
+      // Meadowbrook painting still appears in the main gallery; it also
+      // appears on the collection's own landing page.
+      name: "collection",
+      type: "select",
+      defaultValue: "none",
+      options: [
+        { label: "None — standalone painting", value: "none" },
+        { label: "The Residents of Meadowbrook", value: "meadowbrook" },
+      ],
+      admin: {
+        description:
+          "Part of a named series? Meadowbrook paintings get their own page at /meadowbrook with character name and role.",
+      },
+    },
+    {
+      type: "row",
+      admin: {
+        condition: (data) => data?.collection === "meadowbrook",
+      },
+      fields: [
+        {
+          name: "characterName",
+          label: "Character name",
+          type: "text",
+          admin: {
+            description: "e.g. Maisie",
+          },
+        },
+        {
+          name: "characterRole",
+          label: "Role in the village",
+          type: "text",
+          admin: {
+            description: "e.g. The Pie Maker",
+          },
+        },
+      ],
+    },
+    {
       name: "year",
       type: "number",
       required: true,

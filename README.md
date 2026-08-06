@@ -105,6 +105,10 @@ Each painting can offer archival giclée prints in any number of sizes — set t
 
 Fulfillment is manual by design to start: when the email arrives, order the print from a local fine-art print shop (or print in-studio) and ship it. A print-on-demand API can be wired into the webhook later without changing the storefront.
 
+## The Residents of Meadowbrook
+
+A named collection of 5×5 in character portraits — animal residents of the fictional village of Meadowbrook — with its own landing page at `/meadowbrook`. To add a resident, create a painting in `/admin` and set **Collection** to "The Residents of Meadowbrook"; two extra fields appear for the character's name (e.g. Maisie) and role in the village (e.g. The Pie Maker). Residents appear on the Meadowbrook page (sold ones stay listed — prints keep them purchasable) and in the main gallery like any painting. All the usual machinery applies: pricing, print options, sold state, checkout.
+
 ## Commission deposits
 
 The commissions page has a two-step flow: the inquiry form (emails Barbara via Resend, as before), and a **Reserve your spot** section for clients whose commission Barbara has already accepted. They pick the agreed size tier, describe the subject, and pay a deposit via Stripe Checkout; the webhook emails the studio a "Commission deposit received" note with the payer and subject. Tiers, guide prices, and deposit amounts live in `src/data/commissions.ts`; the deposit is applied toward the final price and the balance is collected on completion (invoice from the Stripe dashboard, or however Barbara prefers).
