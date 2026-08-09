@@ -107,22 +107,22 @@ Each painting can offer archival giclée prints in any number of sizes — set t
 
 Fulfillment is manual by design to start: when the email arrives, order the print from a local fine-art print shop (or print in-studio) and ship it. A print-on-demand API can be wired into the webhook later without changing the storefront.
 
-## The Residents of Meadowbrook
+## The Residents of Budderlee
 
-A named collection of 5×5 in character portraits — animal residents of the fictional village of Meadowbrook — with its own landing page at `/meadowbrook`. To add a resident, create a painting in `/admin` and set **Collection** to "The Residents of Meadowbrook"; two extra fields appear for the character's name (e.g. Maisie) and role in the village (e.g. The Pie Maker). Residents appear on the Meadowbrook page (sold ones stay listed — prints keep them purchasable) and in the main gallery like any painting. All the usual machinery applies: pricing, print options, sold state, checkout.
+A named collection of 5×5 in character portraits — animal residents of the fictional village of Budderlee — with its own landing page at `/budderlee`. To add a resident, create a painting in `/admin` and set **Collection** to "The Residents of Budderlee"; two extra fields appear for the character's name (e.g. Maisie) and role in the village (e.g. The Pie Maker). Residents appear on the Budderlee page (sold ones stay listed — prints keep them purchasable) and in the main gallery like any painting. All the usual machinery applies: pricing, print options, sold state, checkout.
 
 ## Social media posting
 
 One Ayrshare API key fans posts out to every social account Barbara connects in the [Ayrshare dashboard](https://app.ayrshare.com) (Instagram, Facebook, X, Pinterest). Two ways to post:
 
-- **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Meadowbrook arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram + Facebook. Fires once per tick; the delivery report lands in **Social Posts**.
+- **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Budderlee arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram + Facebook. Fires once per tick; the delivery report lands in **Social Posts**.
 - **Composer:** create a **Social Post** in `/admin` — message, optional image, platform selection, and an optional schedule date. Set status to **Send** and save: it posts now (status → Posted) or at the scheduled time via Ayrshare (status → Scheduled). Failures show the reason in the result field; fix and set Send again to retry.
 
 Notes: Instagram and Pinterest require an image. Keep messages under 280 characters when X is selected. Pinterest may need a default board configured in Ayrshare.
 
 ## Newsletter
 
-Signup forms live on the home page and `/meadowbrook`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio), so announcements — a new painting, a new Meadowbrook resident — are sent as **Broadcasts from the Resend dashboard** to the whole list, with unsubscribe handling built in. No code involved per send. Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
+Signup forms live on the home page and `/budderlee`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio), so announcements — a new painting, a new Budderlee resident — are sent as **Broadcasts from the Resend dashboard** to the whole list, with unsubscribe handling built in. No code involved per send. Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
 
 ## Commission deposits
 

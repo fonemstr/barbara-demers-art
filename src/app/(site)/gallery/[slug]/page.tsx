@@ -140,8 +140,8 @@ export default async function PaintingPage({
                 {painting.subject || SUBJECT_GROUP_LABELS[painting.subjectGroup]} · {painting.year}
               </Eyebrow>
               {painting.collection === "meadowbrook" && (
-                <Link href="/meadowbrook">
-                  <Chip>🏡 Resident of Meadowbrook</Chip>
+                <Link href="/budderlee">
+                  <Chip>🏡 Resident of Budderlee</Chip>
                 </Link>
               )}
               {painting.sold && <Chip>Sold</Chip>}

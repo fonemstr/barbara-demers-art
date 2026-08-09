@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getMeadowbrookPaintings } from "@/data/paintings";
-import { MEADOWBROOK_ROSTER } from "@/data/meadowbrook-roster";
+import { getBudderleePaintings } from "@/data/paintings";
+import { BUDDERLEE_ROSTER } from "@/data/budderlee-roster";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Section } from "@/components/ui/section";
@@ -11,19 +11,19 @@ import { Chip } from "@/components/ui/chip";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = {
-  title: "The Residents of Meadowbrook",
+  title: "The Residents of Budderlee",
   description:
-    "A growing series of 5×5 inch original character portraits — the animal residents of Meadowbrook, a village rooted in kindness. Collect them all and build the village.",
+    "A growing series of 5×5 inch original character portraits — the animal residents of Budderlee, a village rooted in kindness. Collect them all and build the village.",
   openGraph: {
     type: "website",
     siteName: "Barbara J Demers",
-    title: "The Residents of Meadowbrook",
+    title: "The Residents of Budderlee",
     description:
-      "A growing series of 5×5 inch original character portraits — the animal residents of Meadowbrook, a village rooted in kindness.",
+      "A growing series of 5×5 inch original character portraits — the animal residents of Budderlee, a village rooted in kindness.",
     images: [
       {
-        url: "/meadowbrook/seal.webp",
-        alt: "The Meadowbrook village seal — an oak tree, rooted in kindness",
+        url: "/budderlee/seal.webp",
+        alt: "The Budderlee village seal — an oak tree, rooted in kindness",
       },
     ],
   },
@@ -41,8 +41,8 @@ const SERIES_MARKS = [
   "Expressive personality",
 ];
 
-export default async function MeadowbrookPage() {
-  const residents = await getMeadowbrookPaintings();
+export default async function BudderleePage() {
+  const residents = await getBudderleePaintings();
   // Roster entries drop off the coming-soon lineup the moment a painting
   // with a matching character name arrives via the admin.
   const arrivedNames = new Set(
@@ -50,7 +50,7 @@ export default async function MeadowbrookPage() {
       .map((p) => p.characterName?.toLowerCase())
       .filter((n): n is string => !!n),
   );
-  const comingSoon = MEADOWBROOK_ROSTER.filter(
+  const comingSoon = BUDDERLEE_ROSTER.filter(
     (r) => !arrivedNames.has(r.name.toLowerCase()),
   );
   const villageSize = residents.length + comingSoon.length;
@@ -71,8 +71,8 @@ export default async function MeadowbrookPage() {
             />
             <div className="relative z-[1] aspect-square overflow-hidden rounded-full shadow-lifted bg-surface-container-lowest">
               <Image
-                src="/meadowbrook/seal.webp"
-                alt="The Meadowbrook village seal — a great oak over the motto: rooted in kindness, a village where every resident matters"
+                src="/budderlee/seal.webp"
+                alt="The Budderlee village seal — a great oak over the motto: rooted in kindness, a village where every resident matters"
                 fill
                 priority
                 sizes="(min-width: 768px) 380px, (min-width: 640px) 300px, 240px"
@@ -88,13 +88,13 @@ export default async function MeadowbrookPage() {
             </ArtistNote>
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-[-0.02em] text-balance">
               The Residents of{" "}
-              <em className="font-normal italic text-primary">Meadowbrook</em>
+              <em className="font-normal italic text-primary">Budderlee</em>
             </h1>
             <p className="font-serif italic text-xl md:text-2xl text-primary leading-snug text-balance">
               Rooted in kindness — a village where every resident matters.
             </p>
             <p className="text-lg text-on-surface-muted leading-relaxed text-pretty">
-              Somewhere past the last fence post, Meadowbrook&rsquo;s
+              Somewhere past the last fence post, Budderlee&rsquo;s
               residents are arriving one small painting at a time. Each
               portrait is an original 5×5 inch painting introducing one
               character, their trade, and the object they&rsquo;re never
@@ -135,7 +135,7 @@ export default async function MeadowbrookPage() {
                   <div className="relative aspect-square overflow-hidden bg-surface-container shadow-ambient">
                     <Image
                       src={p.images[0]}
-                      alt={p.characterName ? `${p.characterName}, ${p.characterRole ?? "resident of Meadowbrook"}` : p.title}
+                      alt={p.characterName ? `${p.characterName}, ${p.characterRole ?? "resident of Budderlee"}` : p.title}
                       fill
                       sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
                       className="object-cover transition-transform duration-[700ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
@@ -187,7 +187,7 @@ export default async function MeadowbrookPage() {
                   <div className="bg-surface-container-lowest p-1.5 shadow-ambient">
                     <Image
                       src={r.image}
-                      alt={`${r.name}, ${r.role} — ${r.animal.toLowerCase()} resident of Meadowbrook, portrait coming soon`}
+                      alt={`${r.name}, ${r.role} — ${r.animal.toLowerCase()} resident of Budderlee, portrait coming soon`}
                       width={r.width}
                       height={r.height}
                       sizes="140px"
@@ -210,59 +210,6 @@ export default async function MeadowbrookPage() {
         )}
       </Section>
 
-      {/* THE WHOLE VILLAGE — the character sheets */}
-      <Section tone="surface" pad="lg">
-        <div className="max-w-2xl mb-12">
-          <Eyebrow>Meet the whole village</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
-            Every resident, waiting for their portrait.
-          </h2>
-          <p className="mt-4 text-on-surface-muted leading-relaxed">
-            These are the character sheets Barbara works from — the full
-            census of Meadowbrook. Each resident steps out of the sheet and
-            into an original 5×5 inch painting, one at a time. If someone
-            here already feels like family, the newsletter below will tell
-            you the moment they arrive.
-          </p>
-        </div>
-        <div className="flex flex-col gap-10 max-w-4xl mx-auto">
-          {[
-            {
-              src: "/meadowbrook/sheet-1.webp",
-              width: 1402,
-              height: 1122,
-              alt: "Character sheet of fifteen Meadowbrook residents, including Rowan the Rooster, Poppy the Forager, Reggie the Night Watchman, and Maisie the Pie Maker",
-            },
-            {
-              src: "/meadowbrook/sheet-2.webp",
-              width: 1402,
-              height: 1122,
-              alt: "Character sheet of ten Meadowbrook residents, including Percival the Pianist, Barnaby the Beekeeper, Mabel the Baker, and Lottie the Librarian",
-            },
-            {
-              src: "/meadowbrook/sheet-3.webp",
-              width: 1254,
-              height: 1254,
-              alt: "Character sheet of twelve Meadowbrook residents, including Henry the Potter, Clara the Florist, Beatrice the Tea Keeper, and Eleanor the Letter Writer",
-            },
-          ].map((sheet) => (
-            <div
-              key={sheet.src}
-              className="bg-surface-container-lowest p-3 md:p-5 shadow-ambient"
-            >
-              <Image
-                src={sheet.src}
-                alt={sheet.alt}
-                width={sheet.width}
-                height={sheet.height}
-                sizes="(min-width: 1024px) 896px, 100vw"
-                className="w-full h-auto"
-              />
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {/* NEWSLETTER — meet each new arrival */}
       <Section tone="surface" pad="lg" maxWidth="3xl">
         <div className="text-center mb-8">
@@ -271,7 +218,7 @@ export default async function MeadowbrookPage() {
             New arrivals, straight to your inbox.
           </h2>
           <p className="mt-4 text-on-surface-muted leading-relaxed max-w-xl mx-auto">
-            Each portrait introduces a new resident of Meadowbrook — and the
+            Each portrait introduces a new resident of Budderlee — and the
             originals tend to find homes quickly. Newsletter readers meet
             every new arrival before anyone else.
           </p>

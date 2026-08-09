@@ -30,9 +30,9 @@ export function buildAnnouncementCaption(p: AnnounceablePainting): string {
     const role = p.characterRole ? `, ${p.characterRole}` : "";
     return clamp(
       [
-        `A new resident has arrived in Meadowbrook 🏡`,
+        `A new resident has arrived in Budderlee 🏡`,
         `Meet ${p.characterName}${role} — an original 5×5 inch painting${price}.`,
-        `See the whole village: ${SITE_URL}/meadowbrook`,
+        `See the whole village: ${SITE_URL}/budderlee`,
       ].join("\n"),
     );
   }

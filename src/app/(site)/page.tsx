@@ -196,6 +196,56 @@ export default async function HomePage() {
       </section>
 
       {/* ============================================================
+          BUDDERLEE — the village seal and an invitation to visit
+          ============================================================ */}
+      <section className="relative py-24 overflow-hidden">
+        <Blob size={380} color="var(--secondary-container)" style={{ right: -120, top: 40, opacity: 0.4 }} />
+        <div className="relative z-10 mx-auto max-w-6xl px-6 grid gap-12 md:grid-cols-[0.8fr_1.2fr] items-center">
+          <div className="relative mx-auto w-[220px] sm:w-[280px] md:w-[340px]">
+            <Blob
+              size={300}
+              color="var(--surface-container-highest)"
+              style={{ left: -40, bottom: -30, opacity: 0.8 }}
+            />
+            <Link
+              href="/budderlee"
+              aria-label="Visit the Residents of Budderlee"
+              className="relative z-[1] block aspect-square overflow-hidden rounded-full shadow-lifted bg-surface-container-lowest"
+            >
+              <Image
+                src="/budderlee/seal.webp"
+                alt="The Budderlee village seal — a great oak over the motto: rooted in kindness, a village where every resident matters"
+                fill
+                sizes="(min-width: 768px) 340px, (min-width: 640px) 280px, 220px"
+                className="object-cover scale-[1.04] transition-transform duration-[700ms] ease-[cubic-bezier(.22,1,.36,1)] hover:scale-[1.08]"
+              />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-6 text-center md:text-left items-center md:items-start">
+            <Eyebrow>A village is growing</Eyebrow>
+            <h2 className="font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em] text-on-surface">
+              The Residents of{" "}
+              <em className="font-normal italic text-primary">Budderlee</em>.
+            </h2>
+            <p className="font-serif italic text-lg md:text-xl text-primary leading-snug">
+              Rooted in kindness — a village where every resident matters.
+            </p>
+            <p className="text-lg text-on-surface-muted leading-relaxed max-w-xl">
+              A growing series of 5×5 inch original character portraits.
+              Each painting introduces one animal resident of Budderlee,
+              their trade, and the object they&apos;re never seen without.
+              Collect them all and build the village.
+            </p>
+            <div className="mt-2">
+              <ButtonLink href="/budderlee" size="md">
+                Meet the residents
+              </ButtonLink>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
           FEATURED ORIGINALS — fresh-from-the-easel strip
           ============================================================ */}
       {featured.length > 0 && (

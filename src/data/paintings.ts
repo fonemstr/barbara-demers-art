@@ -10,6 +10,9 @@ export type { SubjectGroup };
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
+// "meadowbrook" is the legacy DB enum value for the Budderlee series —
+// renaming it requires a hand-applied Postgres migration, so the internal
+// value stays while all user-facing copy says Budderlee.
 export type PaintingCollection = "none" | "meadowbrook";
 
 export type PrintOption = {
@@ -141,7 +144,7 @@ const seedPaintings: Painting[] = [
       { id: "12x16", widthIn: 12, heightIn: 16, priceCents: 7500 },
     ],
   },
-  // Sample Meadowbrook residents so the /meadowbrook page has content in
+  // Sample Budderlee residents so the /budderlee page has content in
   // dev without a database. Real residents are added via /admin.
   {
     slug: "maisie-the-pie-maker",
@@ -158,7 +161,7 @@ const seedPaintings: Painting[] = [
     priceCents: 9500,
     sizeTier: "small",
     description:
-      "Maisie carries a tray of fresh pies through the village square. Nobody in Meadowbrook has ever refused a slice, and nobody ever will.",
+      "Maisie carries a tray of fresh pies through the village square. Nobody in Budderlee has ever refused a slice, and nobody ever will.",
     images: ["/paintings/placeholder-2.svg"],
     prints: [{ id: "5x5", widthIn: 5, heightIn: 5, priceCents: 3500 }],
   },
@@ -177,7 +180,7 @@ const seedPaintings: Painting[] = [
     priceCents: 12500,
     sizeTier: "small",
     description:
-      "Lantern in paw, Reggie makes his rounds while Meadowbrook sleeps. He has never once missed a night, or a midnight snack.",
+      "Lantern in paw, Reggie makes his rounds while Budderlee sleeps. He has never once missed a night, or a midnight snack.",
     images: ["/paintings/placeholder-3.svg"],
     sold: true,
     prints: [{ id: "5x5", widthIn: 5, heightIn: 5, priceCents: 3500 }],
@@ -305,11 +308,11 @@ export async function getAvailablePaintings(): Promise<Painting[]> {
 }
 
 /**
- * Residents of Meadowbrook — the 5×5 character portrait series. Sold
+ * Residents of Budderlee — the 5×5 character portrait series. Sold
  * residents stay listed (prints keep them purchasable), so the village
  * only ever grows.
  */
-export async function getMeadowbrookPaintings(): Promise<Painting[]> {
+export async function getBudderleePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
   return all.filter((p) => p.collection === "meadowbrook");
 }

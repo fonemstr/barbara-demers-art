@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const resend = requireResend();
 
     // Store the signup as a Resend contact so broadcasts (new painting,
-    // new Meadowbrook resident, studio news) can be sent to the whole
+    // new Budderlee resident, studio news) can be sent to the whole
     // list from the Resend dashboard — no more hand-collected addresses.
     // RESEND_SEGMENT_ID is optional: set it to bucket studio-list signups
     // into a segment if other contact types are ever added.
