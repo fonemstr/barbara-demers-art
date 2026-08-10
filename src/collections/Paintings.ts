@@ -1,6 +1,7 @@
 import type { CollectionConfig, Payload } from "payload";
-import { sendSocialPost } from "../lib/ayrshare";
+import { sendSocialPost, type SocialPlatform } from "../lib/ayrshare";
 import { buildAnnouncementCaption } from "../lib/social-captions";
+import { SITE_URL } from "../lib/site-url";
 
 // Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
 // Next's runtime.
@@ -58,15 +59,19 @@ async function announcePainting(payload: Payload, doc: PaintingDoc) {
   const imageUrl = await resolveFirstImageUrl(payload, doc);
 
   const caption = buildAnnouncementCaption(doc);
-  // Instagram rejects text-only posts, so without an image it gets skipped
-  // rather than failing the whole announcement.
-  const platforms: ("instagram" | "facebook")[] = imageUrl
-    ? ["instagram", "facebook"]
+  // Instagram and Pinterest reject posts without media, so they only join
+  // when an image resolved; Facebook posts either way.
+  const platforms: SocialPlatform[] = imageUrl
+    ? ["instagram", "facebook", "pinterest"]
     : ["facebook"];
   const result = await sendSocialPost({
     post: caption,
     platforms: [...platforms],
     mediaUrls: imageUrl ? [imageUrl] : [],
+    pinterestOptions: {
+      link: `${SITE_URL}/gallery/${doc.slug}`,
+      title: doc.title.slice(0, 100),
+    },
   });
 
   await payload

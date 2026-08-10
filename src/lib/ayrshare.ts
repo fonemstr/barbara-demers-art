@@ -32,11 +32,14 @@ export async function sendSocialPost({
   platforms,
   mediaUrls,
   scheduleAt,
+  pinterestOptions,
 }: {
   post: string;
   platforms: SocialPlatform[];
   mediaUrls?: string[];
   scheduleAt?: string | null;
+  /** Pins are links first — set the destination and title when posting to Pinterest. */
+  pinterestOptions?: { link?: string; title?: string };
 }): Promise<SocialPostResult> {
   const apiKey = process.env.AYRSHARE_API_KEY;
   if (!apiKey) {
@@ -63,6 +66,9 @@ export async function sendSocialPost({
           ? { mediaUrls: mediaUrls.map(absoluteMediaUrl) }
           : {}),
         ...(scheduleAt ? { scheduleDate: new Date(scheduleAt).toISOString() } : {}),
+        ...(pinterestOptions && platforms.includes("pinterest")
+          ? { pinterestOptions }
+          : {}),
       }),
     });
     const body = (await res.json().catch(() => ({}))) as {
