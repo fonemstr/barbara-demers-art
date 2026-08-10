@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import {
   getAllPaintings,
@@ -11,6 +10,7 @@ import {
 } from "@/data/paintings";
 import { formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
+import { PaintingGallery } from "@/components/painting-gallery";
 import { PrintBuy } from "@/components/print-buy";
 import { PaintingCard } from "@/components/painting-card";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -94,43 +94,12 @@ export default async function PaintingPage({
               color="var(--surface-variant)"
               style={{ left: -80, top: 40, opacity: 0.7 }}
             />
-            <div
-              className="relative z-[1] overflow-hidden shadow-lifted bg-surface-container-lowest"
-              style={{
-                aspectRatio: `${painting.widthIn} / ${painting.heightIn}`,
-              }}
-            >
-              <Image
-                src={painting.images[0]}
-                alt={painting.title}
-                fill
-                sizes="(min-width: 768px) 60vw, 100vw"
-                className="object-cover"
-                priority
-              />
-            </div>
-            {/* Detail images, if multiple images */}
-            {painting.images.length > 1 && (
-              <div className="relative z-[1] mt-6">
-                <Eyebrow>Look closer</Eyebrow>
-                <div className="mt-3 grid grid-cols-4 gap-3">
-                  {painting.images.map((src, i) => (
-                    <div
-                      key={src + i}
-                      className="relative aspect-square overflow-hidden bg-surface-container"
-                    >
-                      <Image
-                        src={src}
-                        alt={`${painting.title} — ${i === 0 ? "full painting" : `detail ${i}`}`}
-                        fill
-                        sizes="15vw"
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <PaintingGallery
+              title={painting.title}
+              images={painting.images}
+              widthIn={painting.widthIn}
+              heightIn={painting.heightIn}
+            />
           </div>
 
           {/* Metadata + buy column */}
