@@ -30,13 +30,39 @@ type PaintingDoc = {
 // Fires when "Announce on social" flips from off to on. The announcement
 // is recorded in Social Posts so there's a visible delivery report, and a
 // failure never blocks saving the painting itself.
-async function announcePainting(payload: Payload, doc: PaintingDoc) {
+// In afterChange hooks the image relation usually arrives as a bare ID,
+// not a populated object — fetch the media doc in that case.
+async function resolveFirstImageUrl(
+  payload: Payload,
+  doc: PaintingDoc,
+): Promise<string | null> {
   const firstImage = doc.images?.[0]?.image;
-  const imageUrl =
-    firstImage && typeof firstImage === "object" ? (firstImage.url ?? null) : null;
+  if (firstImage == null) return null;
+  if (typeof firstImage === "object") return firstImage.url ?? null;
+  try {
+    const media = await payload.findByID({
+      collection: "media",
+      id: firstImage,
+      depth: 0,
+    });
+    return (media as { url?: string | null }).url ?? null;
+  } catch (err) {
+    payload.logger.error(
+      `[social] could not load media ${firstImage} for "${doc.slug}": ${err}`,
+    );
+    return null;
+  }
+}
+
+async function announcePainting(payload: Payload, doc: PaintingDoc) {
+  const imageUrl = await resolveFirstImageUrl(payload, doc);
 
   const caption = buildAnnouncementCaption(doc);
-  const platforms = ["instagram", "facebook"] as const;
+  // Instagram rejects text-only posts, so without an image it gets skipped
+  // rather than failing the whole announcement.
+  const platforms: ("instagram" | "facebook")[] = imageUrl
+    ? ["instagram", "facebook"]
+    : ["facebook"];
   const result = await sendSocialPost({
     post: caption,
     platforms: [...platforms],
