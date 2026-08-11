@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Serif, Plus_Jakarta_Sans, Be_Vietnam_Pro } from "next/font/google";
 import Link from "next/link";
+import { MobileNav } from "@/components/mobile-nav";
 import { getFeaturedPaintings } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
 import "../globals.css";
@@ -98,6 +99,7 @@ export default function SiteLayout({
                 View available work
               </Link>
             </nav>
+            <MobileNav links={navLinks} />
           </div>
         </header>
 
