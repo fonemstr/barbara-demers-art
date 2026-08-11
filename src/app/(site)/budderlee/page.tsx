@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getBudderleePaintings } from "@/data/paintings";
 import { BUDDERLEE_ROSTER } from "@/data/budderlee-roster";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
+import { BudderleeSeal } from "@/components/budderlee-seal";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -62,23 +63,11 @@ export default async function BudderleePage() {
         <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />
         <Blob size={240} color="var(--secondary-container)" style={{ right: 40, top: 120, opacity: 0.5 }} />
         <div className="relative z-10 grid gap-12 md:grid-cols-[0.85fr_1.15fr] items-center">
-          {/* The village seal */}
-          <div className="relative mx-auto w-[240px] sm:w-[300px] md:w-[380px]">
-            <Blob
-              size={340}
-              color="var(--surface-container-highest)"
-              style={{ left: -50, bottom: -40, opacity: 0.8 }}
-            />
-            <div className="relative z-[1] aspect-square overflow-hidden rounded-full shadow-lifted bg-surface-container-lowest">
-              <Image
-                src="/budderlee/seal.webp"
-                alt="The Budderlee village seal — a great oak over the motto: rooted in kindness, a village where every resident matters"
-                fill
-                priority
-                sizes="(min-width: 768px) 380px, (min-width: 640px) 300px, 240px"
-                className="object-cover scale-[1.04]"
-              />
-            </div>
+          {/* The village seal — assembles itself, spins, and settles.
+              No blob behind it: the seal blends onto the page with
+              mix-blend-multiply, so anything underneath would tint it. */}
+          <div className="relative mx-auto w-[260px] sm:w-[330px] md:w-[420px]">
+            <BudderleeSeal />
           </div>
 
           {/* The introduction */}
