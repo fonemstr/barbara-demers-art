@@ -4,6 +4,7 @@ import * as migration_20260728_104917_add_free_shipping_tier from './20260728_10
 import * as migration_20260805_add_print_options from './20260805_add_print_options';
 import * as migration_20260806_120000_add_social_posts from './20260806_120000_add_social_posts';
 import * as migration_20260806_add_collections from './20260806_add_collections';
+import * as migration_20260811_add_commissioned_portraits from './20260811_add_commissioned_portraits';
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260806_add_collections.up,
     down: migration_20260806_add_collections.down,
     name: '20260806_add_collections'
+  },
+  {
+    up: migration_20260811_add_commissioned_portraits.up,
+    down: migration_20260811_add_commissioned_portraits.down,
+    name: '20260811_add_commissioned_portraits',
   },
 ];

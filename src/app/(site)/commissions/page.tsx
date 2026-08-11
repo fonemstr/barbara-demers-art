@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getFeaturedPaintings, getAllPaintings } from "@/data/paintings";
+import { getCommissionedPortraits } from "@/data/commissioned-portraits";
 import { CommissionsForm } from "@/components/commissions-form";
 import { CommissionDeposit } from "@/components/commission-deposit";
 import { CommissionsFAQ } from "@/components/commissions-faq";
@@ -37,6 +38,7 @@ const PROCESS_STEPS = [
 export default async function CommissionsPage() {
   const featured = await getFeaturedPaintings(3);
   const all = await getAllPaintings();
+  const portraits = await getCommissionedPortraits();
   const hero = featured[0] ?? all.find((p) => !p.sold) ?? all[0];
   const testimonialImg = featured[1]?.images[0] ?? hero?.images[0];
 
@@ -175,6 +177,84 @@ export default async function CommissionsPage() {
           </ol>
         </div>
       </section>
+
+      {/* ============================================================
+          PAST COMMISSIONS — delivered portraits with owner comments.
+          Hidden until the first entry is added in the admin.
+          ============================================================ */}
+      {portraits.length > 0 && (
+        <Section tone="surface" pad="lg">
+          <div className="max-w-2xl mb-14">
+            <Eyebrow>Past commissions</Eyebrow>
+            <h2 className="mt-4 font-serif text-4xl md:text-5xl leading-[1.08] tracking-[-0.015em]">
+              Portraits that found their way home.
+            </h2>
+            <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
+              Every commission starts as someone&apos;s story about an animal
+              they love. A few of those paintings, and what their owners said
+              when they arrived.
+            </p>
+          </div>
+          <div className="grid gap-10 md:grid-cols-2 lg:gap-14">
+            {portraits.map((portrait) => {
+              const meta = [
+                portrait.subject,
+                portrait.medium,
+                portrait.widthIn && portrait.heightIn
+                  ? `${portrait.widthIn}×${portrait.heightIn} in`
+                  : undefined,
+                portrait.year ? String(portrait.year) : undefined,
+              ]
+                .filter(Boolean)
+                .join(" · ");
+              const attribution = [portrait.ownerName, portrait.ownerLocation]
+                .filter(Boolean)
+                .join(", ");
+              return (
+                <figure
+                  key={portrait.id}
+                  className="bg-surface-container-lowest rounded-[var(--radius-lg)] overflow-hidden shadow-ambient-sm"
+                >
+                  <div className="relative aspect-[4/3] bg-surface-container">
+                    <Image
+                      src={portrait.images[0]}
+                      alt={`${portrait.title}${portrait.subject ? ` — commissioned portrait of a ${portrait.subject.toLowerCase()}` : " — commissioned portrait"}`}
+                      fill
+                      sizes="(min-width: 768px) 45vw, 90vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <figcaption className="p-7 md:p-8">
+                    <h3 className="font-serif text-2xl leading-tight text-on-surface">
+                      {portrait.title}
+                    </h3>
+                    {meta && (
+                      <p className="mt-1.5 text-sm text-on-surface-subtle">
+                        {meta}
+                      </p>
+                    )}
+                    {portrait.ownerQuote && (
+                      <blockquote className="mt-5 font-serif italic text-lg leading-relaxed text-on-surface-muted">
+                        &ldquo;{portrait.ownerQuote}&rdquo;
+                        {attribution && (
+                          <cite className="mt-3 block text-sm not-italic font-sans text-on-surface-subtle">
+                            — {attribution}
+                          </cite>
+                        )}
+                      </blockquote>
+                    )}
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+          <div className="mt-14 text-center">
+            <ButtonLink href="#inquiry" size="md" variant="secondary">
+              Start your own commission
+            </ButtonLink>
+          </div>
+        </Section>
+      )}
 
       {/* ============================================================
           FORM + TRUST PANEL

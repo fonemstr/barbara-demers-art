@@ -72,6 +72,7 @@ export interface Config {
     paintings: Painting;
     'journal-posts': JournalPost;
     'social-posts': SocialPost;
+    'commissioned-portraits': CommissionedPortrait;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -84,6 +85,7 @@ export interface Config {
     paintings: PaintingsSelect<false> | PaintingsSelect<true>;
     'journal-posts': JournalPostsSelect<false> | JournalPostsSelect<true>;
     'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
+    'commissioned-portraits': CommissionedPortraitsSelect<false> | CommissionedPortraitsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -219,7 +221,7 @@ export interface Painting {
    */
   subjectGroup?: ('dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
   /**
-   * Part of a named series? Meadowbrook paintings get their own page at /meadowbrook with character name and role.
+   * Part of a named series? Budderlee paintings get their own page at /budderlee with character name and role.
    */
   collection?: ('none' | 'meadowbrook') | null;
   /**
@@ -364,6 +366,51 @@ export interface SocialPost {
   createdAt: string;
 }
 /**
+ * Finished commissions shown on the commissions page, newest first. Add the portrait photo(s) and what the owner said about it.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "commissioned-portraits".
+ */
+export interface CommissionedPortrait {
+  id: number;
+  /**
+   * e.g. Wally in the Garden
+   */
+  title: string;
+  /**
+   * e.g. Golden Retriever, or the pet's name and breed
+   */
+  subject?: string | null;
+  /**
+   * Year painted
+   */
+  year?: number | null;
+  medium?: string | null;
+  widthIn?: number | null;
+  heightIn?: number | null;
+  /**
+   * First image is the one shown on the commissions page. A photo of the portrait in the owner's home works beautifully.
+   */
+  images: {
+    image: number | Media;
+    id?: string | null;
+  }[];
+  /**
+   * What the owner said when they received it, in their words. Shown as a quote under the portrait.
+   */
+  ownerQuote?: string | null;
+  /**
+   * How they'd like to be credited, e.g. Sarah M.
+   */
+  ownerName?: string | null;
+  /**
+   * e.g. Burlington, Vermont
+   */
+  ownerLocation?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -406,6 +453,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'social-posts';
         value: number | SocialPost;
+      } | null)
+    | ({
+        relationTo: 'commissioned-portraits';
+        value: number | CommissionedPortrait;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -591,6 +642,29 @@ export interface SocialPostsSelect<T extends boolean = true> {
   scheduleAt?: T;
   status?: T;
   result?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "commissioned-portraits_select".
+ */
+export interface CommissionedPortraitsSelect<T extends boolean = true> {
+  title?: T;
+  subject?: T;
+  year?: T;
+  medium?: T;
+  widthIn?: T;
+  heightIn?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  ownerQuote?: T;
+  ownerName?: T;
+  ownerLocation?: T;
   updatedAt?: T;
   createdAt?: T;
 }
