@@ -34,7 +34,13 @@ function placement(r: { x: number; y: number; w: number; h: number }) {
   };
 }
 
-const ORIGIN = `${SL + SW / 2}px ${ST + SW / 2}px`;
+// transform-origin is relative to each ELEMENT's own box, not the stage.
+// The group spans the full stage, so the stage center works for it; the
+// seal img is inset 50px, so it must use its own center — the design
+// reference set the stage center on both, making the seal orbit visibly
+// off-axis in the slow tail of the spin.
+const GROUP_ORIGIN = `${SL + SW / 2}px ${ST + SW / 2}px`;
+const SEAL_ORIGIN = "center";
 
 // Timeline (seconds). Total 13.2s, then holds the finished seal.
 const SPIN = 6.5;
@@ -175,7 +181,7 @@ export function BudderleeSeal() {
         <div
           ref={groupRef}
           className="absolute inset-0"
-          style={{ transformOrigin: ORIGIN, opacity: 0 }}
+          style={{ transformOrigin: GROUP_ORIGIN, opacity: 0 }}
         >
           <img
             ref={treeRef}
@@ -206,7 +212,7 @@ export function BudderleeSeal() {
           className="absolute select-none"
           style={{
             ...placement(RECTS.seal),
-            transformOrigin: ORIGIN,
+            transformOrigin: SEAL_ORIGIN,
             opacity: 0,
           }}
         />
