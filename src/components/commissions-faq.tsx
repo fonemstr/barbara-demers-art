@@ -26,7 +26,7 @@ const FAQ = [
   },
   {
     q: "Do you ship internationally?",
-    a: "Not at the moment — insured, tracked shipping is available within the US and Canada. If you're elsewhere and love a piece, reach out anyway; Barbara will let you know if that changes.",
+    a: "Not at the moment — insured, tracked shipping is available within the United States. If you're elsewhere and love a piece, reach out anyway; Barbara will let you know if that changes.",
   },
   {
     q: "Can I see the painting before it ships?",

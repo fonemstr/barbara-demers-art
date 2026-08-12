@@ -99,7 +99,7 @@ export async function POST(request: Request) {
           },
         },
       ],
-      shipping_address_collection: { allowed_countries: ["US", "CA"] },
+      shipping_address_collection: { allowed_countries: ["US"] },
       metadata: {
         painting_slug: painting.slug,
         ...(printOption
