@@ -26,7 +26,7 @@ export function buildAnnouncementCaption(p: AnnounceablePainting): string {
   const price =
     p.priceCents != null ? ` · ${formatPrice(p.priceCents)}` : "";
 
-  if (p.collection === "meadowbrook" && p.characterName) {
+  if (p.collection === "budderlee" && p.characterName) {
     const role = p.characterRole ? `, ${p.characterRole}` : "";
     return clamp(
       [

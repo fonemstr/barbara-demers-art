@@ -223,7 +223,7 @@ export interface Painting {
   /**
    * Part of a named series? Budderlee paintings get their own page at /budderlee with character name and role.
    */
-  collection?: ('none' | 'meadowbrook') | null;
+  collection?: ('none' | 'budderlee') | null;
   /**
    * e.g. Maisie
    */

@@ -223,15 +223,13 @@ export const Paintings: CollectionConfig = {
     {
       // Named, curated series — different axis from subjectGroup. A
       // Budderlee painting still appears in the main gallery; it also
-      // appears on the collection's own landing page. The stored value
-      // remains "meadowbrook" (legacy DB enum) — user-facing name is
-      // Budderlee.
+      // appears on the collection's own landing page.
       name: "collection",
       type: "select",
       defaultValue: "none",
       options: [
         { label: "None — standalone painting", value: "none" },
-        { label: "The Residents of Budderlee", value: "meadowbrook" },
+        { label: "The Residents of Budderlee", value: "budderlee" },
       ],
       admin: {
         description:
@@ -241,7 +239,7 @@ export const Paintings: CollectionConfig = {
     {
       type: "row",
       admin: {
-        condition: (data) => data?.collection === "meadowbrook",
+        condition: (data) => data?.collection === "budderlee",
       },
       fields: [
         {

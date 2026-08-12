@@ -10,10 +10,7 @@ export type { SubjectGroup };
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
-// "meadowbrook" is the legacy DB enum value for the Budderlee series —
-// renaming it requires a hand-applied Postgres migration, so the internal
-// value stays while all user-facing copy says Budderlee.
-export type PaintingCollection = "none" | "meadowbrook";
+export type PaintingCollection = "none" | "budderlee";
 
 export type PrintOption = {
   id: string;
@@ -151,7 +148,7 @@ const seedPaintings: Painting[] = [
     title: "Maisie, The Pie Maker",
     subject: "Mouse",
     subjectGroup: "other",
-    collection: "meadowbrook",
+    collection: "budderlee",
     characterName: "Maisie",
     characterRole: "The Pie Maker",
     year: 2026,
@@ -170,7 +167,7 @@ const seedPaintings: Painting[] = [
     title: "Reggie, The Night Watchman",
     subject: "Raccoon",
     subjectGroup: "wild",
-    collection: "meadowbrook",
+    collection: "budderlee",
     characterName: "Reggie",
     characterRole: "The Night Watchman",
     year: 2026,
@@ -314,7 +311,7 @@ export async function getAvailablePaintings(): Promise<Painting[]> {
  */
 export async function getBudderleePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
-  return all.filter((p) => p.collection === "meadowbrook");
+  return all.filter((p) => p.collection === "budderlee");
 }
 
 /**
