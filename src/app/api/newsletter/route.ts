@@ -59,6 +59,16 @@ export async function POST(request: Request) {
 
     const resend = requireResend();
 
+    // Resend's contacts.create upserts silently for existing addresses
+    // (verified live: no "already exists" error comes back), so knowing
+    // whether this is a first-time signup needs an explicit lookup. A
+    // failed lookup counts as new — worst case a repeat signup gets a
+    // second hello, which beats a first-timer getting none.
+    const existing = await resend.contacts
+      .get({ email })
+      .catch(() => ({ data: null }));
+    const alreadySubscribed = !!existing.data;
+
     // Store the signup as a Resend contact so broadcasts (new painting,
     // new Budderlee resident, studio news) can be sent to the whole
     // list from the Resend dashboard — no more hand-collected addresses.
@@ -83,8 +93,7 @@ export async function POST(request: Request) {
     // Welcome the subscriber, but only on a first-time signup — a repeat
     // signup already got one. Best effort: the contact is stored, so an
     // email hiccup must not fail the signup.
-    const isNewContact = !error;
-    if (isNewContact) {
+    if (!alreadySubscribed) {
       try {
         const { text, html } = welcomeEmail();
         await resend.emails.send({
