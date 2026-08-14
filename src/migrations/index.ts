@@ -6,6 +6,7 @@ import * as migration_20260806_120000_add_social_posts from './20260806_120000_a
 import * as migration_20260806_add_collections from './20260806_add_collections';
 import * as migration_20260811_add_commissioned_portraits from './20260811_add_commissioned_portraits';
 import * as migration_20260812_rename_meadowbrook_enum_to_budderlee from './20260812_rename_meadowbrook_enum_to_budderlee';
+import * as migration_20260814_add_newsletters from './20260814_add_newsletters';
 
 export const migrations = [
   {
@@ -47,5 +48,10 @@ export const migrations = [
     up: migration_20260812_rename_meadowbrook_enum_to_budderlee.up,
     down: migration_20260812_rename_meadowbrook_enum_to_budderlee.down,
     name: '20260812_rename_meadowbrook_enum_to_budderlee',
+  },
+  {
+    up: migration_20260814_add_newsletters.up,
+    down: migration_20260814_add_newsletters.down,
+    name: '20260814_add_newsletters',
   },
 ];

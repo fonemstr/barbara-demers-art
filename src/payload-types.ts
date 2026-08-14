@@ -73,6 +73,7 @@ export interface Config {
     'journal-posts': JournalPost;
     'social-posts': SocialPost;
     'commissioned-portraits': CommissionedPortrait;
+    newsletters: Newsletter;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     'journal-posts': JournalPostsSelect<false> | JournalPostsSelect<true>;
     'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
     'commissioned-portraits': CommissionedPortraitsSelect<false> | CommissionedPortraitsSelect<true>;
+    newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -411,6 +413,52 @@ export interface CommissionedPortrait {
   createdAt: string;
 }
 /**
+ * Write a newsletter, set status to “Send me a test” to preview it in your own inbox, then “Send to the collector list” and save. Unsubscribes are handled automatically.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters".
+ */
+export interface Newsletter {
+  id: number;
+  /**
+   * The email subject line.
+   */
+  subject: string;
+  /**
+   * Optional. The short snippet inboxes show next to the subject. Falls back to the first line of the newsletter.
+   */
+  previewText?: string | null;
+  /**
+   * The newsletter itself. Headings, links, and images all work — images are best uploaded landscape and under ~1MB.
+   */
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * “Send me a test” emails only the studio and returns to Draft. “Send to the collector list” goes to every subscriber. Both happen when you save.
+   */
+  status: 'draft' | 'test' | 'send' | 'sent' | 'failed';
+  sentAt?: string | null;
+  /**
+   * Delivery report from the last send attempt.
+   */
+  result?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -457,6 +505,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'commissioned-portraits';
         value: number | CommissionedPortrait;
+      } | null)
+    | ({
+        relationTo: 'newsletters';
+        value: number | Newsletter;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -665,6 +717,20 @@ export interface CommissionedPortraitsSelect<T extends boolean = true> {
   ownerQuote?: T;
   ownerName?: T;
   ownerLocation?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "newsletters_select".
+ */
+export interface NewslettersSelect<T extends boolean = true> {
+  subject?: T;
+  previewText?: T;
+  body?: T;
+  status?: T;
+  sentAt?: T;
+  result?: T;
   updatedAt?: T;
   createdAt?: T;
 }
