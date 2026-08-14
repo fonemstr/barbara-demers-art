@@ -219,9 +219,9 @@ export interface Painting {
    */
   subject?: string | null;
   /**
-   * Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other.
+   * Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other. Pick None for collection paintings (like Budderlee residents) — they appear in the gallery under All, without a species filter.
    */
-  subjectGroup?: ('dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
+  subjectGroup?: ('none' | 'dog' | 'cat' | 'horse' | 'farm' | 'wild' | 'bird' | 'other') | null;
   /**
    * Part of a named series? Budderlee paintings get their own page at /budderlee with character name and role.
    */

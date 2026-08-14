@@ -207,6 +207,10 @@ export const Paintings: CollectionConfig = {
       type: "select",
       defaultValue: "other",
       options: [
+        {
+          label: "None — collection painting (e.g. a Budderlee resident)",
+          value: "none",
+        },
         { label: "Dog", value: "dog" },
         { label: "Cat", value: "cat" },
         { label: "Pasture — Horses", value: "horse" },
@@ -217,7 +221,7 @@ export const Paintings: CollectionConfig = {
       ],
       admin: {
         description:
-          "Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other.",
+          "Used for gallery filters and homepage collection blocks. Pasture = farm + horse; The Wild = wild + bird; Small Wonders = other. Pick None for collection paintings (like Budderlee residents) — they appear in the gallery under All, without a species filter.",
       },
     },
     {

@@ -2,6 +2,7 @@
 // client components can import labels without pulling Payload into the bundle.
 
 export type SubjectGroup =
+  | "none"
   | "dog"
   | "cat"
   | "horse"
@@ -11,6 +12,10 @@ export type SubjectGroup =
   | "other";
 
 export const SUBJECT_GROUP_LABELS: Record<SubjectGroup, string> = {
+  // Collection-only paintings (e.g. Budderlee residents) — deliberately
+  // absent from SUBJECT_GROUPS below so no gallery filter chip appears;
+  // they show under "All" and on their collection's own page.
+  none: "Original Paintings",
   dog: "Dogs",
   cat: "Cats",
   horse: "Pasture — Horses",
