@@ -34,6 +34,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "src/payload-types.ts"),
   },
   db: postgresAdapter({
+    // Never dev-push schema: local dev runs against the production
+    // database, and push mode re-inserts the `dev` marker row that makes
+    // `payload migrate` prompt (and silently skip) in CI. All schema
+    // changes go through files in src/migrations, applied on deploy.
+    push: false,
     pool: {
       // Vercel Postgres exposes POSTGRES_URL; the new Neon integration uses
       // DATABASE_URL; some integrations only set POSTGRES_PRISMA_URL. Accept
