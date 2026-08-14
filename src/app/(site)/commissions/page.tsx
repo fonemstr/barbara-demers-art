@@ -22,8 +22,8 @@ const PROCESS_STEPS = [
     body: "Share a few strong reference photos and the story of the animal. Barbara will look for the image with the most presence and feeling.",
   },
   {
-    title: "We talk about fit",
-    body: "Because originals are the heart of the studio, commissions are accepted selectively when the subject and timing feel aligned.",
+    title: "We plan it together",
+    body: "Barbara replies personally to every inquiry. Together you'll settle on the size, the reference photo, and the timeline before any deposit is taken.",
   },
   {
     title: "Expressive realism",
@@ -55,16 +55,17 @@ export default async function CommissionsPage() {
           {/* Copy column */}
           <div className="flex flex-col gap-7">
             <ArtistNote icon="✉️">
-              Selective inquiries welcome.
+              Now accepting commissions.
             </ArtistNote>
             <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
               Custom work in the spirit of Barbara&apos;s{" "}
               <em className="font-normal italic text-primary">originals</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
-              Barbara&apos;s primary focus is original expressive realism
-              paintings. She occasionally accepts commissions when the subject,
-              story, and timing feel aligned with that way of seeing.
+              Barbara now paints full time, and commissions are a central
+              part of the studio. Tell her about the animal you love and
+              she&apos;ll bring that presence to canvas in her expressive
+              realism style.
             </p>
             <div className="flex flex-wrap gap-4 mt-3">
               <ButtonLink href="#inquiry" size="md">
@@ -310,9 +311,9 @@ export default async function CommissionsPage() {
               finished — before it ships.
             </p>
             <p className="mt-3 text-sm text-on-surface-subtle leading-relaxed">
-              Haven&rsquo;t written yet? Start with the inquiry above —
-              commissions are accepted selectively, and Barbara confirms every
-              project personally before a deposit is taken.
+              Haven&rsquo;t written yet? Start with the inquiry above.
+              Barbara replies to every request and confirms each project
+              personally before a deposit is taken.
             </p>
           </div>
           <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-8 md:p-10">

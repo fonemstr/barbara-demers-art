@@ -130,9 +130,9 @@ export default function AboutPage() {
             The studio centers on original work.
           </h2>
           <p className="mt-5 text-[17px] leading-relaxed text-on-surface-muted">
-            Barbara&apos;s primary focus is creating original expressive realism
-            paintings. She occasionally accepts commissions when the subject,
-            story, and timing feel aligned with the spirit of the work.
+            Barbara paints full time, creating original expressive realism
+            paintings. Commissions are a welcome part of the studio: if
+            there&apos;s an animal you love, she&apos;d like to hear the story.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link

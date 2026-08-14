@@ -8,7 +8,7 @@ function welcomeEmail() {
   const text = [
     "Thank you for joining the collector list.",
     "",
-    "Here's what to expect: first look at new original paintings, new residents arriving in Budderlee, the stories behind the paintings, and the occasional commission opening. Two emails a month at most.",
+    "Here's what to expect: first look at new original paintings, new residents arriving in Budderlee, the stories behind the paintings, and commission news. Two emails a month at most.",
     "",
     `Browse available work: ${SITE_URL}/gallery`,
     `Meet the Residents of Budderlee: ${SITE_URL}/budderlee`,
@@ -26,8 +26,8 @@ function welcomeEmail() {
       <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">
         Thank you for joining. Here's what to expect: first look at new
         original paintings, new residents arriving in Budderlee, the
-        stories behind the paintings, and the occasional commission
-        opening. Two emails a month at most.
+        stories behind the paintings, and commission news. Two emails a
+        month at most.
       </p>
       <p style="margin:0 0 8px;font-size:16px;line-height:1.6;">
         While you're here:

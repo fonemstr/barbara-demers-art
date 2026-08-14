@@ -310,14 +310,14 @@ export default async function HomePage() {
           ============================================================ */}
       <section className="bg-surface-container-low py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <Eyebrow>Also available</Eyebrow>
+          <Eyebrow>Commissions</Eyebrow>
           <h2 className="mt-4 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
-            Selective commissions.
+            Custom portraits, warmly welcomed.
           </h2>
           <p className="mt-5 text-lg text-on-surface-muted leading-relaxed">
-            Barbara occasionally accepts custom animal portraits when the
-            subject, story, and timing feel aligned with the spirit of the
-            studio.
+            Custom animal portraits are now a full-time part of the studio.
+            Share a few photos and your animal&apos;s story, and Barbara will
+            paint the presence she sees.
           </p>
           <div className="mt-8">
             <ButtonLink href="/commissions" size="md" variant="secondary">
@@ -341,7 +341,7 @@ export default async function HomePage() {
           </h2>
           <p className="mt-5 text-lg text-on-surface-muted">
             First access to new originals, collection releases, the stories
-            behind the paintings, and the occasional commission opening.
+            behind the paintings, and commission news.
           </p>
           <div className="mt-9 max-w-lg mx-auto">
             <NewsletterForm />
