@@ -90,9 +90,14 @@ export default function SiteLayout({
                 priority
                 className="h-10 w-auto"
               />
-              <span className="hidden sm:inline font-serif text-xl tracking-tight">
-                Barbara J Demers
-              </span>
+              <Image
+                src="/brand/name-40.webp"
+                alt="Barbara J. Demers"
+                width={281}
+                height={20}
+                priority
+                className="hidden sm:block h-[15px] w-auto"
+              />
             </Link>
             <nav className="hidden md:flex items-center gap-9 text-[15px]">
               {navLinks.map((link) => (
