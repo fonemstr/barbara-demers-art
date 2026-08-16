@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Serif, Plus_Jakarta_Sans, Be_Vietnam_Pro } from "next/font/google";
 import Link from "next/link";
+import Image from "next/image";
 import { MobileNav } from "@/components/mobile-nav";
 import { getFeaturedPaintings } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
@@ -78,9 +79,20 @@ export default function SiteLayout({
           <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between">
             <Link
               href="/"
-              className="font-serif text-xl tracking-tight text-on-surface"
+              aria-label="Barbara J Demers — home"
+              className="flex items-center gap-3 text-on-surface"
             >
-              Barbara J Demers
+              <Image
+                src="/brand/monogram-96.webp"
+                alt=""
+                width={71}
+                height={48}
+                priority
+                className="h-10 w-auto"
+              />
+              <span className="hidden sm:inline font-serif text-xl tracking-tight">
+                Barbara J Demers
+              </span>
             </Link>
             <nav className="hidden md:flex items-center gap-9 text-[15px]">
               {navLinks.map((link) => (
@@ -109,10 +121,14 @@ export default function SiteLayout({
         <footer className="mt-24 bg-surface-container-low">
           <div className="mx-auto max-w-6xl px-6 py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
-              <p className="font-serif text-xl text-on-surface">
-                Barbara J Demers
-              </p>
-              <p className="text-sm text-on-surface-muted mt-1">
+              <Image
+                src="/brand/lockup-160.webp"
+                alt="Barbara J. Demers, Artist"
+                width={231}
+                height={160}
+                className="h-20 w-auto"
+              />
+              <p className="text-sm text-on-surface-muted mt-4">
                 Original expressive realism paintings · 10% of profits donated to animal welfare
               </p>
             </div>
