@@ -57,7 +57,7 @@ export default async function CommissionsPage() {
             <ArtistNote icon="✉️">
               Now accepting commissions.
             </ArtistNote>
-            <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] tracking-[-0.02em] text-on-surface text-balance">
+            <h1 className="font-serif text-4xl md:text-6xl leading-[1.08] tracking-[-0.02em] text-on-surface text-balance">
               Custom work in the spirit of Barbara&apos;s{" "}
               <em className="font-normal italic text-primary">originals</em>.
             </h1>
