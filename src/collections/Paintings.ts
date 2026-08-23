@@ -11,11 +11,18 @@ import { SITE_URL } from "../lib/site-url";
 // Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
 // Next's runtime.
 async function revalidatePaintingPaths(slugs: (string | undefined)[]) {
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/");
-  revalidatePath("/gallery");
-  for (const slug of slugs) {
-    if (slug) revalidatePath(`/gallery/${slug}`);
+  // Revalidation only works inside a Next request; scripts and CLI runs
+  // must still be able to save, so never let it fail the write.
+  try {
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/");
+    revalidatePath("/gallery");
+    revalidatePath("/budderlee");
+    for (const slug of slugs) {
+      if (slug) revalidatePath(`/gallery/${slug}`);
+    }
+  } catch {
+    // outside a request context (scripts, migrations) — nothing to do
   }
 }
 
@@ -154,6 +161,23 @@ export const Paintings: CollectionConfig = {
     read: () => true,
   },
   hooks: {
+    beforeValidate: [
+      // Slugs are URLs: keep them lowercase and clean so case variants never
+      // 404 or split Google's index. Titles lose stray whitespace.
+      ({ data }) => {
+        if (!data) return data;
+        if (typeof data.slug === "string") {
+          data.slug = data.slug
+            .trim()
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+        }
+        if (typeof data.title === "string") data.title = data.title.trim();
+        if (typeof data.subject === "string") data.subject = data.subject.trim();
+        return data;
+      },
+    ],
     afterChange: [
       async ({ doc, previousDoc, req }) => {
         // Include the previous slug in case the editor renamed it, so the

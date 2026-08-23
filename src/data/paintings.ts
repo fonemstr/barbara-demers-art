@@ -39,6 +39,7 @@ export type Painting = {
   characterRole?: string;
   sold?: boolean;
   featured?: boolean;
+  updatedAt?: string;
 };
 
 export const DEFAULT_PAINTING_STORY =
@@ -209,6 +210,7 @@ type PayloadPainting = {
   characterRole?: string | null;
   sold?: boolean;
   featured?: boolean;
+  updatedAt?: string;
 };
 
 function normalizeOptionalText(value?: string | null): string | undefined {
@@ -254,6 +256,7 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     characterRole: normalizeOptionalText(p.characterRole),
     sold: p.sold ?? false,
     featured: p.featured ?? false,
+    updatedAt: p.updatedAt,
   };
 }
 

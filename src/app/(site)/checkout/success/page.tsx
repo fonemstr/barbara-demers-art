@@ -4,7 +4,10 @@ import { ArtistNote } from "@/components/ui/artist-note";
 import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
 
-export const metadata = { title: "Order received" };
+export const metadata = {
+  title: "Order received",
+  robots: { index: false, follow: false },
+};
 
 const TRUST = [
   {

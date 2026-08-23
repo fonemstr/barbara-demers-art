@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import {
   getAllPaintings,
@@ -77,6 +77,11 @@ export default async function PaintingPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Slugs are lowercase; a capitalized variant (two early paintings were
+  // published that way) gets a permanent redirect instead of a 404.
+  if (slug !== slug.toLowerCase()) {
+    permanentRedirect(`/gallery/${slug.toLowerCase()}`);
+  }
   const painting = await getPainting(slug);
   if (!painting) notFound();
 
