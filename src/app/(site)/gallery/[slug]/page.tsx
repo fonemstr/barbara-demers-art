@@ -19,6 +19,8 @@ import { Chip } from "@/components/ui/chip";
 import { Blob } from "@/components/ui/blob";
 import { Section } from "@/components/ui/section";
 import { ButtonLink } from "@/components/ui/button";
+import { JsonLd } from "@/components/json-ld";
+import { paintingGraph } from "@/lib/schema";
 
 // Known slugs are prerendered at build; new slugs get static-generated on
 // first request (dynamicParams defaults to true) and revalidated every
@@ -89,6 +91,7 @@ export default async function PaintingPage({
 
   return (
     <>
+      <JsonLd data={paintingGraph(painting)} />
       {/* HERO — image + metadata + buy */}
       <Section tone="surface" pad="md" className="overflow-hidden">
         <Link

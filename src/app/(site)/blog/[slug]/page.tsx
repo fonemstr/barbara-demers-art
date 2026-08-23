@@ -7,6 +7,8 @@ import { LexicalRichText } from "@/components/rich-text";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { blogPostGraph } from "@/lib/schema";
 
 export const revalidate = 60;
 
@@ -60,6 +62,7 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <JsonLd data={blogPostGraph(post)} />
       <Section tone="surface" pad="md" maxWidth="3xl" className="overflow-hidden">
         <Blob size={300} color="var(--surface-variant)" style={{ right: -120, top: -30, opacity: 0.6 }} />
         <Link

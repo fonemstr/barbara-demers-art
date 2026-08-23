@@ -5,6 +5,8 @@ import Image from "next/image";
 import { MobileNav } from "@/components/mobile-nav";
 import { getFeaturedPaintings } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
+import { JsonLd } from "@/components/json-ld";
+import { siteGraph } from "@/lib/schema";
 import "../globals.css";
 
 const notoSerif = Noto_Serif({
@@ -65,9 +67,11 @@ const navLinks = [
   { href: "/commissions", label: "Commissions" },
 ];
 
-export default function SiteLayout({
+export default async function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // The artist entity's image: the featured painting, same as the share image.
+  const siteShareImage = (await getFeaturedPaintings(1))[0]?.images[0];
   return (
     <html
       lang="en"
@@ -120,6 +124,7 @@ export default function SiteLayout({
           </div>
         </header>
 
+        <JsonLd data={siteGraph(siteShareImage)} />
         <main className="flex-1">{children}</main>
 
         {/* Footer — uses a layered surface shift instead of a hairline */}

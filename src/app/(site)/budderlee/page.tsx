@@ -10,6 +10,8 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { ArtistNote } from "@/components/ui/artist-note";
 import { Chip } from "@/components/ui/chip";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { collectionGraph } from "@/lib/schema";
 
 export const metadata = {
   title: "The Residents of Budderlee, Collectible Animal Paintings",
@@ -59,6 +61,15 @@ export default async function BudderleePage() {
 
   return (
     <div className="overflow-hidden">
+      <JsonLd
+        data={collectionGraph({
+          path: "/budderlee",
+          name: "The Residents of Budderlee",
+          description: metadata.description,
+          image: "/budderlee/seal.webp",
+          itemPaths: residents.map((p) => `/gallery/${p.slug}`),
+        })}
+      />
       {/* HERO — the village seal and introduction */}
       <Section tone="surface" pad="lg" className="overflow-hidden">
         <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />

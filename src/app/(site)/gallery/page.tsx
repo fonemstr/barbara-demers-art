@@ -3,6 +3,8 @@ import { GalleryList } from "@/components/gallery-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { collectionGraph } from "@/lib/schema";
 
 export const metadata = {
   title: "Original Animal Paintings for Sale",
@@ -23,6 +25,14 @@ export default async function GalleryPage() {
 
   return (
     <>
+      <JsonLd
+        data={collectionGraph({
+          path: "/gallery",
+          name: "Available Work",
+          description: metadata.description,
+          itemPaths: paintings.map((p) => `/gallery/${p.slug}`),
+        })}
+      />
       <Section tone="surface" pad="md" className="overflow-hidden">
         <Blob
           size={420}

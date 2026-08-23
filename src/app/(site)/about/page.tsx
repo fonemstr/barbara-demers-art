@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { profileGraph } from "@/lib/schema";
 
 export const metadata = {
   title: { absolute: "About Barbara J Demers, Animal Painter" },
@@ -15,6 +17,7 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
+      <JsonLd data={profileGraph()} />
       {/* HEADER */}
       <Section tone="surface" pad="md" className="overflow-hidden">
         <Blob size={360} color="var(--secondary-container)" style={{ right: -80, top: -40, opacity: 0.5 }} />

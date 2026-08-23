@@ -4,6 +4,8 @@ import { getAllPosts } from "@/lib/blog";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { collectionGraph } from "@/lib/schema";
 
 export const metadata = {
   title: "Studio Journal",
@@ -33,6 +35,14 @@ export default async function BlogIndexPage() {
 
   return (
     <>
+      <JsonLd
+        data={collectionGraph({
+          path: "/blog",
+          name: "Studio Journal",
+          description: metadata.description,
+          itemPaths: posts.map((p) => `/blog/${p.slug}`),
+        })}
+      />
       <Section tone="surface" pad="md" className="overflow-hidden">
         <Blob size={360} color="var(--secondary-container)" style={{ left: -80, top: -40, opacity: 0.45 }} />
         <div className="relative z-10">

@@ -9,6 +9,8 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { ArtistNote } from "@/components/ui/artist-note";
 import { ButtonLink } from "@/components/ui/button";
 import { Blob } from "@/components/ui/blob";
+import { JsonLd } from "@/components/json-ld";
+import { commissionsGraph } from "@/lib/schema";
 
 export const metadata = {
   title: "Custom Pet Portrait Paintings and Commissions",
@@ -49,6 +51,7 @@ export default async function CommissionsPage() {
 
   return (
     <div className="overflow-hidden">
+      <JsonLd data={commissionsGraph(hero?.images[0])} />
       {/* ============================================================
           HERO — moved from former home page; commissions-focused
           ============================================================ */}
