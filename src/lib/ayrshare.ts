@@ -121,17 +121,23 @@ const HANDLE_URLS: Record<string, (handle: string) => string> = {
   bluesky: (h) => `https://bsky.app/profile/${h}`,
 };
 
+// Known handles that Ayrshare does not report. Its Pinterest entry carries
+// neither a username nor a usable profileUrl, so the link is pinned here.
+const HANDLE_OVERRIDES: Record<string, string> = {
+  pinterest: "barbgbcreations",
+};
+
 function profileUrlFor(
   platform: string,
   entry: { username?: string; profileUrl?: string },
 ): string | null {
-  const handle = entry.username?.trim();
+  const handle = HANDLE_OVERRIDES[platform] ?? entry.username?.trim();
   const fromUrl = entry.profileUrl?.trim();
   const validUrl = fromUrl && /^https?:\/\/\S+$/.test(fromUrl) ? fromUrl : null;
   const build = HANDLE_URLS[platform];
   if (build && handle && /^@?[\w.-]+$/.test(handle)) {
-    // Only override a valid profileUrl when it is clearly display-name based.
-    if (!validUrl) return build(handle);
+    // A pinned handle always wins; otherwise only fill in for a bad profileUrl.
+    if (HANDLE_OVERRIDES[platform] || !validUrl) return build(handle);
   }
   return validUrl;
 }
