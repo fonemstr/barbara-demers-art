@@ -84,7 +84,7 @@ export default async function HomePage() {
           {/* Copy column */}
           <div className="flex flex-col gap-7">
             <Eyebrow>Original expressive realism paintings</Eyebrow>
-            <h1 className="font-serif text-4xl md:text-6xl leading-[1.08] tracking-[-0.02em] text-on-surface text-balance">
+            <h1 className="font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-on-surface text-balance">
               Original paintings that ask us to{" "}<br className="hidden sm:block" />
               <em className="font-normal italic text-primary">look again</em>.
             </h1>
