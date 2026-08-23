@@ -84,11 +84,11 @@ export default async function SiteLayout({
       <body className="min-h-full flex flex-col bg-surface text-on-surface">
         {/* Top nav — glass over paper, no dividers */}
         <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color-mix(in_srgb,var(--surface)_72%,transparent)]">
-          <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between">
+          <div className="mx-auto max-w-6xl px-6 py-5 flex items-center justify-between gap-6">
             <Link
               href="/"
               aria-label="Barbara J Demers — home"
-              className="flex items-center gap-3 text-on-surface"
+              className="flex items-center gap-3 text-on-surface shrink-0"
             >
               <Image
                 src="/brand/monogram-96.webp"
@@ -104,10 +104,10 @@ export default async function SiteLayout({
                 width={281}
                 height={20}
                 priority
-                className="hidden sm:block h-[15px] w-auto"
+                className="hidden sm:block lg:hidden xl:block h-[15px] w-auto"
               />
             </Link>
-            <nav className="hidden md:flex items-center gap-9 text-[15px]">
+            <nav className="hidden lg:flex items-center gap-8 text-[15px] whitespace-nowrap shrink-0">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}

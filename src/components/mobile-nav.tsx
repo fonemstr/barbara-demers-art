@@ -19,7 +19,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         onClick={() => setOpen(!open)}
         aria-expanded={open}
@@ -52,7 +52,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           block, which would trap a fixed-position overlay inside it. */}
       {open &&
         createPortal(
-          <div className="fixed inset-0 z-30 md:hidden backdrop-blur-xl bg-[color-mix(in_srgb,var(--surface)_92%,transparent)]">
+          <div className="fixed inset-0 z-30 lg:hidden backdrop-blur-xl bg-[color-mix(in_srgb,var(--surface)_92%,transparent)]">
             <nav className="flex h-full flex-col justify-center px-8 pb-16">
               <ul className="flex flex-col gap-2">
                 {links.map((link) => (
