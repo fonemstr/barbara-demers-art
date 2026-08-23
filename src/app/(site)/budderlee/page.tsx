@@ -75,7 +75,7 @@ export default async function BudderleePage() {
             <ArtistNote icon="🏡">
               A new collection, one resident at a time.
             </ArtistNote>
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-[-0.02em] text-balance">
+            <h1 className="font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-balance">
               The Residents of{" "}
               <em className="font-normal italic text-primary">Budderlee</em>
             </h1>

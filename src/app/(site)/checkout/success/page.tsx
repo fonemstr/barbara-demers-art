@@ -31,7 +31,7 @@ export default function CheckoutSuccessPage() {
           <ArtistNote icon="🎉" className="mx-auto">
             Order confirmed.
           </ArtistNote>
-          <h1 className="mt-6 font-serif text-5xl md:text-6xl leading-[1.05] tracking-[-0.02em] text-balance">
+          <h1 className="mt-6 font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-balance">
             Your painting is on its way.
           </h1>
           <p className="mt-6 text-lg text-on-surface-muted leading-relaxed text-pretty">

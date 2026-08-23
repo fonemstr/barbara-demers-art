@@ -70,7 +70,7 @@ export default async function BlogPostPage({
 
         <header className="relative z-[2]">
           <Eyebrow>{formatDate(post.date)}</Eyebrow>
-          <h1 className="mt-4 font-serif text-4xl md:text-6xl leading-[1.05] tracking-[-0.02em] text-balance">
+          <h1 className="mt-4 font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-balance">
             {post.title}
           </h1>
           {post.excerpt && (

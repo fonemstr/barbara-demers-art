@@ -116,7 +116,7 @@ export default async function PaintingPage({
               {painting.sold && <Chip>Sold</Chip>}
             </div>
 
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-[-0.015em] text-balance">
+            <h1 className="font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-balance">
               {painting.title}
             </h1>
 

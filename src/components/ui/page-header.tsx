@@ -32,8 +32,8 @@ export function PageHeader({
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h1
         className={cn(
-          "font-serif leading-[1.05] tracking-[-0.02em] text-on-surface text-balance",
-          "text-5xl md:text-6xl lg:text-7xl",
+          "font-serif leading-[1.1] tracking-[-0.015em] text-on-surface text-balance",
+          "text-3xl md:text-5xl",
           eyebrow && "mt-5"
         )}
       >
