@@ -95,7 +95,7 @@ export default async function BudderleePage() {
               ))}
             </div>
             <p className="text-sm text-on-surface-subtle">
-              Originals $95–$125 · prints of every resident · collect them
+              Originals $195 · prints of every resident · collect them
               all and build the village
             </p>
           </div>

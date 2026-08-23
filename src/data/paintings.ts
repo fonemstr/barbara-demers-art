@@ -155,7 +155,7 @@ const seedPaintings: Painting[] = [
     medium: "Acrylic on panel",
     widthIn: 5,
     heightIn: 5,
-    priceCents: 9500,
+    priceCents: 19500,
     sizeTier: "small",
     description:
       "Maisie carries a tray of fresh pies through the village square. Nobody in Budderlee has ever refused a slice, and nobody ever will.",
@@ -174,7 +174,7 @@ const seedPaintings: Painting[] = [
     medium: "Acrylic on panel",
     widthIn: 5,
     heightIn: 5,
-    priceCents: 12500,
+    priceCents: 19500,
     sizeTier: "small",
     description:
       "Lantern in paw, Reggie makes his rounds while Budderlee sleeps. He has never once missed a night, or a midnight snack.",
