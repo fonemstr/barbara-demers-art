@@ -6,7 +6,9 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = {
-  title: "About",
+  title: { absolute: "About Barbara J Demers, Animal Painter" },
+  description:
+    "Meet Barbara J Demers, a full-time painter of original expressive realism animal art and custom pet portraits. Her story, her process, and why 10% of every original supports animal welfare.",
   alternates: { canonical: "/about" },
 };
 

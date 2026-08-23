@@ -11,7 +11,9 @@ import { ButtonLink } from "@/components/ui/button";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = {
-  title: "Commissions",
+  title: "Custom Pet Portrait Paintings and Commissions",
+  description:
+    "Commission a custom pet portrait or animal painting in acrylic on canvas by Barbara J Demers. Sizes from 12×16 in ($650) to 30×40 in, progress photos, insured shipping, and a personal reply to every inquiry.",
   alternates: { canonical: "/commissions" },
 };
 
@@ -61,14 +63,16 @@ export default async function CommissionsPage() {
               Now accepting commissions.
             </ArtistNote>
             <h1 className="font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-on-surface text-balance">
-              Custom work in the spirit of Barbara&apos;s{" "}
+              Custom pet and animal portraits, painted in the spirit of
+              Barbara&apos;s{" "}
               <em className="font-normal italic text-primary">originals</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
-              Barbara now paints full time, and commissions are a central
-              part of the studio. Tell her about the animal you love and
-              she&apos;ll bring that presence to canvas in her expressive
-              realism style.
+              Barbara paints custom portraits of dogs, cats, horses, and farm
+              animals from your photos, in acrylic on canvas. Sizes run from
+              12×16 inches (from $650) to 30×40 inches, most commissions
+              ship within 4 to 6 weeks, and she replies personally to every
+              inquiry.
             </p>
             <div className="flex flex-wrap gap-4 mt-3">
               <ButtonLink href="#inquiry" size="md">

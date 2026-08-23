@@ -12,7 +12,7 @@ import { Chip } from "@/components/ui/chip";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = {
-  title: "The Residents of Budderlee",
+  title: "The Residents of Budderlee, Collectible Animal Paintings",
   alternates: { canonical: "/budderlee" },
   description:
     "A growing series of 5×5 inch original character portraits — the animal residents of Budderlee, a village rooted in kindness. Collect them all and build the village.",

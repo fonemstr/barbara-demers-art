@@ -6,7 +6,9 @@ import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
 
 export const metadata = {
-  title: "Journal",
+  title: "Studio Journal",
+  description:
+    "Notes from Barbara J Demers's painting studio: the stories behind new animal paintings, works in progress, Budderlee arrivals, and commission spotlights.",
   alternates: { canonical: "/blog" },
 };
 

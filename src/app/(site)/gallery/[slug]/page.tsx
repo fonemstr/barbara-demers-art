@@ -38,15 +38,26 @@ export async function generateMetadata({
   const { slug } = await params;
   const painting = await getPainting(slug);
   if (!painting) return {};
+  // Search-facing title names the subject and medium; bare artwork titles
+  // ("Reflection", "The Three") tell Google nothing.
+  const subject = painting.subject?.trim();
+  const seoTitle = [
+    painting.title.trim(),
+    `Original ${subject ? `${subject} ` : ""}Painting, ${painting.medium}`,
+  ].join(" — ");
+  const description =
+    painting.description && painting.description.trim().length > 60
+      ? painting.description.trim()
+      : `${painting.title.trim()}, an original ${painting.medium.toLowerCase()} painting${subject ? ` of a ${subject.toLowerCase()}` : ""} by Barbara J Demers, ${painting.widthIn}×${painting.heightIn} in. ${painting.sold ? "The original has sold; archival prints may be available." : "Available now, shipped insured from the studio."}`;
   return {
-    title: painting.title,
-    description: painting.description,
+    title: seoTitle,
+    description,
     alternates: { canonical: `/gallery/${painting.slug}` },
     openGraph: {
       type: "article",
       siteName: "Barbara J Demers",
-      title: painting.title,
-      description: painting.description,
+      title: seoTitle,
+      description,
       images: [
         {
           url: painting.images[0],

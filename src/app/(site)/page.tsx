@@ -16,7 +16,12 @@ import { Blob } from "@/components/ui/blob";
 export const revalidate = 60;
 
 // Canonical URL so apex/www and redirected variants never read as duplicates.
-export const metadata = { alternates: { canonical: "/" } };
+export const metadata = {
+  title: { absolute: "Original Animal Paintings and Custom Pet Portraits | Barbara J Demers" },
+  description:
+    "Original expressive realism paintings of animals, insects, and the natural world, plus custom pet portrait commissions, by Barbara J Demers. Acrylic on canvas, shipped insured from the studio. 10% of profits support animal welfare.",
+  alternates: { canonical: "/" },
+};
 
 type Collection = {
   slug: string;
@@ -88,7 +93,7 @@ export default async function HomePage() {
           <div className="flex flex-col gap-7">
             <Eyebrow>Original expressive realism paintings</Eyebrow>
             <h1 className="font-serif text-3xl md:text-5xl leading-[1.1] tracking-[-0.015em] text-on-surface text-balance">
-              Original paintings that ask us to{" "}<br className="hidden sm:block" />
+              Original animal paintings that ask us to{" "}<br className="hidden sm:block" />
               <em className="font-normal italic text-primary">look again</em>.
             </h1>
             <p className="text-lg md:text-xl text-on-surface-muted max-w-xl leading-relaxed">
