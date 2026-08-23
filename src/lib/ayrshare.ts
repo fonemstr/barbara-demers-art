@@ -108,6 +108,34 @@ export type SocialProfile = {
   url: string;
 };
 
+// Ayrshare sometimes derives profileUrl from the display name (seen with
+// Pinterest: "pinterest.com/The Artist Barbara J Demers"). Prefer a URL
+// built from the handle where the platform's URL scheme is known, and never
+// emit a URL containing whitespace.
+const HANDLE_URLS: Record<string, (handle: string) => string> = {
+  pinterest: (h) => `https://www.pinterest.com/${h}/`,
+  instagram: (h) => `https://www.instagram.com/${h}/`,
+  tiktok: (h) => `https://www.tiktok.com/@${h.replace(/^@/, "")}`,
+  twitter: (h) => `https://x.com/${h.replace(/^@/, "")}`,
+  threads: (h) => `https://www.threads.net/@${h.replace(/^@/, "")}`,
+  bluesky: (h) => `https://bsky.app/profile/${h}`,
+};
+
+function profileUrlFor(
+  platform: string,
+  entry: { username?: string; profileUrl?: string },
+): string | null {
+  const handle = entry.username?.trim();
+  const fromUrl = entry.profileUrl?.trim();
+  const validUrl = fromUrl && /^https?:\/\/\S+$/.test(fromUrl) ? fromUrl : null;
+  const build = HANDLE_URLS[platform];
+  if (build && handle && /^@?[\w.-]+$/.test(handle)) {
+    // Only override a valid profileUrl when it is clearly display-name based.
+    if (!validUrl) return build(handle);
+  }
+  return validUrl;
+}
+
 export async function getSocialProfiles(): Promise<SocialProfile[]> {
   const apiKey = process.env.AYRSHARE_API_KEY;
   if (!apiKey) return [];
@@ -131,8 +159,9 @@ export async function getSocialProfiles(): Promise<SocialProfile[]> {
     const profiles: SocialProfile[] = [];
     for (const entry of body.displayNames ?? []) {
       const platform = entry.platform?.toLowerCase();
-      const url = entry.profileUrl;
-      if (!platform || !url || !/^https?:\/\//.test(url) || seen.has(platform)) continue;
+      if (!platform || seen.has(platform)) continue;
+      const url = profileUrlFor(platform, entry);
+      if (!url) continue;
       seen.add(platform);
       profiles.push({
         platform,
