@@ -114,7 +114,7 @@ export function GalleryList({
                 i % 3 === 2 && "lg:mt-6"
               )}
             >
-              <PaintingCard painting={painting} />
+              <PaintingCard painting={painting} priority={i < 2} />
             </div>
           ))}
         </div>

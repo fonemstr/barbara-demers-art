@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Serif, Plus_Jakarta_Sans, Be_Vietnam_Pro } from "next/font/google";
+import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 import { MobileNav } from "@/components/mobile-nav";
@@ -9,24 +9,22 @@ import { JsonLd } from "@/components/json-ld";
 import { siteGraph } from "@/lib/schema";
 import "../globals.css";
 
+// Only the weights actually used: headings are serif 700, the italic
+// accents in heroes are serif 400, body is sans 400 with 500/600 accents.
+// Fewer font files on the critical path is the biggest LCP win on the site.
 const notoSerif = Noto_Serif({
   variable: "--font-noto-serif",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
+  display: "swap",
 });
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const beVietnam = Be_Vietnam_Pro({
-  variable: "--font-be-vietnam",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600"],
+  display: "swap",
 });
 
 const SITE_DESCRIPTION =
@@ -75,7 +73,7 @@ export default async function SiteLayout({
   return (
     <html
       lang="en"
-      className={`${notoSerif.variable} ${plusJakarta.variable} ${beVietnam.variable} h-full antialiased`}
+      className={`${notoSerif.variable} ${plusJakarta.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-surface text-on-surface">
         {/* Top nav — glass over paper, no dividers */}

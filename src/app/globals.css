@@ -140,7 +140,7 @@
   /* fonts */
   --font-serif: var(--font-noto-serif), Georgia, "Times New Roman", serif;
   --font-sans:  var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-note:  var(--font-be-vietnam),  var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-note:  var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
 
   /* radii */
   --radius-sm:       8px;
@@ -198,7 +198,7 @@ p { text-wrap: pretty; }
 
 /* Artist Note — rotated sticky-note */
 .artist-note {
-  font-family: var(--font-be-vietnam), var(--font-plus-jakarta), sans-serif;
+  font-family: var(--font-plus-jakarta), sans-serif;
   font-size: 14px;
   color: var(--on-secondary-container);
   background: var(--secondary-container);

@@ -14,7 +14,41 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        // Baseline hardening; not a ranking factor, but a Lighthouse
+        // best-practice and it keeps /admin from being framed.
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
+      {
+        // Seal animation assets never change without a rename.
+        source: "/budderlee/anim/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        source: "/brand/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
+  },
   images: {
+    // AVIF first: ~20-30% smaller than WebP for the painting photos.
+    formats: ["image/avif", "image/webp"],
     // Allow SVG placeholders until real photos are in place. Remove
     // dangerouslyAllowSVG once paintings are real JPG/PNG files.
     dangerouslyAllowSVG: true,

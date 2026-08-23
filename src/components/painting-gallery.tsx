@@ -33,9 +33,10 @@ export function PaintingGallery({
             selected === 0 ? title : `${title} — detail ${selected}`
           }
           fill
-          sizes="(min-width: 768px) 60vw, 100vw"
+          sizes="(min-width: 1152px) 690px, (min-width: 768px) 60vw, 100vw"
           className={selected === 0 ? "object-cover" : "object-contain"}
           priority
+          fetchPriority="high"
         />
       </div>
       {images.length > 1 && (

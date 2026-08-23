@@ -3,7 +3,14 @@ import Image from "next/image";
 import type { Painting } from "@/data/paintings";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 
-export function PaintingCard({ painting }: { painting: Painting }) {
+export function PaintingCard({
+  painting,
+  priority = false,
+}: {
+  painting: Painting;
+  // First cards in a grid are the LCP candidate; load them eagerly.
+  priority?: boolean;
+}) {
   const printsFrom = lowestPrintPriceCents(painting);
   return (
     <Link
@@ -17,6 +24,8 @@ export function PaintingCard({ painting }: { painting: Painting }) {
           src={painting.images[0]}
           alt={painting.title}
           fill
+          priority={priority}
+          fetchPriority={priority ? "high" : undefined}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="object-cover transition-transform duration-[700ms] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.03]"
         />

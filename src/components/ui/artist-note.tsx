@@ -21,7 +21,7 @@ export function ArtistNote({
       style={rotate ? { transform: `rotate(${rotate}deg)` } : undefined}
       className={cn(
         "inline-flex items-center gap-2 self-start rounded-full bg-secondary-container text-on-secondary-container px-4 py-2",
-        "font-[family-name:var(--font-be-vietnam)] text-sm leading-none",
+        "font-[family-name:var(--font-note)] text-sm leading-none",
         className
       )}
     >

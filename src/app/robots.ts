@@ -5,8 +5,10 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: "/",
-      disallow: ["/admin", "/api/", "/checkout/"],
+      // /api/ is blocked, but painting originals and og:images are served
+      // from /api/media/file/ and Google must be able to fetch those.
+      allow: ["/", "/api/media/file/"],
+      disallow: ["/admin", "/api/", "/checkout/", "/commissions/reserved"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

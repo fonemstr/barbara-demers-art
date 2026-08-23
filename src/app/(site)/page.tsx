@@ -121,6 +121,7 @@ export default async function HomePage() {
                   alt={hero.title}
                   fill
                   priority
+                  fetchPriority="high"
                   sizes="(min-width: 768px) 40vw, 90vw"
                   className="object-cover"
                 />

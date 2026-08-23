@@ -180,7 +180,7 @@ export function BudderleeSeal() {
       >
         <div
           ref={groupRef}
-          className="absolute inset-0"
+          className="absolute inset-0 will-change-[transform,filter]"
           style={{ transformOrigin: GROUP_ORIGIN, opacity: 0 }}
         >
           <img
@@ -209,7 +209,7 @@ export function BudderleeSeal() {
           ref={sealRef}
           src="/budderlee/anim/seal.webp"
           alt=""
-          className="absolute select-none"
+          className="absolute select-none will-change-[transform,filter]"
           style={{
             ...placement(RECTS.seal),
             transformOrigin: SEAL_ORIGIN,
