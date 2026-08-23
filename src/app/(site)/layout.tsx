@@ -3,6 +3,8 @@ import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
 import { MobileNav } from "@/components/mobile-nav";
+import { SocialLinks } from "@/components/social-links";
+import { getSocialProfiles } from "@/lib/ayrshare";
 import { getFeaturedPaintings } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
 import { JsonLd } from "@/components/json-ld";
@@ -69,7 +71,11 @@ export default async function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // The artist entity's image: the featured painting, same as the share image.
-  const siteShareImage = (await getFeaturedPaintings(1))[0]?.images[0];
+  const [featured, socialProfiles] = await Promise.all([
+    getFeaturedPaintings(1),
+    getSocialProfiles(),
+  ]);
+  const siteShareImage = featured[0]?.images[0];
   return (
     <html
       lang="en"
@@ -140,9 +146,12 @@ export default async function SiteLayout({
                 Original expressive realism paintings · 10% of profits donated to animal welfare
               </p>
             </div>
-            <div className="text-sm text-on-surface-subtle">
-              © {new Date().getFullYear()} Barbara J Demers. All artwork
-              rights reserved.
+            <div className="flex flex-col items-start md:items-end gap-4">
+              <SocialLinks profiles={socialProfiles} />
+              <div className="text-sm text-on-surface-subtle">
+                © {new Date().getFullYear()} Barbara J Demers. All artwork
+                rights reserved.
+              </div>
             </div>
           </div>
         </footer>

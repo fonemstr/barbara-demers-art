@@ -92,3 +92,56 @@ export async function sendSocialPost({
     };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Linked profiles — used for the footer's social links.
+// GET /api/user lists every account connected in the Ayrshare dashboard
+// along with its public profile URL, so the footer stays in sync without a
+// hardcoded list. Cached for a day; a failed or keyless request yields an
+// empty list and the footer simply omits the row.
+
+const USER_URL = "https://api.ayrshare.com/api/user";
+
+export type SocialProfile = {
+  platform: string;
+  displayName: string;
+  url: string;
+};
+
+export async function getSocialProfiles(): Promise<SocialProfile[]> {
+  const apiKey = process.env.AYRSHARE_API_KEY;
+  if (!apiKey) return [];
+
+  try {
+    const res = await fetch(USER_URL, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      next: { revalidate: 86400 },
+    });
+    if (!res.ok) return [];
+    const body = (await res.json()) as {
+      displayNames?: {
+        platform?: string;
+        displayName?: string;
+        username?: string;
+        profileUrl?: string;
+      }[];
+    };
+
+    const seen = new Set<string>();
+    const profiles: SocialProfile[] = [];
+    for (const entry of body.displayNames ?? []) {
+      const platform = entry.platform?.toLowerCase();
+      const url = entry.profileUrl;
+      if (!platform || !url || !/^https?:\/\//.test(url) || seen.has(platform)) continue;
+      seen.add(platform);
+      profiles.push({
+        platform,
+        displayName: entry.displayName || entry.username || platform,
+        url,
+      });
+    }
+    return profiles;
+  } catch {
+    return [];
+  }
+}
