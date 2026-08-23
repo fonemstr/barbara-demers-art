@@ -41,6 +41,7 @@ export async function generateMetadata({
   return {
     title: painting.title,
     description: painting.description,
+    alternates: { canonical: `/gallery/${painting.slug}` },
     openGraph: {
       type: "article",
       siteName: "Barbara J Demers",

@@ -5,7 +5,10 @@ import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Blob } from "@/components/ui/blob";
 
-export const metadata = { title: "About" };
+export const metadata = {
+  title: "About",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   return (

@@ -4,7 +4,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
 
-export const metadata = { title: "Available Work" };
+export const metadata = {
+  title: "Available Work",
+  alternates: { canonical: "/gallery" },
+};
 
 // Re-generate at most once a minute so new paintings appear without a
 // redeploy.

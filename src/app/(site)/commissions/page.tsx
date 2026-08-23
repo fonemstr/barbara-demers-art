@@ -10,7 +10,10 @@ import { ArtistNote } from "@/components/ui/artist-note";
 import { ButtonLink } from "@/components/ui/button";
 import { Blob } from "@/components/ui/blob";
 
-export const metadata = { title: "Commissions" };
+export const metadata = {
+  title: "Commissions",
+  alternates: { canonical: "/commissions" },
+};
 
 // Re-generate at most once a minute so a new "currently on the easel" image
 // can pick up admin changes without a redeploy.

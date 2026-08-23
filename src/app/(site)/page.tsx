@@ -15,6 +15,9 @@ import { Blob } from "@/components/ui/blob";
 
 export const revalidate = 60;
 
+// Canonical URL so apex/www and redirected variants never read as duplicates.
+export const metadata = { alternates: { canonical: "/" } };
+
 type Collection = {
   slug: string;
   title: string;

@@ -5,7 +5,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
 import { Blob } from "@/components/ui/blob";
 
-export const metadata = { title: "Journal" };
+export const metadata = {
+  title: "Journal",
+  alternates: { canonical: "/blog" },
+};
 
 export const revalidate = 60;
 
