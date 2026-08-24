@@ -142,16 +142,42 @@ function profileUrlFor(
   return validUrl;
 }
 
+// The Ayrshare plan ends 2026-09-06. These are the live profiles as of
+// August 2026; when the API is unavailable (no key, auth error, empty
+// response) the footer falls back to this list instead of losing its links.
+const FALLBACK_PROFILES: SocialProfile[] = [
+  {
+    platform: "instagram",
+    displayName: "Barbara J Demers",
+    url: "https://www.instagram.com/barbarajdemers",
+  },
+  {
+    platform: "facebook",
+    displayName: "The Artist Barbara J Demers",
+    url: "https://www.facebook.com/526477770698863",
+  },
+  {
+    platform: "pinterest",
+    displayName: "The Artist Barbara J Demers",
+    url: "https://www.pinterest.com/barbgbcreations/",
+  },
+  {
+    platform: "tiktok",
+    displayName: "barbarajdemers",
+    url: "https://www.tiktok.com/@barbarajdemers",
+  },
+];
+
 export async function getSocialProfiles(): Promise<SocialProfile[]> {
   const apiKey = process.env.AYRSHARE_API_KEY;
-  if (!apiKey) return [];
+  if (!apiKey) return FALLBACK_PROFILES;
 
   try {
     const res = await fetch(USER_URL, {
       headers: { Authorization: `Bearer ${apiKey}` },
       next: { revalidate: 86400 },
     });
-    if (!res.ok) return [];
+    if (!res.ok) return FALLBACK_PROFILES;
     const body = (await res.json()) as {
       displayNames?: {
         platform?: string;
@@ -175,8 +201,8 @@ export async function getSocialProfiles(): Promise<SocialProfile[]> {
         url,
       });
     }
-    return profiles;
+    return profiles.length ? profiles : FALLBACK_PROFILES;
   } catch {
-    return [];
+    return FALLBACK_PROFILES;
   }
 }
