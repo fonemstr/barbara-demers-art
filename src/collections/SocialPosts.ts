@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { sendSocialPost, SOCIAL_PLATFORM_OPTIONS, type SocialPlatform } from "../lib/ayrshare";
+import { sendSocialPost, SOCIAL_PLATFORM_OPTIONS, type SocialPlatform } from "../lib/social-direct";
 
 export const SocialPosts: CollectionConfig = {
   slug: "social-posts",
@@ -48,7 +48,7 @@ export const SocialPosts: CollectionConfig = {
       options: SOCIAL_PLATFORM_OPTIONS,
       admin: {
         description:
-          "Which connected accounts to post to. Accounts are linked in the Ayrshare dashboard.",
+          "Which accounts to post to. Credentials are configured in the environment — see SOCIAL.md.",
       },
     },
     {
@@ -92,6 +92,16 @@ export const SocialPosts: CollectionConfig = {
       async ({ data, req }) => {
         if (data?.status !== "send") return data;
 
+        // A future schedule time queues the post in the database; the cron
+        // endpoint (/api/cron/social-posts) delivers it when it comes due.
+        // Times are stored as absolute UTC instants, so server timezone is
+        // irrelevant.
+        if (data.scheduleAt && new Date(data.scheduleAt).getTime() > Date.now()) {
+          data.status = "scheduled";
+          data.result = `Queued — will post after ${new Date(data.scheduleAt).toISOString()} (checked every 15 minutes).`;
+          return data;
+        }
+
         let mediaUrls: string[] = [];
         if (data.image) {
           const media = await req.payload
@@ -104,14 +114,9 @@ export const SocialPosts: CollectionConfig = {
           post: data.message ?? "",
           platforms: (data.platforms ?? []) as SocialPlatform[],
           mediaUrls,
-          scheduleAt: data.scheduleAt ?? null,
         });
 
-        data.status = result.ok
-          ? data.scheduleAt
-            ? "scheduled"
-            : "posted"
-          : "failed";
+        data.status = result.ok ? "posted" : "failed";
         data.result = result.summary;
         return data;
       },
