@@ -9,10 +9,11 @@ import {
   AnalyticsApiError,
   analyticsToken,
   getBreakdown,
-  getDailyTrend,
+  getTrend,
   sumTrend,
   type AnalyticsBreakdownRow,
   type AnalyticsTotals,
+  type TrendGranularity,
 } from "@/lib/vercel-analytics";
 import { AnalyticsTrendChart } from "./analytics-trend-chart";
 
@@ -105,10 +106,13 @@ export async function AnalyticsView({ initPageResult, params, searchParams }: Ad
   const since = new Date(until.getTime() - days * 24 * 60 * 60 * 1000);
   const prevSince = new Date(since.getTime() - days * 24 * 60 * 60 * 1000);
 
+  // The analytics API caps day-granularity aggregates at 62 days.
+  const granularity: TrendGranularity = days > 62 ? "week" : "day";
+
   type AnalyticsData = {
     totals: AnalyticsTotals;
     prevTotals: AnalyticsTotals;
-    trend: Awaited<ReturnType<typeof getDailyTrend>>;
+    trend: Awaited<ReturnType<typeof getTrend>>;
     pages: AnalyticsBreakdownRow[];
     referrers: AnalyticsBreakdownRow[];
     countries: AnalyticsBreakdownRow[];
@@ -120,8 +124,8 @@ export async function AnalyticsView({ initPageResult, params, searchParams }: Ad
   if (analyticsToken()) {
     try {
       const [trend, prevTrend, pages, referrers, countries] = await Promise.all([
-        getDailyTrend(since, until),
-        getDailyTrend(prevSince, since),
+        getTrend(since, until, granularity),
+        getTrend(prevSince, since, granularity),
         getBreakdown("requestPath", since, until),
         getBreakdown("referrerHostname", since, until),
         getBreakdown("country", since, until),
@@ -166,11 +170,11 @@ export async function AnalyticsView({ initPageResult, params, searchParams }: Ad
             <StatTile label="Page views" value={totals.pageviews} prev={prevTotals.pageviews} days={days} />
           </div>
           <section className="av-card">
-            <h2 className="av-card__title">Daily traffic</h2>
+            <h2 className="av-card__title">{granularity === "week" ? "Weekly traffic" : "Daily traffic"}</h2>
             {trend.length === 0 ? (
               <p className="av-empty">No visits recorded in this period yet.</p>
             ) : (
-              <AnalyticsTrendChart points={trend} />
+              <AnalyticsTrendChart points={trend} granularity={granularity} />
             )}
           </section>
           <div className="av-grid">

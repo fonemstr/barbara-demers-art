@@ -41,7 +41,14 @@ function niceMax(rawMax: number): number {
   return 10 * pow;
 }
 
-export function AnalyticsTrendChart({ points }: { points: TrendPoint[] }) {
+export function AnalyticsTrendChart({
+  points,
+  granularity = "day",
+}: {
+  points: TrendPoint[];
+  granularity?: "day" | "week";
+}) {
+  const periodLabel = (iso: string) => (granularity === "week" ? `Week of ${formatDay(iso)}` : formatDay(iso));
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [width, setWidth] = React.useState(640);
   const [active, setActive] = React.useState<number | null>(null);
@@ -108,7 +115,7 @@ export function AnalyticsTrendChart({ points }: { points: TrendPoint[] }) {
         ref={containerRef}
         className="av-trend__plot"
         role="application"
-        aria-label="Daily visitors and page views. Use left and right arrow keys to read values."
+        aria-label={`${granularity === "week" ? "Weekly" : "Daily"} visitors and page views. Use left and right arrow keys to read values.`}
         tabIndex={0}
         onKeyDown={onKeyDown}
         onPointerMove={(e) => setActive(pointFromEvent(e.clientX))}
@@ -162,7 +169,7 @@ export function AnalyticsTrendChart({ points }: { points: TrendPoint[] }) {
         </svg>
         {activePoint && (
           <div className="av-trend__tooltip" style={{ left: tooltipLeft }} role="status">
-            <div className="av-trend__tooltip-date">{formatDay(activePoint.timestamp)}</div>
+            <div className="av-trend__tooltip-date">{periodLabel(activePoint.timestamp)}</div>
             {SERIES.map((s) => (
               <div key={s.key} className="av-trend__tooltip-row">
                 <span className="av-trend__line-key" style={{ background: s.colorVar }} />
@@ -178,7 +185,7 @@ export function AnalyticsTrendChart({ points }: { points: TrendPoint[] }) {
         <table className="av-table">
           <thead>
             <tr>
-              <th scope="col">Day</th>
+              <th scope="col">{granularity === "week" ? "Week of" : "Day"}</th>
               <th scope="col">Visitors</th>
               <th scope="col">Page views</th>
             </tr>

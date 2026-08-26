@@ -89,10 +89,18 @@ export function sumTrend(trend: AnalyticsTrendPoint[]): AnalyticsTotals {
   );
 }
 
-export async function getDailyTrend(since: Date, until: Date): Promise<AnalyticsTrendPoint[]> {
+export type TrendGranularity = "day" | "week";
+
+// The API caps day-granularity aggregates at 62 days, so longer ranges
+// (the 90-day view) must query by week.
+export async function getTrend(
+  since: Date,
+  until: Date,
+  granularity: TrendGranularity,
+): Promise<AnalyticsTrendPoint[]> {
   const data = await query<Array<Partial<AnalyticsTrendPoint>>>("aggregate", {
     ...rangeParams(since, until),
-    by: "day",
+    by: granularity,
   });
   return data
     .filter((row): row is AnalyticsTrendPoint => typeof row.timestamp === "string")
