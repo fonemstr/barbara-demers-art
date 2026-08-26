@@ -73,9 +73,20 @@ function rangeParams(since: Date, until: Date): Record<string, string> {
   return { since: since.toISOString(), until: until.toISOString() };
 }
 
-export async function getTotals(since: Date, until: Date): Promise<AnalyticsTotals> {
-  const data = await query<Partial<AnalyticsTotals>>("count", rangeParams(since, until));
-  return { pageviews: data.pageviews ?? 0, visitors: data.visitors ?? 0 };
+// Totals are summed from the daily aggregate rather than the count
+// endpoint: count returned zeros for ranged queries in practice, and
+// summing days matches the dashboard's semantics anyway (visitor IDs
+// reset daily, so range visitors = sum of daily visitors). It also
+// keeps the stat tiles consistent with the chart drawn from the same
+// rows.
+export function sumTrend(trend: AnalyticsTrendPoint[]): AnalyticsTotals {
+  return trend.reduce(
+    (acc, point) => ({
+      pageviews: acc.pageviews + point.pageviews,
+      visitors: acc.visitors + point.visitors,
+    }),
+    { pageviews: 0, visitors: 0 },
+  );
 }
 
 export async function getDailyTrend(since: Date, until: Date): Promise<AnalyticsTrendPoint[]> {

@@ -10,8 +10,9 @@ import {
   analyticsToken,
   getBreakdown,
   getDailyTrend,
-  getTotals,
+  sumTrend,
   type AnalyticsBreakdownRow,
+  type AnalyticsTotals,
 } from "@/lib/vercel-analytics";
 import { AnalyticsTrendChart } from "./analytics-trend-chart";
 
@@ -105,8 +106,8 @@ export async function AnalyticsView({ initPageResult, params, searchParams }: Ad
   const prevSince = new Date(since.getTime() - days * 24 * 60 * 60 * 1000);
 
   type AnalyticsData = {
-    totals: Awaited<ReturnType<typeof getTotals>>;
-    prevTotals: Awaited<ReturnType<typeof getTotals>>;
+    totals: AnalyticsTotals;
+    prevTotals: AnalyticsTotals;
     trend: Awaited<ReturnType<typeof getDailyTrend>>;
     pages: AnalyticsBreakdownRow[];
     referrers: AnalyticsBreakdownRow[];
@@ -118,15 +119,14 @@ export async function AnalyticsView({ initPageResult, params, searchParams }: Ad
 
   if (analyticsToken()) {
     try {
-      const [totals, prevTotals, trend, pages, referrers, countries] = await Promise.all([
-        getTotals(since, until),
-        getTotals(prevSince, since),
+      const [trend, prevTrend, pages, referrers, countries] = await Promise.all([
         getDailyTrend(since, until),
+        getDailyTrend(prevSince, since),
         getBreakdown("requestPath", since, until),
         getBreakdown("referrerHostname", since, until),
         getBreakdown("country", since, until),
       ]);
-      data = { totals, prevTotals, trend, pages, referrers, countries };
+      data = { totals: sumTrend(trend), prevTotals: sumTrend(prevTrend), trend, pages, referrers, countries };
     } catch (err) {
       errorMessage =
         err instanceof AnalyticsApiError ? err.message : "Could not reach the Vercel Analytics API.";
