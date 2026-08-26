@@ -26,6 +26,15 @@ export default buildConfig({
     meta: {
       titleSuffix: " — Barbara J Demers Studio",
     },
+    components: {
+      views: {
+        analytics: {
+          Component: "/src/components/admin/analytics-view#AnalyticsView",
+          path: "/analytics",
+        },
+      },
+      afterNavLinks: ["/src/components/admin/analytics-nav-link#AnalyticsNavLink"],
+    },
   },
   collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters],
   editor: lexicalEditor(),
