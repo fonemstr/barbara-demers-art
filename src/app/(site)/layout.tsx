@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
+import { Analytics } from "@vercel/analytics/next";
 import { MobileNav } from "@/components/mobile-nav";
 import { SocialLinks } from "@/components/social-links";
 import { getSocialProfiles } from "@/lib/ayrshare";
@@ -155,6 +156,7 @@ export default async function SiteLayout({
             </div>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );

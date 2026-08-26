@@ -1,0 +1,63 @@
+
+> barbara-demers-art@0.1.0 build /vercel/sandbox/primary
+> next build
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+▲ Next.js 16.2.3 (Turbopack)
+- Experiments (use with caution):
+  ⨯ turbopackServerFastRefresh
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 34.4s
+  Running TypeScript ...
+  Finished TypeScript in 7.6s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/30) ...
+  Generating static pages using 1 worker (7/30) 
+  Generating static pages using 1 worker (14/30) 
+  Generating static pages using 1 worker (22/30) 
+✓ Generating static pages using 1 worker (30/30) in 504ms
+  Finalizing page optimization ...
+
+Route (app)                                     Revalidate  Expire
+┌ ○ /                                                   1m      1y
+├ ○ /_not-found
+├ ○ /about
+├ ƒ /admin/[[...segments]]
+├ ƒ /api/[...slug]
+├ ƒ /api/checkout
+├ ƒ /api/commission-deposit
+├ ƒ /api/commissions
+├ ƒ /api/dev-seed
+├ ƒ /api/graphql
+├ ƒ /api/graphql-playground
+├ ƒ /api/newsletter
+├ ƒ /api/one-time-create-paintings-from-media
+├ ƒ /api/stripe-webhook
+├ ○ /apple-icon.png
+├ ○ /blog                                               1m      1y
+├ ● /blog/[slug]                                        1m      1y
+│ └ /blog/welcome-to-the-studio                         1m      1y
+├ ○ /budderlee                                          1m      1y
+├ ○ /checkout/success
+├ ○ /commissions                                        1m      1y
+├ ○ /commissions/reserved
+├ ○ /gallery                                            1m      1y
+├ ● /gallery/[slug]                                     1m      1y
+│ ├ /gallery/you-are-not-a-number-you-are-love          1m      1y
+│ ├ /gallery/eyes-of-a-different-you                    1m      1y
+│ ├ /gallery/the-kindness-of-one                        1m      1y
+│ └ [+3 more paths]
+├ ○ /icon.png
+├ ○ /robots.txt
+└ ○ /sitemap.xml                                        1h      1y
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+
