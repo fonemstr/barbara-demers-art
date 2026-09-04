@@ -152,6 +152,10 @@ export default async function SiteLayout({
               <div className="text-sm text-on-surface-subtle">
                 © {new Date().getFullYear()} Barbara J Demers. All artwork
                 rights reserved.
+                {" · "}
+                <Link href="/privacy" className="hover:text-on-surface transition-colors">
+                  Privacy
+                </Link>
               </div>
             </div>
           </div>
