@@ -3,7 +3,7 @@ import {
   sendSocialPost,
   type SocialPlatform,
   type SocialPostResult,
-} from "../lib/ayrshare";
+} from "../lib/social-direct";
 import { buildAnnouncementCaption } from "../lib/social-captions";
 import { instagramSafeImageUrl } from "../lib/instagram-image";
 import { SITE_URL } from "../lib/site-url";
@@ -452,7 +452,7 @@ export const Paintings: CollectionConfig = {
           defaultValue: false,
           admin: {
             description:
-              "Tick and save to post this painting to Instagram + Facebook (via Ayrshare). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.",
+              "Tick and save to post this painting to Instagram + Facebook (via the platform APIs). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.",
           },
         },
       ],
