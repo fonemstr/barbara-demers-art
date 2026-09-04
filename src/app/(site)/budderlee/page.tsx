@@ -59,7 +59,7 @@ export default async function BudderleePage() {
         })}
       />
       {/* HERO — the village seal and introduction */}
-      <Section tone="surface" pad="lg" className="overflow-hidden">
+      <Section tone="surface" pad="lg" className="overflow-hidden pb-10 md:pb-12">
         <Blob size={420} color="var(--surface-variant)" style={{ left: -120, top: -40, opacity: 0.7 }} />
         <Blob size={240} color="var(--secondary-container)" style={{ right: 40, top: 120, opacity: 0.5 }} />
         <div className="relative z-10 grid gap-12 md:grid-cols-[0.85fr_1.15fr] items-center">
@@ -103,7 +103,7 @@ export default async function BudderleePage() {
       </Section>
 
       {/* RESIDENTS — the growing village grid */}
-      <Section tone="low" pad="lg">
+      <Section tone="low" pad="lg" className="pt-12 md:pt-14">
         <div className="flex items-end justify-between mb-10">
           <div>
             <Eyebrow>The village so far</Eyebrow>
