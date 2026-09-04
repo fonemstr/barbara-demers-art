@@ -7,7 +7,8 @@ import { useEffect, useRef } from "react";
 // full spec). The tree, arched title, and motto fade in as cut-out pieces in
 // their true seal positions, wind up, spin under motion blur, and resolve
 // into the complete seal, which holds. Autoplays once on mount; visitors
-// with prefers-reduced-motion see the finished seal immediately.
+// with prefers-reduced-motion get the same sequence as plain crossfades —
+// no drift, spin, or blur — so the seal still assembles for them.
 
 // The seal artwork is a 1254px square rendered as a 1000px box centered on
 // an 1100px stage (breathing room for the spin), scaled to the container.
@@ -91,6 +92,15 @@ export function BudderleeSeal() {
     const seal = sealRef.current;
     if (!root || !stage || !group || !tree || !title || !motto || !seal) return;
 
+    // Reduce Motion (an iPad accessibility setting many people leave on)
+    // used to skip straight to the finished seal, which reads as the
+    // animation being broken. Fades are fine under that preference; only
+    // the movement goes.
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const move = reduced ? 0 : 1;
+
     function render(t: number) {
       const treeIn = anim(0, 1, 0.4, 2.2, easeOutCubic, t);
       const titleIn = anim(0, 1, 2.3, 4.0, easeOutCubic, t);
@@ -105,18 +115,24 @@ export function BudderleeSeal() {
         anim(0, 6, SPIN + 0.6, SPIN + 1.2, easeInQuad, t) *
         anim(1, 0, SPIN + 1.5, SEAL + 0.8, easeOutCubic, t);
 
+      const blurStyle = !reduced && blur > 0.05 ? `blur(${blur}px)` : "none";
+
       tree!.style.opacity = String(treeIn);
-      tree!.style.transform = `translateY(${24 * (1 - treeIn)}px)`;
+      tree!.style.transform = `translateY(${24 * (1 - treeIn) * move}px)`;
       title!.style.opacity = String(titleIn);
-      title!.style.transform = `translateY(${-26 * (1 - titleIn)}px)`;
+      title!.style.transform = `translateY(${-26 * (1 - titleIn) * move}px)`;
       motto!.style.opacity = String(mottoIn);
-      motto!.style.transform = `translateY(${18 * (1 - mottoIn)}px)`;
+      motto!.style.transform = `translateY(${18 * (1 - mottoIn) * move}px)`;
       group!.style.opacity = String(piecesOut);
-      group!.style.transform = `rotate(${r1}deg) scale(${windup})`;
-      group!.style.filter = blur > 0.05 ? `blur(${blur}px)` : "none";
+      group!.style.transform = reduced
+        ? "none"
+        : `rotate(${r1}deg) scale(${windup})`;
+      group!.style.filter = blurStyle;
       seal!.style.opacity = String(sealIn);
-      seal!.style.transform = `rotate(${r2}deg) scale(${sealScale})`;
-      seal!.style.filter = blur > 0.05 ? `blur(${blur}px)` : "none";
+      seal!.style.transform = reduced
+        ? "none"
+        : `rotate(${r2}deg) scale(${sealScale})`;
+      seal!.style.filter = blurStyle;
     }
 
     // Test hook, same as the design reference: render an arbitrary timestamp.
@@ -127,13 +143,12 @@ export function BudderleeSeal() {
       stage.style.transform = `scale(${root.clientWidth / STAGE})`;
     };
     fit();
-    const ro = new ResizeObserver(fit);
-    ro.observe(root);
-
-    // Reduced motion: show the finished seal immediately.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      render(TOTAL);
-      return () => ro.disconnect();
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      ro = new ResizeObserver(fit);
+      ro.observe(root);
+    } else {
+      window.addEventListener("resize", fit);
     }
 
     // Autoplay once, then hold the final frame. Time accumulates only while
@@ -142,6 +157,7 @@ export function BudderleeSeal() {
     let elapsed = 0;
     let last: number | null = null;
     let raf = 0;
+    let cancelled = false;
     const tick = (now: number) => {
       if (last !== null) elapsed += (now - last) / 1000;
       last = now;
@@ -153,12 +169,27 @@ export function BudderleeSeal() {
     };
     document.addEventListener("visibilitychange", onVisibility);
     render(0);
-    raf = requestAnimationFrame(tick);
+
+    // Don't start the clock until the pieces are decoded, otherwise a slow
+    // connection plays the first fades against images that haven't
+    // arrived yet. Cap the wait so a stalled image can't hold the seal
+    // invisible.
+    const ready = Promise.all(
+      [tree, title, motto, seal].map((img) =>
+        img.complete ? Promise.resolve() : img.decode().catch(() => {}),
+      ),
+    );
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 2500));
+    Promise.race([ready, timeout]).then(() => {
+      if (!cancelled) raf = requestAnimationFrame(tick);
+    });
 
     return () => {
+      cancelled = true;
       cancelAnimationFrame(raf);
       document.removeEventListener("visibilitychange", onVisibility);
-      ro.disconnect();
+      ro?.disconnect();
+      window.removeEventListener("resize", fit);
     };
   }, []);
 
