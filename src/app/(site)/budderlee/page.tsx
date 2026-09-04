@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getBudderleePaintings } from "@/data/paintings";
-import { BUDDERLEE_ROSTER } from "@/data/budderlee-roster";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 import { BudderleeSeal } from "@/components/budderlee-seal";
 import { NewsletterForm } from "@/components/newsletter-form";
@@ -47,17 +46,6 @@ const SERIES_MARKS = [
 
 export default async function BudderleePage() {
   const residents = await getBudderleePaintings();
-  // Roster entries drop off the coming-soon lineup the moment a painting
-  // with a matching character name arrives via the admin.
-  const arrivedNames = new Set(
-    residents
-      .map((p) => p.characterName?.toLowerCase())
-      .filter((n): n is string => !!n),
-  );
-  const comingSoon = BUDDERLEE_ROSTER.filter(
-    (r) => !arrivedNames.has(r.name.toLowerCase()),
-  );
-  const villageSize = residents.length + comingSoon.length;
 
   return (
     <div className="overflow-hidden">
@@ -120,15 +108,17 @@ export default async function BudderleePage() {
           <div>
             <Eyebrow>The village so far</Eyebrow>
             <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em]">
-              {residents.length > 0
-                ? `${residents.length} of ${villageSize} residents have arrived.`
-                : "The first residents are moving in."}
+              {residents.length === 0
+                ? "The first residents are moving in."
+                : residents.length === 1
+                  ? "The first resident has arrived."
+                  : `${residents.length} residents have arrived so far.`}
             </h2>
           </div>
         </div>
 
         {residents.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {residents.map((p) => {
               const printsFrom = lowestPrintPriceCents(p);
               return (
@@ -167,46 +157,6 @@ export default async function BudderleePage() {
                 </Link>
               );
             })}
-          </div>
-        )}
-
-        {/* Coming soon — the rest of the census, waiting for their portraits */}
-        {comingSoon.length > 0 && (
-          <div>
-            <div className="max-w-2xl mb-10">
-              <Eyebrow>Still to arrive</Eyebrow>
-              <p className="mt-3 text-on-surface-muted leading-relaxed">
-                Every one of these residents is waiting for their original
-                5×5 portrait. Barbara paints them one at a time — join the
-                newsletter below and you&rsquo;ll know the moment a favorite
-                arrives.
-              </p>
-            </div>
-            <ul className="flex flex-wrap justify-center gap-x-6 gap-y-10">
-              {comingSoon.map((r) => (
-                <li key={r.name} className="flex flex-col items-center w-[120px] md:w-[140px]">
-                  <div className="bg-surface-container-lowest p-1.5 shadow-ambient">
-                    <Image
-                      src={r.image}
-                      alt={`${r.name}, ${r.role} — ${r.animal.toLowerCase()} resident of Budderlee, portrait coming soon`}
-                      width={r.width}
-                      height={r.height}
-                      sizes="140px"
-                      className="h-36 md:h-44 w-auto"
-                    />
-                  </div>
-                  <p className="mt-3 font-serif text-base leading-tight text-on-surface text-center">
-                    {r.name}
-                  </p>
-                  <p className="text-xs italic text-on-surface-muted mt-0.5 text-center">
-                    {r.role}
-                  </p>
-                  <p className="text-[11px] uppercase tracking-[0.14em] text-on-surface-subtle mt-1.5">
-                    Coming soon
-                  </p>
-                </li>
-              ))}
-            </ul>
           </div>
         )}
       </Section>
