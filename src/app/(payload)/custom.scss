@@ -1,1 +1,315 @@
 /* Custom Payload admin styling overrides go here. */
+
+/* Site analytics view (src/components/admin/analytics-view.tsx) */
+.analytics-view {
+  /* Chart palette: validated for color-vision safety on the admin surfaces
+     in both themes; the dark values are re-stepped hues, not auto-inverts. */
+  --av-series-1: #2a78d6;
+  --av-series-2: #eb6834;
+  --av-delta-up: #006300;
+  --av-delta-down: #d03b3b;
+  --av-surface: var(--theme-elevation-0);
+
+  padding-block: calc(var(--base) * 2);
+  max-width: 960px;
+
+  .av-heading {
+    margin: 0 0 calc(var(--base) * 1.5);
+  }
+
+  .av-filters {
+    display: flex;
+    gap: calc(var(--base) * 0.5);
+    margin-bottom: calc(var(--base) * 1.5);
+
+    &__preset {
+      padding: calc(var(--base) * 0.3) calc(var(--base) * 0.75);
+      border: 1px solid var(--theme-elevation-150);
+      border-radius: 4px;
+      color: var(--theme-elevation-600);
+      text-decoration: none;
+      font-size: 13px;
+
+      &:hover {
+        background: var(--theme-elevation-50);
+      }
+
+      &--active {
+        color: var(--theme-text);
+        border-color: var(--theme-elevation-400);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .av-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: var(--base);
+    margin-bottom: var(--base);
+  }
+
+  .av-tile {
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 6px;
+    background: var(--theme-elevation-0);
+    padding: var(--base);
+
+    &__label {
+      font-size: 13px;
+      color: var(--theme-elevation-600);
+    }
+
+    &__value {
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-top: 2px;
+      color: var(--theme-text);
+    }
+
+    &__delta {
+      font-size: 12px;
+      margin-top: 4px;
+
+      &--up {
+        color: var(--av-delta-up);
+      }
+
+      &--down {
+        color: var(--av-delta-down);
+      }
+    }
+  }
+
+  .av-card {
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 6px;
+    background: var(--theme-elevation-0);
+    padding: var(--base);
+    margin-bottom: var(--base);
+
+    &__title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 calc(var(--base) * 0.75);
+      color: var(--theme-text);
+    }
+  }
+
+  .av-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--base);
+  }
+
+  .av-empty,
+  .av-footnote {
+    color: var(--theme-elevation-500);
+    font-size: 13px;
+    margin: 0;
+  }
+
+  .av-footnote {
+    margin-top: calc(var(--base) * 0.5);
+  }
+
+  .av-error p {
+    margin: 0 0 calc(var(--base) * 0.5);
+  }
+
+  .av-setup {
+    ol {
+      margin: calc(var(--base) * 0.5) 0 0;
+      padding-left: calc(var(--base) * 1.25);
+    }
+
+    li {
+      margin-bottom: calc(var(--base) * 0.4);
+    }
+
+    code {
+      background: var(--theme-elevation-100);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+  }
+
+  /* Bar lists (top pages / referrers / countries) */
+  .av-bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &__row {
+      display: grid;
+      grid-template-columns: minmax(90px, 40%) 1fr auto;
+      align-items: center;
+      gap: calc(var(--base) * 0.5);
+      padding-block: calc(var(--base) * 0.25);
+    }
+
+    &__label {
+      font-size: 13px;
+      color: var(--theme-text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__track {
+      display: block;
+    }
+
+    &__bar {
+      display: block;
+      height: 8px;
+      background: var(--av-series-1);
+      /* Rounded at the data end, square at the baseline. */
+      border-radius: 0 4px 4px 0;
+    }
+
+    &__value {
+      font-size: 13px;
+      color: var(--theme-elevation-600);
+      font-variant-numeric: tabular-nums;
+      min-width: 3ch;
+      text-align: right;
+    }
+  }
+
+  /* Daily trend chart */
+  .av-trend {
+    &__legend {
+      display: flex;
+      gap: var(--base);
+      font-size: 13px;
+      color: var(--theme-elevation-600);
+      margin-bottom: calc(var(--base) * 0.5);
+    }
+
+    &__legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    &__line-key {
+      display: inline-block;
+      width: 12px;
+      height: 2px;
+      border-radius: 1px;
+    }
+
+    &__plot {
+      position: relative;
+      touch-action: pan-y;
+
+      &:focus-visible {
+        outline: 2px solid var(--theme-elevation-400);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+    }
+
+    &__grid {
+      stroke: var(--theme-elevation-100);
+      stroke-width: 1;
+    }
+
+    &__baseline {
+      stroke: var(--theme-elevation-250);
+      stroke-width: 1;
+    }
+
+    &__crosshair {
+      stroke: var(--theme-elevation-250);
+      stroke-width: 1;
+    }
+
+    &__tick {
+      fill: var(--theme-elevation-500);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    &__end-label {
+      fill: var(--theme-elevation-600);
+      font-size: 12px;
+    }
+
+    &__marker {
+      /* Surface ring keeps markers legible where they cross a line. */
+      stroke: var(--av-surface);
+      stroke-width: 2;
+    }
+
+    &__tooltip {
+      position: absolute;
+      top: 0;
+      width: 150px;
+      background: var(--theme-elevation-0);
+      border: 1px solid var(--theme-elevation-150);
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
+      padding: calc(var(--base) * 0.5);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    &__tooltip-date {
+      color: var(--theme-elevation-500);
+      margin-bottom: 4px;
+    }
+
+    &__tooltip-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      strong {
+        color: var(--theme-text);
+        font-variant-numeric: tabular-nums;
+      }
+
+      span:last-child {
+        color: var(--theme-elevation-500);
+      }
+    }
+  }
+
+  .av-table-details {
+    margin-top: calc(var(--base) * 0.5);
+
+    summary {
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--theme-elevation-600);
+    }
+  }
+
+  .av-table {
+    margin-top: calc(var(--base) * 0.5);
+    border-collapse: collapse;
+    font-size: 13px;
+
+    th,
+    td {
+      text-align: left;
+      padding: 4px 16px 4px 0;
+      border-bottom: 1px solid var(--theme-elevation-100);
+      font-variant-numeric: tabular-nums;
+    }
+
+    th {
+      color: var(--theme-elevation-600);
+      font-weight: 600;
+    }
+  }
+}
+
+html[data-theme="dark"] .analytics-view {
+  --av-series-1: #3987e5;
+  --av-series-2: #d95926;
+  --av-delta-up: #0ca30c;
+}

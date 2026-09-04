@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
+import { Analytics } from "@vercel/analytics/next";
 import { MobileNav } from "@/components/mobile-nav";
 import { SocialLinks } from "@/components/social-links";
 import { getSocialProfiles } from "@/lib/ayrshare";
@@ -151,10 +152,15 @@ export default async function SiteLayout({
               <div className="text-sm text-on-surface-subtle">
                 © {new Date().getFullYear()} Barbara J Demers. All artwork
                 rights reserved.
+                {" · "}
+                <Link href="/privacy" className="hover:text-on-surface transition-colors">
+                  Privacy
+                </Link>
               </div>
             </div>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
