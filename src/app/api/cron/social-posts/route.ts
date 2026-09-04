@@ -8,6 +8,12 @@ import { sendSocialPost, type SocialPlatform } from "@/lib/social-direct";
 
 export const maxDuration = 300;
 
+// A post whose scheduled time is more than a day in the past is a leftover,
+// not a due post: for example rows that Ayrshare delivered before scheduling
+// moved in-house, which still carried status "scheduled". Sending those
+// repeats old content, so they are marked failed with an explanation instead.
+const MISSED_WINDOW_MS = 24 * 60 * 60 * 1000;
+
 export async function GET(req: Request): Promise<Response> {
   const secret = process.env.CRON_SECRET;
   const auth = req.headers.get("authorization");
@@ -26,8 +32,23 @@ export async function GET(req: Request): Promise<Response> {
     overrideAccess: true,
   });
 
-  const outcomes: { id: number | string; ok: boolean }[] = [];
+  const outcomes: { id: number | string; ok: boolean; skipped?: string }[] = [];
   for (const doc of due.docs) {
+    const scheduledFor = doc.scheduleAt ? new Date(doc.scheduleAt) : null;
+    if (!scheduledFor || Date.now() - scheduledFor.getTime() > MISSED_WINDOW_MS) {
+      await payload.update({
+        collection: "social-posts",
+        id: doc.id,
+        data: {
+          status: "failed",
+          result: `Missed window: scheduled for ${scheduledFor?.toISOString() ?? "an unknown time"}, more than 24 hours before the scheduler ran. Not sent. Set a new time and choose Send to post it.`,
+        },
+        overrideAccess: true,
+      });
+      outcomes.push({ id: doc.id, ok: false, skipped: "missed-window" });
+      continue;
+    }
+
     let mediaUrls: string[] = [];
     if (doc.image) {
       const imageId = typeof doc.image === "object" ? doc.image.id : doc.image;
