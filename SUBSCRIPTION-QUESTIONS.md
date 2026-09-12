@@ -1,151 +1,99 @@
-# Budderlee Subscription: Questions for Barbara
+# The Budderlee Post: Barbara's Decisions
 
-Before the subscription can be built, a handful of decisions are yours to
-make. Each one below has a short note on why it matters and, where it
-helps, a suggestion. Write your answer on the line under each question.
-Rough answers are fine. Everything here can change later, but the build
-can't start without a first answer.
-
-The full plan is in `SUBSCRIPTION.md` if you want the detail behind any of
-these.
+Answered 12 September 2026. These answers are folded into
+`SUBSCRIPTION.md`, which is the working plan. This file stays as the
+record of what was decided and why.
 
 ---
 
-## 1. What is the subscription called?
+## 1. Subscription name
 
-The name shows up on the website, in every email, and on the line item of
-the subscriber's card statement. Something short reads best on a
-statement. A few starting points: "The Budderlee Post", "Residents of
-Budderlee Monthly", "The Budderlee Club".
+**The Budderlee Post**
+A Monthly Story-and-Art Subscription by Mail
 
-**Answer:**
+Card-statement description: `BUDDERLEE POST`
 
----
+## 2. Monthly price
 
-## 2. What is the monthly price?
+**$12 per month**, with U.S. shipping included.
 
-Shipping is included in this number, so subscribers see one price and
-nothing added at checkout. Our rough estimate is that each package costs
-$3.50 to $6.50 to print and mail, plus the card fee. Similar art print
-clubs charge $20 to $40 a month. Sticker and postcard clubs charge $10 to
-$15. With four pieces, a story, and a recipe, this sits nearer the print
-club end. A price between $18 and $28 leaves room for your time.
+Sales tax will be handled according to the accountant's advice.
 
-**Answer:** $______ per month
+## 3. Prepaid option
 
----
+**Monthly subscriptions only at launch.** An annual or gift subscription
+can be considered later.
 
-## 3. Do you want to offer a prepaid option?
+## 4. Founding-member offer
 
-For example, 12 months paid up front at a small discount. This makes
-gifting easy (a grandparent buys a year for a grandchild) and brings cash
-in early. It also means you're committed to twelve packages for that
-person. Suggestion: yes, at 10 percent off, but it's fine to launch with
-monthly only and add it later.
+Waitlist members who subscribe at launch receive an **exclusive Founding
+Member sticker** in their first package.
 
-**Answer:**
+## 5. Subscriber limit
 
----
+**100 subscribers** for the initial launch. Once the limit is reached, new
+visitors return to the waitlist.
 
-## 4. What do waitlist members get for being first?
+## 6. Cutoff and mailing schedule
 
-People who join the waitlist before launch get a founding member offer.
-Options: a permanent discount (say 10 to 15 percent for as long as they
-stay subscribed), a bonus in the first package (an extra sticker sheet or
-a second card), or both. A permanent discount is the strongest reason for
-them to sign up on day one.
+- Signup cutoff: **the 15th of each month**
+- Packages mailed: **first week of the following month**
+- Anyone subscribing after the 15th receives the subsequent month's
+  package.
 
-**Answer:**
+## 7. Shipping area
 
----
+**United States only at launch.** Canada may be added after the mailing
+process and costs have been evaluated.
 
-## 5. How many subscribers can you handle each month?
+## 8. First resident and mailing
 
-Every subscriber is one package to print, pack, and mail every month.
-Pick a number you could comfortably do in an afternoon. The site will stop
-taking new signups at that number and put people back on the waitlist.
-You can raise it any time. Suggestion: start at 50 and see how the first
-two months feel.
+- First resident: **Walter, Resident 001, Tailor**
+- First cutoff: **October 15, 2026**
+- First package mailed: **first week of November 2026**
 
-**Answer:** ______ subscribers
+## 9. Email lists
 
----
+The Budderlee Post waitlist and the regular collector newsletter will
+remain **completely separate**.
 
-## 6. What day of the month is the cutoff?
+## 10. Stickers
 
-Anyone who signs up on or before the cutoff gets that month's resident.
-Anyone after it gets next month's. This is also the day you generate the
-shipping list and mail the batch. The 15th or the 20th are the usual
-choices. The 20th gives you more of the month to write and print.
+Monthly stickers will be professionally produced as die-cut stickers and
+ordered in bulk. The Founding Member sticker will be a separate,
+exclusive one-time design.
 
-**Answer:** the ______ of each month
+## 11. Sales tax
 
----
+**Accountant guidance is required before accepting paid subscriptions.**
 
-## 7. Where will you ship?
+Questions have been prepared covering North Carolina registration,
+taxable contents, included shipping, checkout presentation, out-of-state
+sales, filing requirements, Stripe classification, and bookkeeping.
 
-The gallery ships to the US only today. Canada is possible but postage is
-roughly double and customs forms are needed on some items. Suggestion: US
-only at launch, add Canada once the routine is settled.
+## 12. Package contents
 
-**Answer:**
+Each standard monthly package will contain:
 
----
+- Resident character and art card
+- Tales from Budderlee story
+- Tested, character-driven recipe card
+- Special surprise gift: a professionally printed die-cut sticker
+- A short personal note: a welcome for new subscribers, a thank-you for
+  returning ones
 
-## 8. Who is the first resident, and what month does the first package ship?
-
-The landing page and the welcome email both need to say who's coming and
-when. It also sets the printing deadline. Allow at least three weeks
-between finishing the artwork and the first cutoff so the printer has time.
-
-**First resident:**
-
-**First ship month:**
+Founding members will also receive the exclusive Founding Member sticker
+in their first mailing.
 
 ---
 
-## 9. Should waitlist signups also join your regular collector list?
+## Still open
 
-When someone joins the waitlist, we can also add them to the studio
-newsletter list so they hear about new paintings and shows. Or we can keep
-them separate and only email them about the subscription. Suggestion: add
-them to both. They came for Budderlee, and Budderlee news is in the
-newsletter anyway.
+Two things the build depends on that aren't settled yet:
 
-**Answer:**
-
----
-
-## 10. How will the stickers be made?
-
-Card printers like Moo or Vistaprint can print the 5×7 cards and the
-recipe cards. Some also do die-cut stickers; others don't, and a sticker
-vendor like Sticker Mule or StickerApp would be a separate order. This
-affects lead time and cost per package.
-
-**Answer:**
-
----
-
-## 11. Has your accountant said anything about sales tax?
-
-Shipping physical goods on a subscription may mean collecting sales tax in
-your state, and possibly others. Stripe can calculate and collect it
-automatically, but only if we turn that on, and whether you need to is a
-question for your accountant. Please ask before launch.
-
-**Answer:**
-
----
-
-## 12. Anything else that should be in the package, or on the page?
-
-A signature on each card? A note about the village? A "collect them all"
-checklist? Anything you've imagined that isn't in the plan.
-
-**Answer:**
-
----
-
-When you've filled this in, hand it back to David and the build starts
-with the waitlist page.
+1. **Accountant sign-off on sales tax.** The waitlist can go live without
+   it. Paid signups can't open until it's in.
+2. **Sticker and card vendors.** Which printer for the cards and recipe
+   cards, and which sticker vendor, plus their turnaround. The first
+   cutoff is October 15 and the first mailing is the first week of
+   November, so turnaround decides whether that date holds.
