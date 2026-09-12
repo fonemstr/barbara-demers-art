@@ -13,6 +13,8 @@ import { JournalPosts } from "./src/collections/JournalPosts";
 import { SocialPosts } from "./src/collections/SocialPosts";
 import { CommissionedPortraits } from "./src/collections/CommissionedPortraits";
 import { Newsletters } from "./src/collections/Newsletters";
+import { Waitlist } from "./src/collections/Waitlist";
+import { BudderleePost } from "./src/globals/BudderleePost";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -36,7 +38,8 @@ export default buildConfig({
       afterNavLinks: ["/src/components/admin/analytics-nav-link#AnalyticsNavLink"],
     },
   },
-  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters],
+  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters, Waitlist],
+  globals: [BudderleePost],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "insecure-dev-secret-change-me",
   typescript: {

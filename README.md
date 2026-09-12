@@ -56,6 +56,8 @@ Collections:
 - **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
 - **Media** — uploaded image files; used by Paintings and Journal Posts
 - **Users** — admin logins; only Barbara (and David) should have accounts
+- **Waitlist** — people waiting for The Budderlee Post to open; rows come from the form at `/budderlee/post`
+- **The Budderlee Post** (global) — phase, price, cap, cutoff day, and next mailing for the subscription; see `SUBSCRIPTION.md`
 
 Image uploads land on the local filesystem in dev (`./media/`) and on Vercel Blob in production. The frontend picks up both automatically.
 

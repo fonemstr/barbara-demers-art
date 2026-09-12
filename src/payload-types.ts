@@ -74,6 +74,7 @@ export interface Config {
     'social-posts': SocialPost;
     'commissioned-portraits': CommissionedPortrait;
     newsletters: Newsletter;
+    waitlist: Waitlist;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     'social-posts': SocialPostsSelect<false> | SocialPostsSelect<true>;
     'commissioned-portraits': CommissionedPortraitsSelect<false> | CommissionedPortraitsSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
+    waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,8 +99,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'budderlee-post': BudderleePost;
+  };
+  globalsSelect: {
+    'budderlee-post': BudderleePostSelect<false> | BudderleePostSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -281,7 +287,7 @@ export interface Painting {
    */
   sold?: boolean | null;
   /**
-   * Tick and save to post this painting to Instagram + Facebook (via Ayrshare). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.
+   * Tick and save to post this painting to Instagram + Facebook (via the platform APIs). Posts once, when first ticked; the delivery report appears under Social Posts. Untick and re-tick to announce again.
    */
   announceOnSocial?: boolean | null;
   updatedAt: string;
@@ -349,9 +355,9 @@ export interface SocialPost {
    */
   image?: (number | null) | Media;
   /**
-   * Which connected accounts to post to. Accounts are linked in the Ayrshare dashboard.
+   * Which accounts to post to. Credentials are configured in the environment — see SOCIAL.md.
    */
-  platforms?: ('instagram' | 'facebook' | 'twitter' | 'pinterest')[] | null;
+  platforms?: ('instagram' | 'facebook' | 'pinterest')[] | null;
   /**
    * Leave empty to post immediately when sent. Set a future date/time for a timed release.
    */
@@ -459,6 +465,35 @@ export interface Newsletter {
   createdAt: string;
 }
 /**
+ * Everyone waiting for The Budderlee Post to open. Signups arrive from the form at /budderlee/post.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist".
+ */
+export interface Waitlist {
+  id: number;
+  email: string;
+  /**
+   * Optional. Whatever they typed on the form.
+   */
+  name?: string | null;
+  /**
+   * Where the signup came from, e.g. budderlee-post-page.
+   */
+  source?: string | null;
+  joinedAt?: string | null;
+  /**
+   * Set when the launch invitation goes out.
+   */
+  invitedAt?: string | null;
+  /**
+   * Set when they become a paying subscriber.
+   */
+  subscribedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -509,6 +544,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'newsletters';
         value: number | Newsletter;
+      } | null)
+    | ({
+        relationTo: 'waitlist';
+        value: number | Waitlist;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -736,6 +775,20 @@ export interface NewslettersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "waitlist_select".
+ */
+export interface WaitlistSelect<T extends boolean = true> {
+  email?: T;
+  name?: T;
+  source?: T;
+  joinedAt?: T;
+  invitedAt?: T;
+  subscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -773,6 +826,66 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * Settings for the monthly subscription. The page at /budderlee/post updates within a minute of saving.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budderlee-post".
+ */
+export interface BudderleePost {
+  id: number;
+  /**
+   * What the page offers visitors. Leave on Waitlist until the accountant's sales-tax guidance is in and Stripe is set up.
+   */
+  phase: 'waitlist' | 'open' | 'closed';
+  /**
+   * Shown on the page and in emails, e.g. “November 2026”.
+   */
+  nextMailing?: string | null;
+  /**
+   * The resident shown on the page as the next one in the mail. Walter for the first mailing.
+   */
+  firstResident?: (number | null) | Painting;
+  /**
+   * Active subscribers allowed. Once reached, visitors go back to the waitlist.
+   */
+  subscriberCap?: number | null;
+  /**
+   * Signups through this day of the month get the next mailing.
+   */
+  cutoffDay?: number | null;
+  /**
+   * $12 = 1200. Shown on the page; the Stripe Price must match.
+   */
+  priceCents?: number | null;
+  /**
+   * Waitlist members who subscribe before this date are founding members and get the Founding Member sticker.
+   */
+  foundingWindowEnds?: string | null;
+  /**
+   * From the Stripe dashboard once the product is created (starts with price_). Needed before the phase can be Open.
+   */
+  stripePriceId?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budderlee-post_select".
+ */
+export interface BudderleePostSelect<T extends boolean = true> {
+  phase?: T;
+  nextMailing?: T;
+  firstResident?: T;
+  subscriberCap?: T;
+  cutoffDay?: T;
+  priceCents?: T;
+  foundingWindowEnds?: T;
+  stripePriceId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
