@@ -109,6 +109,10 @@ export async function POST(request: Request) {
       data: { email, name, source, joinedAt: new Date().toISOString() },
       overrideAccess: true,
     });
+    const total = await payload
+      .count({ collection: "waitlist", overrideAccess: true })
+      .then((r) => r.totalDocs)
+      .catch(() => null);
 
     // The confirmation and the studio heads-up are best effort: the
     // signup is stored, so an email hiccup must not fail the request.
@@ -135,7 +139,9 @@ export async function POST(request: Request) {
           text: [
             `${name ? `${name} <${email}>` : email} joined the waitlist for ${BUDDERLEE_POST.name}.`,
             ``,
-            `Total so far: ${existing.totalDocs + 1 > 0 ? "see Waitlist in /admin" : ""}`,
+            total != null
+              ? `That makes ${total} on the waitlist.`
+              : `The full list is in the admin.`,
             `${SITE_URL}/admin/collections/waitlist`,
           ].join("\n"),
         });
