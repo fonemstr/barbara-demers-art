@@ -9,6 +9,7 @@ import * as migration_20260812_rename_meadowbrook_enum_to_budderlee from './2026
 import * as migration_20260814_add_newsletters from './20260814_add_newsletters';
 import * as migration_20260814_120000_add_none_subject_group from './20260814_120000_add_none_subject_group';
 import * as migration_20260912_add_budderlee_post_waitlist from './20260912_add_budderlee_post_waitlist';
+import * as migration_20260913_add_resident_profile_and_issues from './20260913_add_resident_profile_and_issues';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20260912_add_budderlee_post_waitlist.up,
     down: migration_20260912_add_budderlee_post_waitlist.down,
     name: '20260912_add_budderlee_post_waitlist',
+  },
+  {
+    up: migration_20260913_add_resident_profile_and_issues.up,
+    down: migration_20260913_add_resident_profile_and_issues.down,
+    name: '20260913_add_resident_profile_and_issues',
   },
 ];

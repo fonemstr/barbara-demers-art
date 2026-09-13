@@ -7,6 +7,7 @@ import {
 
 export { SUBJECT_GROUPS, SUBJECT_GROUP_LABELS };
 export type { SubjectGroup };
+import type { StarSign } from "@/lib/zodiac";
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
@@ -37,6 +38,11 @@ export type Painting = {
   collection?: PaintingCollection;
   characterName?: string;
   characterRole?: string;
+  /** Budderlee Post card back: number, birthday, star sign, friends. */
+  residentNumber?: number;
+  dateOfBirth?: string;
+  starSign?: StarSign;
+  friends?: { slug: string; name: string }[];
   sold?: boolean;
   featured?: boolean;
   updatedAt?: string;
@@ -152,6 +158,9 @@ const seedPaintings: Painting[] = [
     collection: "budderlee",
     characterName: "Maisie",
     characterRole: "The Pie Maker",
+    residentNumber: 2,
+    dateOfBirth: "2020-03-14T12:00:00.000Z",
+    starSign: "pisces",
     year: 2026,
     medium: "Acrylic on panel",
     widthIn: 5,
@@ -171,6 +180,9 @@ const seedPaintings: Painting[] = [
     collection: "budderlee",
     characterName: "Reggie",
     characterRole: "The Night Watchman",
+    residentNumber: 3,
+    dateOfBirth: "2019-10-31T12:00:00.000Z",
+    starSign: "scorpio",
     year: 2026,
     medium: "Acrylic on panel",
     widthIn: 5,
@@ -208,6 +220,14 @@ type PayloadPainting = {
   collection?: PaintingCollection | null;
   characterName?: string | null;
   characterRole?: string | null;
+  profile?: {
+    residentNumber?: number | null;
+    dateOfBirth?: string | null;
+    starSign?: StarSign | null;
+    friends?: Array<
+      number | { slug?: string; characterName?: string | null; title?: string }
+    > | null;
+  } | null;
   sold?: boolean;
   featured?: boolean;
   updatedAt?: string;
@@ -254,6 +274,17 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     collection: p.collection ?? "none",
     characterName: normalizeOptionalText(p.characterName),
     characterRole: normalizeOptionalText(p.characterRole),
+    residentNumber: p.profile?.residentNumber ?? undefined,
+    dateOfBirth: p.profile?.dateOfBirth ?? undefined,
+    starSign: p.profile?.starSign ?? undefined,
+    // Friends arrive populated at depth 1; bare IDs (depth 0) are skipped.
+    friends: (p.profile?.friends ?? [])
+      .map((f) =>
+        typeof f === "object" && f.slug
+          ? { slug: f.slug, name: f.characterName || f.title || f.slug }
+          : null,
+      )
+      .filter((f): f is { slug: string; name: string } => !!f),
     sold: p.sold ?? false,
     featured: p.featured ?? false,
     updatedAt: p.updatedAt,

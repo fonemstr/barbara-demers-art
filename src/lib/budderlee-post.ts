@@ -14,6 +14,7 @@ export type PostPhase = "waitlist" | "open" | "closed";
 export type PostResident = {
   name: string;
   role?: string;
+  number?: number;
   slug: string;
   imageUrl?: string;
 };
@@ -45,6 +46,7 @@ type ResidentDoc = {
   title?: string | null;
   characterName?: string | null;
   characterRole?: string | null;
+  profile?: { residentNumber?: number | null } | null;
   images?: Array<{ image?: number | { url?: string | null } | null }> | null;
 };
 
@@ -58,6 +60,7 @@ function toResident(doc: unknown): PostResident | undefined {
   return {
     name: d.characterName || d.title || d.slug,
     role: d.characterRole ?? undefined,
+    number: d.profile?.residentNumber ?? undefined,
     slug: d.slug,
     imageUrl,
   };
