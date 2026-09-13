@@ -76,6 +76,7 @@ export interface Config {
     newsletters: Newsletter;
     waitlist: Waitlist;
     issues: Issue;
+    subscribers: Subscriber;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -92,6 +93,7 @@ export interface Config {
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
     issues: IssuesSelect<false> | IssuesSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -609,6 +611,60 @@ export interface Issue {
   createdAt: string;
 }
 /**
+ * Everyone subscribed to The Budderlee Post, kept in step with Stripe automatically. Change cards, addresses, and cancellations in Stripe or through the subscriber's own portal link; only Notes is yours to edit here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: number;
+  email: string;
+  name?: string | null;
+  /**
+   * Mirrors Stripe.
+   */
+  status: 'active' | 'trialing' | 'past_due' | 'paused' | 'canceled' | 'incomplete';
+  /**
+   * Was on the waitlist and subscribed at launch. Gets the Founding Member sticker in the first package.
+   */
+  foundingMember?: boolean | null;
+  /**
+   * Counted when a shipment is marked shipped. Zero means the next package is their first.
+   */
+  packagesSent?: number | null;
+  currentPeriodEnd?: string | null;
+  /**
+   * Only set for signups after the cutoff, whose first charge waits for the next cutoff.
+   */
+  trialEnd?: string | null;
+  startedAt?: string | null;
+  /**
+   * Synced from Stripe whenever the subscriber updates it.
+   */
+  shippingAddress?: {
+    name?: string | null;
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  canceledAt?: string | null;
+  /**
+   * What they chose in the portal, if anything.
+   */
+  cancelReason?: string | null;
+  /**
+   * Yours. Allergies, gift notes, anything to remember when packing.
+   */
+  notes?: string | null;
+  stripeCustomerId?: string | null;
+  stripeSubscriptionId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -667,6 +723,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'issues';
         value: number | Issue;
+      } | null)
+    | ({
+        relationTo: 'subscribers';
+        value: number | Subscriber;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -935,6 +995,38 @@ export interface IssuesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T;
+  name?: T;
+  status?: T;
+  foundingMember?: T;
+  packagesSent?: T;
+  currentPeriodEnd?: T;
+  trialEnd?: T;
+  startedAt?: T;
+  shippingAddress?:
+    | T
+    | {
+        name?: T;
+        line1?: T;
+        line2?: T;
+        city?: T;
+        state?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  canceledAt?: T;
+  cancelReason?: T;
+  notes?: T;
+  stripeCustomerId?: T;
+  stripeSubscriptionId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1013,6 +1105,10 @@ export interface BudderleePost {
    * From the Stripe dashboard once the product is created (starts with price_). Needed before the phase can be Open.
    */
   stripePriceId?: string | null;
+  /**
+   * Only after the accountant says to, and after Stripe Tax is switched on in the Stripe dashboard. Adds tax at checkout based on the shipping address.
+   */
+  collectTax?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1029,6 +1125,7 @@ export interface BudderleePostSelect<T extends boolean = true> {
   priceCents?: T;
   foundingWindowEnds?: T;
   stripePriceId?: T;
+  collectTax?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

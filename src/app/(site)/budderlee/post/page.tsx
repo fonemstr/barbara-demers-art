@@ -6,10 +6,13 @@ import { ArtistNote } from "@/components/ui/artist-note";
 import { Chip } from "@/components/ui/chip";
 import { Blob } from "@/components/ui/blob";
 import { WaitlistForm } from "@/components/waitlist-form";
+import { SubscribeButton } from "@/components/subscribe-button";
 import {
   BUDDERLEE_POST,
   formatDollars,
+  getActiveSubscriberCount,
   getBudderleePostSettings,
+  getSignupSchedule,
 } from "@/lib/budderlee-post";
 
 export const metadata = {
@@ -72,7 +75,7 @@ const FAQ = [
   {
     q: "Can I cancel or pause?",
     a: () =>
-      "Yes, any time, from a link in your emails. No phone calls, no forms. Cancel before the cutoff and you won't be charged again.",
+      "Yes, any time. Ask for a link on the manage page or use the one in your emails. No phone calls, no forms. Cancel before the cutoff and you won't be charged again.",
   },
   {
     q: "Do you ship outside the United States?",
@@ -97,12 +100,21 @@ export default async function BudderleePostPage() {
   const price = formatDollars(settings.priceCents);
   const resident = settings.firstResident;
 
+  // Open means "open and not full". The checkout route re-checks the cap
+  // at click time; this only decides what the page shows.
+  const activeCount = settings.phase === "open" ? await getActiveSubscriberCount() : 0;
+  const full = settings.phase === "open" && activeCount >= settings.subscriberCap;
+  const canSubscribe = settings.phase === "open" && !full && !!settings.stripePriceId;
+  const schedule = getSignupSchedule(settings.cutoffDay);
+
   const headline =
     settings.phase === "closed"
       ? "Signups are closed for now."
-      : settings.phase === "open"
-        ? "Signups are opening to the waitlist first."
-        : "Be first in line when signups open.";
+      : full
+        ? "Every spot is taken for now."
+        : canSubscribe
+          ? `${price} a month. Cancel any time.`
+          : "Be first in line when signups open.";
 
   return (
     <div className="overflow-hidden">
@@ -135,7 +147,7 @@ export default async function BudderleePostPage() {
               {resident ? ` · ${resident.name}${resident.role ? `, ${resident.role}` : ""}` : ""}
             </p>
             <a href="#waitlist" className="text-sm font-medium text-primary underline underline-offset-4">
-              {settings.phase === "closed" ? "Get notified if it reopens" : "Join the waitlist"} ↓
+              {settings.phase === "closed" ? "Get notified if it reopens" : canSubscribe ? "Subscribe" : "Join the waitlist"} ↓
             </a>
           </div>
 
@@ -247,22 +259,42 @@ export default async function BudderleePostPage() {
         </ol>
       </Section>
 
-      {/* WAITLIST */}
-      <Section tone="variant" pad="lg" maxWidth="3xl" className="overflow-hidden" innerClassName="relative">
-        <div id="waitlist" className="scroll-mt-24 text-center mb-8">
-          <Eyebrow>{settings.phase === "closed" ? "Signups closed" : "The waitlist"}</Eyebrow>
-          <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-tight text-balance">{headline}</h2>
-          <p className="mt-4 text-on-surface-muted leading-relaxed max-w-xl mx-auto">
-            {settings.phase === "closed"
-              ? "Leave your email and you'll be the first to know if The Budderlee Post opens again."
-              : `Leave your email and you'll hear from Barbara before anyone else when signups open. The first ${settings.subscriberCap} subscribers are all she can pack in a month, so the waitlist goes first.`}
+      {/* SUBSCRIBE or WAITLIST */}
+      {canSubscribe ? (
+        <Section tone="variant" pad="lg" maxWidth="3xl" className="overflow-hidden" innerClassName="relative">
+          <div id="waitlist" className="scroll-mt-24 text-center mb-8">
+            <Eyebrow>Subscribe</Eyebrow>
+            <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-tight text-balance">{headline}</h2>
+            <p className="mt-4 text-on-surface-muted leading-relaxed max-w-xl mx-auto">
+              {schedule.chargesNow
+                ? `Subscribe today and your first package mails in the first week of ${schedule.firstMailingLabel}. Your card is charged now and renews on the same day each month.`
+                : `The ${ordinal(settings.cutoffDay)} has passed this month, so nothing is charged today: your card is charged on ${schedule.chargeDateLabel} and your first package mails in the first week of ${schedule.firstMailingLabel}.`}
+            </p>
+          </div>
+          <SubscribeButton label={`Subscribe for ${price} a month`} />
+          <p className="mt-6 text-center text-xs text-on-surface-subtle">
+            Secure checkout by Stripe. U.S. addresses only. Change your address or card, pause, or cancel any time from a link in your emails.
           </p>
-        </div>
-        <WaitlistForm />
-        <p className="mt-6 text-center text-xs text-on-surface-subtle">
-          This list is only for {BUDDERLEE_POST.name}. It&rsquo;s separate from the studio newsletter.
-        </p>
-      </Section>
+        </Section>
+      ) : (
+        <Section tone="variant" pad="lg" maxWidth="3xl" className="overflow-hidden" innerClassName="relative">
+          <div id="waitlist" className="scroll-mt-24 text-center mb-8">
+            <Eyebrow>{settings.phase === "closed" ? "Signups closed" : full ? "Full for now" : "The waitlist"}</Eyebrow>
+            <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-tight text-balance">{headline}</h2>
+            <p className="mt-4 text-on-surface-muted leading-relaxed max-w-xl mx-auto">
+              {settings.phase === "closed"
+                ? "Leave your email and you'll be the first to know if The Budderlee Post opens again."
+                : full
+                  ? `${settings.subscriberCap} packages a month is all Barbara can pack by hand. Leave your email and you'll hear first when a spot opens.`
+                  : `Leave your email and you'll hear from Barbara before anyone else when signups open. The first ${settings.subscriberCap} subscribers are all she can pack in a month, so the waitlist goes first.`}
+            </p>
+          </div>
+          <WaitlistForm />
+          <p className="mt-6 text-center text-xs text-on-surface-subtle">
+            This list is only for {BUDDERLEE_POST.name}. It&rsquo;s separate from the studio newsletter.
+          </p>
+        </Section>
+      )}
 
       {/* FAQ */}
       <Section tone="surface" pad="lg" maxWidth="3xl">
@@ -286,6 +318,10 @@ export default async function BudderleePostPage() {
           Meet the residents so far on{" "}
           <Link href="/budderlee" className="text-primary underline underline-offset-4">
             the Budderlee page
+          </Link>
+          . Already subscribed?{" "}
+          <Link href="/budderlee/post/manage" className="text-primary underline underline-offset-4">
+            Manage your subscription
           </Link>
           .
         </p>
