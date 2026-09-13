@@ -143,6 +143,11 @@ export default async function BudderleePage() {
                     )}
                   </div>
                   <div className="mt-4 text-center">
+                    {p.residentNumber != null && (
+                      <p className="text-[10px] tracking-[0.18em] uppercase text-on-surface-faint mb-1">
+                        No. {String(p.residentNumber).padStart(3, "0")}
+                      </p>
+                    )}
                     <h3 className="font-serif text-xl leading-tight text-on-surface">
                       {p.characterName ?? p.title}
                     </h3>

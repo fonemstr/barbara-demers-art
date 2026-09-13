@@ -7,6 +7,7 @@ import {
 import { buildAnnouncementCaption } from "../lib/social-captions";
 import { instagramSafeImageUrl } from "../lib/instagram-image";
 import { SITE_URL } from "../lib/site-url";
+import { STAR_SIGNS, starSignForDate } from "../lib/zodiac";
 
 // Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
 // Next's runtime.
@@ -175,6 +176,13 @@ export const Paintings: CollectionConfig = {
         }
         if (typeof data.title === "string") data.title = data.title.trim();
         if (typeof data.subject === "string") data.subject = data.subject.trim();
+        // The star sign follows the birthday unless Barbara picks one.
+        const profile = data.profile as
+          | { dateOfBirth?: string | null; starSign?: string | null }
+          | undefined;
+        if (profile && typeof profile.dateOfBirth === "string" && !profile.starSign) {
+          profile.starSign = starSignForDate(profile.dateOfBirth) ?? null;
+        }
         return data;
       },
     ],
@@ -285,6 +293,59 @@ export const Paintings: CollectionConfig = {
           admin: {
             description: "e.g. The Pie Maker",
           },
+        },
+      ],
+    },
+    {
+      // The profile printed on the back of each Budderlee Post card.
+      type: "group",
+      name: "profile",
+      label: "Resident profile (back of the card)",
+      admin: {
+        condition: (data) => data?.collection === "budderlee",
+        description:
+          "What The Budderlee Post prints on the back of the 5×7 card. The star sign fills itself in from the birthday when left blank.",
+      },
+      fields: [
+        {
+          type: "row",
+          fields: [
+            {
+              name: "residentNumber",
+              label: "Resident number",
+              type: "number",
+              min: 1,
+              admin: { description: "Walter is 1. Printed as No. 001.", width: "25%" },
+            },
+            {
+              name: "dateOfBirth",
+              label: "Birthday",
+              type: "date",
+              admin: {
+                date: { pickerAppearance: "dayOnly" },
+                description: "The year is optional flavor; only month and day print.",
+                width: "35%",
+              },
+            },
+            {
+              name: "starSign",
+              label: "Star sign",
+              type: "select",
+              options: STAR_SIGNS.map((s) => ({ label: `${s.symbol} ${s.label}`, value: s.value })),
+              admin: { description: "Auto-filled from the birthday. Change it if the character disagrees.", width: "40%" },
+            },
+          ],
+        },
+        {
+          name: "friends",
+          type: "relationship",
+          relationTo: "paintings",
+          hasMany: true,
+          filterOptions: ({ id }) => ({
+            collection: { equals: "budderlee" },
+            ...(id ? { id: { not_equals: id } } : {}),
+          }),
+          admin: { description: "Other residents. Their names print on the card." },
         },
       ],
     },

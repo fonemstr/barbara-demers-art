@@ -75,6 +75,7 @@ export interface Config {
     'commissioned-portraits': CommissionedPortrait;
     newsletters: Newsletter;
     waitlist: Waitlist;
+    issues: Issue;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +91,7 @@ export interface Config {
     'commissioned-portraits': CommissionedPortraitsSelect<false> | CommissionedPortraitsSelect<true>;
     newsletters: NewslettersSelect<false> | NewslettersSelect<true>;
     waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
+    issues: IssuesSelect<false> | IssuesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -240,6 +242,42 @@ export interface Painting {
    * e.g. The Pie Maker
    */
   characterRole?: string | null;
+  /**
+   * What The Budderlee Post prints on the back of the 5×7 card. The star sign fills itself in from the birthday when left blank.
+   */
+  profile?: {
+    /**
+     * Walter is 1. Printed as No. 001.
+     */
+    residentNumber?: number | null;
+    /**
+     * The year is optional flavor; only month and day print.
+     */
+    dateOfBirth?: string | null;
+    /**
+     * Auto-filled from the birthday. Change it if the character disagrees.
+     */
+    starSign?:
+      | (
+          | 'aries'
+          | 'taurus'
+          | 'gemini'
+          | 'cancer'
+          | 'leo'
+          | 'virgo'
+          | 'libra'
+          | 'scorpio'
+          | 'sagittarius'
+          | 'capricorn'
+          | 'aquarius'
+          | 'pisces'
+        )
+      | null;
+    /**
+     * Other residents. Their names print on the card.
+     */
+    friends?: (number | Painting)[] | null;
+  };
   year: number;
   medium: string;
   widthIn: number;
@@ -494,6 +532,83 @@ export interface Waitlist {
   createdAt: string;
 }
 /**
+ * One issue per mailing month. The title fills itself in from the month and the resident when you save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "issues".
+ */
+export interface Issue {
+  id: number;
+  /**
+   * Set automatically on save.
+   */
+  title?: string | null;
+  /**
+   * The month the packages go out (first week).
+   */
+  mailingMonth: string;
+  /**
+   * The resident on this month's card.
+   */
+  resident: number | Painting;
+  status: 'planning' | 'printer' | 'ready' | 'shipped';
+  storyTitle?: string | null;
+  /**
+   * This month's chapter. It prints on the folded sheet.
+   */
+  story?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * e.g. Maisie's Apple Pie
+   */
+  recipeTitle?: string | null;
+  /**
+   * Ingredients and method, as they should print on the 4×6 card.
+   */
+  recipe?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * What this month's sticker is, for your own tracking.
+   */
+  stickerNote?: string | null;
+  /**
+   * Anything else about this mailing: vendor orders, counts, reminders.
+   */
+  notes?: string | null;
+  /**
+   * Set when the shipping list is generated at the cutoff (coming in a later release).
+   */
+  shippingListGeneratedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -548,6 +663,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'waitlist';
         value: number | Waitlist;
+      } | null)
+    | ({
+        relationTo: 'issues';
+        value: number | Issue;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -678,6 +797,14 @@ export interface PaintingsSelect<T extends boolean = true> {
   collection?: T;
   characterName?: T;
   characterRole?: T;
+  profile?:
+    | T
+    | {
+        residentNumber?: T;
+        dateOfBirth?: T;
+        starSign?: T;
+        friends?: T;
+      };
   year?: T;
   medium?: T;
   widthIn?: T;
@@ -784,6 +911,25 @@ export interface WaitlistSelect<T extends boolean = true> {
   joinedAt?: T;
   invitedAt?: T;
   subscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "issues_select".
+ */
+export interface IssuesSelect<T extends boolean = true> {
+  title?: T;
+  mailingMonth?: T;
+  resident?: T;
+  status?: T;
+  storyTitle?: T;
+  story?: T;
+  recipeTitle?: T;
+  recipe?: T;
+  stickerNote?: T;
+  notes?: T;
+  shippingListGeneratedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

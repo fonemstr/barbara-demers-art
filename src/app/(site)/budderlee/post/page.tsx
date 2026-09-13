@@ -165,6 +165,11 @@ export default async function BudderleePostPage() {
                 )}
               </div>
               <div className="mt-3 text-center">
+                {resident?.number != null && (
+                  <p className="text-[10px] tracking-[0.18em] uppercase text-on-surface-faint mb-1">
+                    No. {String(resident.number).padStart(3, "0")}
+                  </p>
+                )}
                 <p className="font-serif text-lg leading-tight text-on-surface">
                   {resident?.name ?? "The next resident"}
                 </p>
