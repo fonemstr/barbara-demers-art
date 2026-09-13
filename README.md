@@ -32,7 +32,7 @@ Open <http://localhost:3000>.
 | `POSTGRES_URL` | for admin | Postgres connection string. Free tier on <https://neon.tech>. |
 | `BLOB_READ_WRITE_TOKEN` | production | Vercel Blob token for uploaded images. Local dev uses filesystem. |
 | `STRIPE_SECRET_KEY` | for checkout | Use `sk_test_...` during development. |
-| `STRIPE_WEBHOOK_SECRET` | for sale webhook | Get via `stripe listen --forward-to localhost:3000/api/stripe-webhook`. |
+| `STRIPE_WEBHOOK_SECRET` | for sale webhook | Get via `stripe listen --forward-to localhost:3000/api/stripe-webhook`. The Budderlee Post also needs the subscription, invoice, and customer events enabled on the endpoint (see DEPLOY.md). |
 | `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
 | `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
@@ -58,6 +58,7 @@ Collections:
 - **Users** — admin logins; only Barbara (and David) should have accounts
 - **Waitlist** — people waiting for The Budderlee Post to open; rows come from the form at `/budderlee/post`
 - **Issues** — one per Budderlee Post mailing month: the resident, the Tales from Budderlee chapter, the recipe, the sticker, and a status
+- **Subscribers** — Budderlee Post subscribers, written by the Stripe webhook (status, renewal, shipping address, founding member); only Notes is edited by hand
 - **The Budderlee Post** (global) — phase, price, cap, cutoff day, and next mailing for the subscription; see `SUBSCRIPTION.md`
 
 Image uploads land on the local filesystem in dev (`./media/`) and on Vercel Blob in production. The frontend picks up both automatically.

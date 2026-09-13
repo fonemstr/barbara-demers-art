@@ -41,6 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/gallery`, lastModified: galleryLastMod },
     { url: `${SITE_URL}/budderlee`, lastModified: budderleeLastMod ?? galleryLastMod },
     { url: `${SITE_URL}/budderlee/post` },
+    { url: `${SITE_URL}/budderlee/post/manage` },
     { url: `${SITE_URL}/commissions` },
     { url: `${SITE_URL}/about` },
     { url: `${SITE_URL}/privacy` },

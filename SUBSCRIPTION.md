@@ -310,8 +310,8 @@ guidance, not the code.
 | --- | --- | --- | --- |
 | 1 | **Stripe setup** (no code). Product and $12 Price with the `BUDDERLEE POST` descriptor. Customer Portal: card and address updates, pause, cancel with reason. Subscription events on the webhook. Stripe Tax ready to enable. | none | this week |
 | 2 | **Waitlist.** Settings global, Waitlist collection and migration, landing page in waitlist mode, waitlist route, confirmation email, link from the Budderlee page. | small | shipped September 12 |
-| 3 | **Content model.** Resident profile group on Paintings (number, birthday, star sign, friends), Issues collection, migration. Barbara enters Walter and writes the November issue. | small | in review |
-| 4 | **Checkout.** Checkout route with the cutoff logic, webhook handlers, Subscribers collection, welcome and manage pages, portal route, notifications. End-to-end in Stripe test mode. | medium | ready by October 1 |
+| 3 | **Content model.** Resident profile group on Paintings (number, birthday, star sign, friends), Issues collection, migration. Barbara enters Walter and writes the November issue. | small | shipped September 12 |
+| 4 | **Checkout.** Checkout route with the cutoff logic, webhook handlers, Subscribers collection, welcome and manage pages, signed portal links, notifications. Stripe setup steps are in DEPLOY.md. | medium | in review |
 | 5 | **Fulfillment.** Shipments collection, generate list, CSV export, mark shipped, cap enforcement. | medium | ready by October 15 |
 | 6 | **Launch.** Accountant sign-off. Flip the phase to open. Send the launch invitation. Announce on social with the existing tools. | none | early October |
 | 7 | **Later.** Print-ready PDFs. Annual and gift subscriptions. Canada. A public archive of past residents. Back issues for sale. Skip a month from the portal. | | when ready |

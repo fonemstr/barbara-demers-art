@@ -2,6 +2,13 @@ import { NextResponse } from "next/server";
 import { getPayloadClient } from "@/lib/payload";
 import { FROM_EMAIL, TO_EMAIL, resend } from "@/lib/resend";
 import { requireStripe } from "@/lib/stripe";
+import {
+  handlePostCheckoutCompleted,
+  handlePostCustomerUpdated,
+  handlePostInvoiceFailed,
+  handlePostSubscriptionEvent,
+  isPostSession,
+} from "@/lib/budderlee-post-stripe";
 
 // Stripe webhooks must read the raw body for signature verification.
 export const runtime = "nodejs";
@@ -26,6 +33,51 @@ export async function POST(request: Request) {
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Invalid signature";
     return NextResponse.json({ error: msg }, { status: 400 });
+  }
+
+  // The Budderlee Post keeps its own table in step with Stripe. A missing
+  // database returns 500 so Stripe retries rather than losing the change.
+  const postEvents = new Set([
+    "customer.subscription.created",
+    "customer.subscription.updated",
+    "customer.subscription.deleted",
+    "customer.subscription.paused",
+    "customer.subscription.resumed",
+    "invoice.payment_failed",
+    "customer.updated",
+  ]);
+  const isPostCheckout =
+    event.type === "checkout.session.completed" && isPostSession(event.data.object);
+  if (isPostCheckout || postEvents.has(event.type)) {
+    const payload = await getPayloadClient();
+    if (!payload) {
+      console.error(`[stripe-webhook] Payload unavailable for ${event.type} (${event.id}).`);
+      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+    }
+    try {
+      switch (event.type) {
+        case "checkout.session.completed":
+          await handlePostCheckoutCompleted(stripe, payload, event.data.object, event.livemode);
+          break;
+        case "customer.subscription.created":
+        case "customer.subscription.updated":
+        case "customer.subscription.deleted":
+        case "customer.subscription.paused":
+        case "customer.subscription.resumed":
+          await handlePostSubscriptionEvent(payload, event.data.object, event.type, event.livemode);
+          break;
+        case "invoice.payment_failed":
+          await handlePostInvoiceFailed(payload, event.data.object, event.livemode);
+          break;
+        case "customer.updated":
+          await handlePostCustomerUpdated(payload, event.data.object);
+          break;
+      }
+    } catch (err) {
+      console.error(`[stripe-webhook] ${event.type} (${event.id}) failed:`, err);
+      return NextResponse.json({ error: "Handler failed" }, { status: 500 });
+    }
+    return NextResponse.json({ received: true });
   }
 
   switch (event.type) {

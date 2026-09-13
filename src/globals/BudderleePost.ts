@@ -131,5 +131,15 @@ export const BudderleePost: GlobalConfig = {
         },
       ],
     },
+    {
+      name: "collectTax",
+      label: "Collect sales tax through Stripe Tax",
+      type: "checkbox",
+      defaultValue: false,
+      admin: {
+        description:
+          "Only after the accountant says to, and after Stripe Tax is switched on in the Stripe dashboard. Adds tax at checkout based on the shipping address.",
+      },
+    },
   ],
 };
