@@ -16,6 +16,7 @@ import { Newsletters } from "./src/collections/Newsletters";
 import { Waitlist } from "./src/collections/Waitlist";
 import { Issues } from "./src/collections/Issues";
 import { Subscribers } from "./src/collections/Subscribers";
+import { Shipments } from "./src/collections/Shipments";
 import { BudderleePost } from "./src/globals/BudderleePost";
 
 const filename = fileURLToPath(import.meta.url);
@@ -36,11 +37,18 @@ export default buildConfig({
           Component: "/src/components/admin/analytics-view#AnalyticsView",
           path: "/analytics",
         },
+        fulfillment: {
+          Component: "/src/components/admin/fulfillment-view#FulfillmentView",
+          path: "/fulfillment",
+        },
       },
-      afterNavLinks: ["/src/components/admin/analytics-nav-link#AnalyticsNavLink"],
+      afterNavLinks: [
+        "/src/components/admin/analytics-nav-link#AnalyticsNavLink",
+        "/src/components/admin/fulfillment-nav-link#FulfillmentNavLink",
+      ],
     },
   },
-  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters, Waitlist, Issues, Subscribers],
+  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters, Waitlist, Issues, Subscribers, Shipments],
   globals: [BudderleePost],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "insecure-dev-secret-change-me",

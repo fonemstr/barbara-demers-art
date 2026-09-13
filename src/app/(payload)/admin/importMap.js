@@ -23,8 +23,10 @@ import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b99
 import { UploadFeatureClient as UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { AnalyticsNavLink as AnalyticsNavLink_2ca846fe5b2ee6c73024b33d47220815 } from '../../../../src/components/admin/analytics-nav-link'
+import { FulfillmentNavLink as FulfillmentNavLink_0b7d2a86b3079d9e6b2e1a921d831642 } from '../../../../src/components/admin/fulfillment-nav-link'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 import { AnalyticsView as AnalyticsView_9bbed5229e2fd725697c3e7b7204e7fb } from '../../../../src/components/admin/analytics-view'
+import { FulfillmentView as FulfillmentView_5b72573f383fff04d437464730db67c7 } from '../../../../src/components/admin/fulfillment-view'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -54,7 +56,9 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UploadFeatureClient": UploadFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/src/components/admin/analytics-nav-link#AnalyticsNavLink": AnalyticsNavLink_2ca846fe5b2ee6c73024b33d47220815,
+  "/src/components/admin/fulfillment-nav-link#FulfillmentNavLink": FulfillmentNavLink_0b7d2a86b3079d9e6b2e1a921d831642,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e,
   "/src/components/admin/analytics-view#AnalyticsView": AnalyticsView_9bbed5229e2fd725697c3e7b7204e7fb,
+  "/src/components/admin/fulfillment-view#FulfillmentView": FulfillmentView_5b72573f383fff04d437464730db67c7,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

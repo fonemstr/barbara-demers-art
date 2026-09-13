@@ -132,6 +132,16 @@ export const BudderleePost: GlobalConfig = {
       ],
     },
     {
+      name: "includePastDue",
+      label: "Ship to past-due subscribers",
+      type: "checkbox",
+      defaultValue: true,
+      admin: {
+        description:
+          "When a renewal charge fails, Stripe retries for about a week. Ticked: they still get that month's package. Unticked: they're left off the shipping list until the charge goes through.",
+      },
+    },
+    {
       name: "collectTax",
       label: "Collect sales tax through Stripe Tax",
       type: "checkbox",

@@ -313,3 +313,63 @@ html[data-theme="dark"] .analytics-view {
   --av-series-2: #d95926;
   --av-delta-up: #0ca30c;
 }
+
+/* Budderlee Post fulfillment view (src/components/admin/fulfillment-view.tsx) */
+.fulfillment-view {
+  padding-block: calc(var(--base) * 2);
+  max-width: 1040px;
+
+  .fv-heading { margin: 0 0 calc(var(--base) * 1.5); }
+  .fv-muted { color: var(--theme-elevation-600); font-size: 0.85rem; }
+  .fv-footnote { margin-top: calc(var(--base) * 0.75); }
+
+  .fv-banner {
+    padding: calc(var(--base) * 0.6) calc(var(--base) * 0.9);
+    border-radius: 4px;
+    margin-bottom: calc(var(--base) * 1.25);
+    &--ok { background: var(--theme-success-100); color: var(--theme-success-900); }
+    &--error { background: var(--theme-error-100); color: var(--theme-error-900); }
+  }
+
+  .fv-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: calc(var(--base) * 0.75);
+    margin-bottom: calc(var(--base) * 1.5);
+  }
+  .fv-tile {
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 6px;
+    padding: calc(var(--base) * 0.9) calc(var(--base) * 1);
+    &__label { font-size: 0.8rem; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
+    &__value { font-size: 1.8rem; font-weight: 600; margin: calc(var(--base) * 0.2) 0; font-variant-numeric: tabular-nums; }
+  }
+
+  .fv-card {
+    background: var(--theme-elevation-0);
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 6px;
+    padding: calc(var(--base) * 1.1) calc(var(--base) * 1.25);
+    margin-bottom: calc(var(--base) * 1.25);
+    &__title { margin: 0 0 calc(var(--base) * 0.75); font-size: 1.1rem; }
+  }
+
+  .fv-table-wrap { overflow-x: auto; }
+  .fv-table {
+    width: 100%;
+    border-collapse: collapse;
+    th, td { text-align: left; vertical-align: top; padding: calc(var(--base) * 0.6) calc(var(--base) * 0.5); border-top: 1px solid var(--theme-elevation-100); }
+    th { border-top: 0; font-size: 0.8rem; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
+  }
+  .fv-actions {
+    display: flex; flex-wrap: wrap; gap: calc(var(--base) * 0.4); align-items: flex-start;
+    form { margin: 0; }
+    .btn { margin: 0; }
+  }
+
+  .fv-steps {
+    margin: 0; padding-left: 1.25rem;
+    li + li { margin-top: calc(var(--base) * 0.5); }
+  }
+}

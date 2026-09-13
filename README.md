@@ -56,9 +56,12 @@ Collections:
 - **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
 - **Media** — uploaded image files; used by Paintings and Journal Posts
 - **Users** — admin logins; only Barbara (and David) should have accounts
+
+The admin also has two custom pages: **Analytics** (site traffic) and **Fulfillment** (`/admin/fulfillment`: subscriber counts, and per issue the generate-list, CSV download, and mark-shipped actions for The Budderlee Post).
 - **Waitlist** — people waiting for The Budderlee Post to open; rows come from the form at `/budderlee/post`
 - **Issues** — one per Budderlee Post mailing month: the resident, the Tales from Budderlee chapter, the recipe, the sticker, and a status
 - **Subscribers** — Budderlee Post subscribers, written by the Stripe webhook (status, renewal, shipping address, founding member); only Notes is edited by hand
+- **Shipments** — one row per subscriber per Budderlee Post issue, generated from the admin's Fulfillment page at the cutoff (address snapshot, first-package and founding-sticker flags, shipped status)
 - **The Budderlee Post** (global) — phase, price, cap, cutoff day, and next mailing for the subscription; see `SUBSCRIPTION.md`
 
 Image uploads land on the local filesystem in dev (`./media/`) and on Vercel Blob in production. The frontend picks up both automatically.

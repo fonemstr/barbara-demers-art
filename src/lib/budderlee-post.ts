@@ -28,6 +28,7 @@ export type PostSettings = {
   foundingWindowEnds?: string;
   stripePriceId?: string;
   collectTax: boolean;
+  includePastDue: boolean;
   firstResident?: PostResident;
 };
 
@@ -41,6 +42,7 @@ export const DEFAULT_POST_SETTINGS: PostSettings = {
   priceCents: 1200,
   foundingWindowEnds: "2026-10-15T00:00:00.000Z",
   collectTax: false,
+  includePastDue: true,
 };
 
 type ResidentDoc = {
@@ -83,6 +85,7 @@ export async function getBudderleePostSettings(): Promise<PostSettings> {
         g.foundingWindowEnds ?? DEFAULT_POST_SETTINGS.foundingWindowEnds,
       stripePriceId: g.stripePriceId ?? undefined,
       collectTax: g.collectTax ?? false,
+      includePastDue: g.includePastDue ?? true,
       firstResident: toResident(g.firstResident),
     };
   } catch (err) {

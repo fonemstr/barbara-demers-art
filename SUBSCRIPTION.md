@@ -224,7 +224,7 @@ page, and the homepage gets a mention once signups open.
 | `POST /api/post/portal` | Looks up the subscriber, creates a portal session, emails the link. |
 | `POST /api/stripe-webhook` | Existing route. Adds subscription created, updated, and deleted; invoice paid and payment failed; customer address updates. Sets `foundingMember` on creation. |
 
-### Admin actions
+### Admin actions (built as the Fulfillment page at `/admin/fulfillment`)
 
 On the **Waitlist** list: **Send launch invitation**. Emails every
 un-invited waitlist member through Resend with the landing page link and
@@ -311,8 +311,8 @@ guidance, not the code.
 | 1 | **Stripe setup** (no code). Product and $12 Price with the `BUDDERLEE POST` descriptor. Customer Portal: card and address updates, pause, cancel with reason. Subscription events on the webhook. Stripe Tax ready to enable. | none | this week |
 | 2 | **Waitlist.** Settings global, Waitlist collection and migration, landing page in waitlist mode, waitlist route, confirmation email, link from the Budderlee page. | small | shipped September 12 |
 | 3 | **Content model.** Resident profile group on Paintings (number, birthday, star sign, friends), Issues collection, migration. Barbara enters Walter and writes the November issue. | small | shipped September 12 |
-| 4 | **Checkout.** Checkout route with the cutoff logic, webhook handlers, Subscribers collection, welcome and manage pages, signed portal links, notifications. Stripe setup steps are in DEPLOY.md. | medium | in review |
-| 5 | **Fulfillment.** Shipments collection, generate list, CSV export, mark shipped, cap enforcement. | medium | ready by October 15 |
+| 4 | **Checkout.** Checkout route with the cutoff logic, webhook handlers, Subscribers collection, welcome and manage pages, signed portal links, notifications. Stripe setup steps are in DEPLOY.md. | medium | shipped September 13 |
+| 5 | **Fulfillment.** Shipments collection, a Fulfillment page in the admin with generate list, CSV export, and mark shipped per issue, past-due switch. Cap enforcement shipped with checkout. | medium | in review |
 | 6 | **Launch.** Accountant sign-off. Flip the phase to open. Send the launch invitation. Announce on social with the existing tools. | none | early October |
 | 7 | **Later.** Print-ready PDFs. Annual and gift subscriptions. Canada. A public archive of past residents. Back issues for sale. Skip a month from the portal. | | when ready |
 
