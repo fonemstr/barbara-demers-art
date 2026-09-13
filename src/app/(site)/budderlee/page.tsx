@@ -4,6 +4,8 @@ import { getBudderleePaintings } from "@/data/paintings";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 import { BudderleeSeal } from "@/components/budderlee-seal";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { ButtonLink } from "@/components/ui/button";
+import { BUDDERLEE_POST, formatDollars, getBudderleePostSettings } from "@/lib/budderlee-post";
 import { Section } from "@/components/ui/section";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { ArtistNote } from "@/components/ui/artist-note";
@@ -45,7 +47,10 @@ const SERIES_MARKS = [
 ];
 
 export default async function BudderleePage() {
-  const residents = await getBudderleePaintings();
+  const [residents, post] = await Promise.all([
+    getBudderleePaintings(),
+    getBudderleePostSettings(),
+  ]);
 
   return (
     <div className="overflow-hidden">
@@ -160,6 +165,36 @@ export default async function BudderleePage() {
           </div>
         )}
       </Section>
+
+      {/* THE BUDDERLEE POST — the monthly subscription */}
+      {post.phase !== "closed" && (
+        <Section tone="variant" pad="md" maxWidth="4xl" className="overflow-hidden">
+          <Blob size={300} color="var(--secondary-container)" style={{ right: -80, top: -60, opacity: 0.5 }} />
+          <div className="relative z-10 grid gap-8 md:grid-cols-[1.2fr_0.8fr] items-center">
+            <div>
+              <Eyebrow>New: a subscription by mail</Eyebrow>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em] text-balance">
+                {BUDDERLEE_POST.name}
+              </h2>
+              <p className="mt-4 text-on-surface-muted leading-relaxed text-pretty">
+                One resident in your mailbox every month: their portrait on
+                a 5×7 card, their story on the back, a chapter of{" "}
+                <em>Tales from Budderlee</em>, a recipe, and a sticker.{" "}
+                {formatDollars(post.priceCents)} a month, U.S. shipping
+                included. First mailing {post.nextMailing}.
+              </p>
+            </div>
+            <div className="flex flex-col items-center md:items-end gap-3">
+              <ButtonLink href="/budderlee/post" size="lg">
+                {post.phase === "open" ? "Subscribe" : "Join the waitlist"}
+              </ButtonLink>
+              <p className="text-xs text-on-surface-subtle text-center md:text-right">
+                Waitlist members get the Founding Member sticker.
+              </p>
+            </div>
+          </div>
+        </Section>
+      )}
 
       {/* NEWSLETTER — meet each new arrival */}
       <Section tone="surface" pad="lg" maxWidth="3xl">
