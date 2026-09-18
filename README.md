@@ -11,7 +11,7 @@ Portfolio + shop site for Barbara J Demers, a painter of animal subjects. Built 
 - **Postgres** via `@payloadcms/db-postgres` (Neon / Vercel Postgres)
 - **Vercel Blob** for image storage in production (local filesystem in dev)
 - **Stripe Checkout** for purchases, plus a webhook for sale notifications
-- **Resend** for commission inquiries + newsletter signups
+- **Resend** for commission inquiries, newsletter signups, and sending newsletters (Broadcasts)
 - **MDX** blog (`content/blog/*.mdx`) as a fallback when Payload is not connected
 
 ## Local setup
@@ -36,7 +36,7 @@ Open <http://localhost:3000>.
 | `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
 | `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
-| `RESEND_SEGMENT_ID` | optional | Resend segment to add newsletter signups to. Without it, signups land as plain account-level contacts. |
+| `RESEND_SEGMENT_ID` | optional | Resend segment that newsletter signups are added to and that newsletters are sent to. Without it, signups land as plain account-level contacts and sends pick a segment by name (see Newsletter). |
 | `AYRSHARE_API_KEY` | for social posting | From <https://app.ayrshare.com> — connect Barbara's social accounts there once. Without it, social posts report a clear failure and everything else works. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
@@ -54,7 +54,10 @@ Collections:
 
 - **Paintings** — title, slug, subject, year, medium, dimensions, price (cents), size tier, description, images, print options (giclée sizes + prices), featured, sold; Budderlee residents also carry a profile (resident number, birthday, star sign, friends) for the back of the Budderlee Post card
 - **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
-- **Media** — uploaded image files; used by Paintings and Journal Posts
+- **Media** — uploaded image files; used by Paintings, Journal Posts, Social Posts, and Newsletters
+- **Commissioned Portraits** — finished commissions shown on the commissions page, with the portrait photo(s) and what the owner said
+- **Social Posts** — composed social posts and the delivery reports from auto-announcements; see Social media posting
+- **Newsletters** — write, test, and send newsletters to the collector list; see Newsletter
 - **Users** — admin logins; only Barbara (and David) should have accounts
 - **Waitlist** — people waiting for The Budderlee Post to open; rows come from the form at `/budderlee/post`
 - **Issues** — one per Budderlee Post mailing month: the resident, the Tales from Budderlee chapter, the recipe, the sticker, and a status
@@ -126,7 +129,15 @@ Notes: Instagram and Pinterest require an image. Keep messages under 280 charact
 
 ## Newsletter
 
-Signup forms live on the home page and `/budderlee`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio), so announcements — a new painting, a new Budderlee resident — are sent as **Broadcasts from the Resend dashboard** to the whole list, with unsubscribe handling built in. No code involved per send. Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
+Signup forms live on the home page and `/budderlee`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio). Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
+
+Announcements — a new painting, a new Budderlee resident — are written and sent from **Newsletters** in `/admin`, no Resend dashboard needed:
+
+- **Write:** subject, optional preview text, and the body. To add a picture, put the cursor on an empty line, open the **+** menu in the toolbar, and choose **Upload** — a new file or one already in Media. New uploads get an uncropped 1200px `email` size; pictures uploaded before that size existed are sent as their original file.
+- **Test:** set status to **Send me a test** and save. It emails only the studio (`RESEND_TO_EMAIL`) and returns to Draft. The unsubscribe link is a placeholder in tests.
+- **Send:** set status to **Send to the collector list** and save. Every Resend contact is synced into the target segment first, then the newsletter goes out as a Resend Broadcast, so unsubscribes are handled automatically. The delivery report lands in the result field; on **Failed**, fix the cause and set the status again to retry.
+
+The target segment is `RESEND_SEGMENT_ID` if set; otherwise a Resend segment named like "General" or "Collector", falling back to the first segment. At least one segment must exist in Resend (Audience → Segments). A send also fails if a picture in the body has since been deleted from Media.
 
 ## Commission deposits
 
