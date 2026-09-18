@@ -209,6 +209,14 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    email?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
 /**
@@ -475,7 +483,7 @@ export interface Newsletter {
    */
   previewText?: string | null;
   /**
-   * The newsletter itself. Headings, links, and images all work — images are best uploaded landscape and under ~1MB.
+   * The newsletter itself. To add a picture, put the cursor on an empty line, open the + menu in the toolbar and choose Upload — then pick a new file or one already in Media. Pictures are resized for email automatically.
    */
   body: {
     root: {
@@ -834,6 +842,16 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         feature?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        email?:
           | T
           | {
               url?: T;

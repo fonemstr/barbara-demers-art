@@ -47,6 +47,8 @@ export const Media: CollectionConfig = {
       { name: "thumbnail", width: 400, height: 500, position: "centre" },
       { name: "card", width: 800, height: 1000, position: "centre" },
       { name: "feature", width: 1600, height: 2000, position: "centre" },
+      // Width-only, so newsletters get the whole picture — never a crop.
+      { name: "email", width: 1200 },
     ],
     adminThumbnail: "thumbnail",
     mimeTypes: ["image/*"],

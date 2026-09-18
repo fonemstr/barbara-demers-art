@@ -1,6 +1,8 @@
 import type { Resend } from "resend";
 import { convertLexicalToHTML } from "@payloadcms/richtext-lexical/html";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
+import type { Media } from "@/payload-types";
+import { absoluteMediaUrl } from "@/lib/social-direct";
 import { SITE_URL } from "@/lib/site-url";
 
 // The collector list lives in Resend. Broadcasts can only target a
@@ -44,17 +46,84 @@ export async function syncAllContactsIntoSegment(
   return total;
 }
 
+// Text column of the email card: 560px card minus 32px padding each side.
+const CONTENT_WIDTH = 496;
+
+type LexicalNodeLike = { type?: string; value?: unknown; children?: unknown[] };
+
+/** IDs of every picture placed in the body, so the caller can load them. */
+export function collectUploadIds(body: SerializedEditorState): (number | string)[] {
+  const ids = new Set<number | string>();
+  const walk = (node: LexicalNodeLike) => {
+    if (node.type === "upload") {
+      const value = node.value;
+      if (typeof value === "number" || typeof value === "string") ids.add(value);
+      else if (value && typeof value === "object" && "id" in value) {
+        ids.add((value as Media).id);
+      }
+    }
+    for (const child of node.children ?? []) walk(child as LexicalNodeLike);
+  };
+  walk(body.root as LexicalNodeLike);
+  return [...ids];
+}
+
+const escapeHTML = (text: string) =>
+  text
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+// Email clients can't be trusted with <picture>, srcset, or stylesheets,
+// and Outlook ignores max-width — so each picture is one plain <img> with
+// an explicit width attribute and inline styles.
+function renderEmailImage(doc: Media, altOverride?: string): string {
+  if (!doc.url || !doc.mimeType?.startsWith("image")) return "";
+  // Prefer the uncropped 1200px rendition; older uploads (and images
+  // already narrower than that) only have the original.
+  const email = doc.sizes?.email;
+  const src = email?.url ? email : doc;
+  const width = Math.min(src.width ?? CONTENT_WIDTH, CONTENT_WIDTH);
+  return `<img src="${escapeHTML(absoluteMediaUrl(src.url!))}" alt="${escapeHTML(altOverride || doc.alt || "")}" width="${width}" style="display:block;width:100%;max-width:${width}px;height:auto;margin:24px auto;border:0;border-radius:8px;" />`;
+}
+
 // Same visual shell as the welcome email: cream page, white card, serif.
 export function renderNewsletterHtml(
   body: SerializedEditorState,
-  { forTest }: { forTest: boolean },
+  {
+    forTest,
+    media = new Map(),
+  }: { forTest: boolean; media?: Map<string, Media> },
 ): string {
-  let inner = convertLexicalToHTML({ data: body, disableContainer: true });
+  // Fail the send rather than mail a newsletter with a hole in it. Checked
+  // up front because the converter swallows errors thrown inside it.
+  if (collectUploadIds(body).some((id) => !media.has(String(id)))) {
+    throw new Error(
+      "A picture in the newsletter no longer exists in Media. Remove it from the body or upload it again.",
+    );
+  }
+
+  let inner = convertLexicalToHTML({
+    data: body,
+    disableContainer: true,
+    converters: ({ defaultConverters }) => ({
+      ...defaultConverters,
+      // Body data inside a save hook holds bare media IDs, which the
+      // default converter silently drops — look them up instead.
+      upload: ({ node }) => {
+        const value = node.value as unknown;
+        const doc =
+          value && typeof value === "object"
+            ? (value as Media)
+            : media.get(String(value));
+        const alt = (node.fields as { alt?: string } | undefined)?.alt;
+        return doc ? renderEmailImage(doc, alt) : "";
+      },
+    }),
+  });
   inner = inner
-    // Media URLs come back site-relative; email clients need absolute.
-    .replace(/src="\/api\/media\//g, `src="${SITE_URL}/api/media/`)
     // Email clients ignore stylesheets — style tags inline.
-    .replace(/<img /g, '<img style="max-width:100%;height:auto;" ')
     .replace(/<a /g, '<a style="color:#8a7a2e;" ');
 
   // Resend substitutes the unsubscribe placeholder per-recipient in
