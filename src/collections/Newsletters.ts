@@ -1,7 +1,9 @@
 import type { CollectionConfig } from "payload";
+import { lexicalEditor, FixedToolbarFeature } from "@payloadcms/richtext-lexical";
 import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 import { FROM_EMAIL, TO_EMAIL, requireResend } from "../lib/resend";
 import {
+  collectUploadIds,
   renderNewsletterHtml,
   resolveCollectorSegmentId,
   syncAllContactsIntoSegment,
@@ -44,9 +46,16 @@ export const Newsletters: CollectionConfig = {
       name: "body",
       type: "richText",
       required: true,
+      // The fixed toolbar keeps the picture button in plain sight.
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          FixedToolbarFeature(),
+        ],
+      }),
       admin: {
         description:
-          "The newsletter itself. Headings, links, and images all work — images are best uploaded landscape and under ~1MB.",
+          "The newsletter itself. To add a picture, put the cursor on an empty line, open the + menu in the toolbar and choose Upload — then pick a new file or one already in Media. Pictures are resized for email automatically.",
       },
     },
     {
@@ -86,15 +95,25 @@ export const Newsletters: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [
-      async ({ data }) => {
+      async ({ data, req }) => {
         if (data?.status !== "test" && data?.status !== "send") return data;
         const isTest = data.status === "test";
         try {
           const resend = requireResend();
-          const html = renderNewsletterHtml(
-            data.body as SerializedEditorState,
-            { forTest: isTest },
-          );
+          const body = data.body as SerializedEditorState;
+          const ids = collectUploadIds(body);
+          const found = ids.length
+            ? await req.payload.find({
+                collection: "media",
+                where: { id: { in: ids } },
+                depth: 0,
+                limit: ids.length,
+                pagination: false,
+                req,
+              })
+            : { docs: [] };
+          const media = new Map(found.docs.map((doc) => [String(doc.id), doc]));
+          const html = renderNewsletterHtml(body, { forTest: isTest, media });
 
           if (isTest) {
             const sent = await resend.emails.send({
