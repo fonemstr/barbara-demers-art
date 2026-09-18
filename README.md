@@ -11,7 +11,7 @@ Portfolio + shop site for Barbara J Demers, a painter of animal subjects. Built 
 - **Postgres** via `@payloadcms/db-postgres` (Neon / Vercel Postgres)
 - **Vercel Blob** for image storage in production (local filesystem in dev)
 - **Stripe Checkout** for purchases, plus a webhook for sale notifications
-- **Resend** for commission inquiries + newsletter signups
+- **Resend** for commission inquiries, newsletter signups, and sending newsletters (Broadcasts)
 - **MDX** blog (`content/blog/*.mdx`) as a fallback when Payload is not connected
 
 ## Local setup
@@ -36,8 +36,11 @@ Open <http://localhost:3000>.
 | `RESEND_API_KEY` | for commissions + newsletter | <https://resend.com/api-keys> |
 | `RESEND_FROM_EMAIL` | for commissions + newsletter | Must be a verified sender on Resend. |
 | `RESEND_TO_EMAIL` | for commissions + newsletter | Where inquiries land — Barbara's inbox. |
-| `RESEND_SEGMENT_ID` | optional | Resend segment to add newsletter signups to. Without it, signups land as plain account-level contacts. |
-| `AYRSHARE_API_KEY` | for social posting | From <https://app.ayrshare.com> — connect Barbara's social accounts there once. Without it, social posts report a clear failure and everything else works. |
+| `RESEND_SEGMENT_ID` | optional | Resend segment that newsletter signups are added to and that newsletters are sent to. Without it, signups land as plain account-level contacts and sends pick a segment by name (see Newsletter). |
+| `META_PAGE_ID`, `META_IG_USER_ID`, `META_PAGE_ACCESS_TOKEN` | for social posting | Facebook Page + linked Instagram account. Setup steps in `SOCIAL.md`. Without them, those platforms report a clear failure and everything else works. |
+| `PINTEREST_APP_ID`, `PINTEREST_APP_SECRET`, `PINTEREST_REFRESH_TOKEN`, `PINTEREST_BOARD_ID` | for social posting | Pinterest app credentials and the board that receives pins. See `SOCIAL.md`. |
+| `CRON_SECRET` | for scheduled social posts | Any random string; the same value goes in the GitHub repo secret `CRON_SECRET` so the scheduler workflow can call `/api/cron/social-posts`. |
+| `AYRSHARE_API_KEY` | legacy, optional | Only read by the footer's social links, which fall back to a hardcoded profile list without it. Posting no longer uses it. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
 Graceful fallbacks:
@@ -54,7 +57,10 @@ Collections:
 
 - **Paintings** — title, slug, subject, year, medium, dimensions, price (cents), size tier, description, images, print options (giclée sizes + prices), featured, sold; Budderlee residents also carry a profile (resident number, birthday, star sign, friends) for the back of the Budderlee Post card
 - **Journal Posts** — title, slug, excerpt, cover, rich-text body, status (draft/published), publishedAt
-- **Media** — uploaded image files; used by Paintings and Journal Posts
+- **Media** — uploaded image files; used by Paintings, Journal Posts, Social Posts, and Newsletters
+- **Commissioned Portraits** — finished commissions shown on the commissions page, with the portrait photo(s) and what the owner said
+- **Social Posts** — composed social posts and the delivery reports from auto-announcements; see Social media posting
+- **Newsletters** — write, test, and send newsletters to the collector list; see Newsletter
 - **Users** — admin logins; only Barbara (and David) should have accounts
 - **Waitlist** — people waiting for The Budderlee Post to open; rows come from the form at `/budderlee/post`
 - **Issues** — one per Budderlee Post mailing month: the resident, the Tales from Budderlee chapter, the recipe, the sticker, and a status
@@ -117,16 +123,24 @@ A named collection of 5×5 in character portraits — animal residents of the fi
 
 ## Social media posting
 
-One Ayrshare API key fans posts out to every social account Barbara connects in the [Ayrshare dashboard](https://app.ayrshare.com) (Instagram, Facebook, X, Pinterest). Two ways to post:
+Posts go straight to Instagram, Facebook, and Pinterest through the platforms' own free APIs (`src/lib/social-direct.ts`) — no third-party posting service. The one-time credential setup (Meta app, Pinterest app, scheduler secret) is in `SOCIAL.md`. Two ways to post:
 
-- **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Budderlee arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram + Facebook. Fires once per tick; the delivery report lands in **Social Posts**.
-- **Composer:** create a **Social Post** in `/admin` — message, optional image, platform selection, and an optional schedule date. Set status to **Send** and save: it posts now (status → Posted) or at the scheduled time via Ayrshare (status → Scheduled). Failures show the reason in the result field; fix and set Send again to retry.
+- **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Budderlee arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram, Facebook, and Pinterest (Facebook only if the painting has no image). Fires once per tick; the delivery report lands in **Social Posts**.
+- **Composer:** create a **Social Post** in `/admin` — message, optional image, platform selection, and an optional schedule date. Set status to **Send** and save: it posts now (status → Posted) or is queued (status → Scheduled) and delivered by `/api/cron/social-posts`, which a GitHub Actions workflow pings every 15 minutes. Failures show the reason in the result field; fix and set Send again to retry.
 
-Notes: Instagram and Pinterest require an image. Keep messages under 280 characters when X is selected. Pinterest may need a default board configured in Ayrshare.
+Notes: Instagram and Pinterest require an image. A platform whose credentials are missing never blocks a save — it reports `FAILED (…not set)` in the delivery report. The Pinterest refresh token lasts about a year; when pins start failing with `token refresh failed`, redo the authorize steps in `SOCIAL.md`.
 
 ## Newsletter
 
-Signup forms live on the home page and `/budderlee`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio), so announcements — a new painting, a new Budderlee resident — are sent as **Broadcasts from the Resend dashboard** to the whole list, with unsubscribe handling built in. No code involved per send. Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
+Signup forms live on the home page and `/budderlee`. Each signup is stored as a **contact in Resend** (plus a heads-up email to the studio). Addresses collected before this existed (from the old notification-only emails) need a one-time manual add under Contacts in Resend.
+
+Announcements — a new painting, a new Budderlee resident — are written and sent from **Newsletters** in `/admin`, no Resend dashboard needed:
+
+- **Write:** subject, optional preview text, and the body. To add a picture, put the cursor on an empty line, open the **+** menu in the toolbar, and choose **Upload** — a new file or one already in Media. New uploads get an uncropped 1200px `email` size; pictures uploaded before that size existed are sent as their original file.
+- **Test:** set status to **Send me a test** and save. It emails only the studio (`RESEND_TO_EMAIL`) and returns to Draft. The unsubscribe link is a placeholder in tests.
+- **Send:** set status to **Send to the collector list** and save. Every Resend contact is synced into the target segment first, then the newsletter goes out as a Resend Broadcast, so unsubscribes are handled automatically. The delivery report lands in the result field; on **Failed**, fix the cause and set the status again to retry.
+
+The target segment is `RESEND_SEGMENT_ID` if set; otherwise a Resend segment named like "General" or "Collector", falling back to the first segment. At least one segment must exist in Resend (Audience → Segments). A send also fails if a picture in the body has since been deleted from Media.
 
 ## Commission deposits
 
