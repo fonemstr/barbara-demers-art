@@ -1,11 +1,7 @@
 import type { CollectionConfig, Payload } from "payload";
-import {
-  sendSocialPost,
-  type SocialPlatform,
-  type SocialPostResult,
-} from "../lib/social-direct";
+import type { SocialPlatform } from "../lib/social-direct";
+import { deliverSocialPost } from "../lib/social-delivery";
 import { buildAnnouncementCaption } from "../lib/social-captions";
-import { instagramSafeImageUrl } from "../lib/instagram-image";
 import { SITE_URL } from "../lib/site-url";
 import { STAR_SIGNS, starSignForDate } from "../lib/zodiac";
 
@@ -77,56 +73,21 @@ async function announcePainting(payload: Payload, doc: PaintingDoc) {
     title: doc.title.slice(0, 100),
   };
 
-  let platforms: SocialPlatform[];
-  let result: SocialPostResult;
-  if (!imageUrl) {
-    // Instagram and Pinterest reject posts without media; Facebook still posts.
-    platforms = ["facebook"];
-    result = await sendSocialPost({ post: caption, platforms: [...platforms] });
-  } else {
-    const igImageUrl = await instagramSafeImageUrl(
-      imageUrl,
-      doc.slug,
-      payload.logger,
-    );
-    if (igImageUrl === imageUrl) {
-      platforms = ["instagram", "facebook", "pinterest"];
-      result = await sendSocialPost({
-        post: caption,
-        platforms: [...platforms],
-        mediaUrls: [imageUrl],
-        pinterestOptions,
-      });
-    } else {
-      // Tall or wide artwork: Instagram gets the padded rendition while
-      // Facebook and Pinterest keep the original proportions.
-      platforms = igImageUrl
-        ? ["instagram", "facebook", "pinterest"]
-        : ["facebook", "pinterest"];
-      const [fbPin, ig] = await Promise.all([
-        sendSocialPost({
-          post: caption,
-          platforms: ["facebook", "pinterest"],
-          mediaUrls: [imageUrl],
-          pinterestOptions,
-        }),
-        igImageUrl
-          ? sendSocialPost({
-              post: caption,
-              platforms: ["instagram"],
-              mediaUrls: [igImageUrl],
-            })
-          : Promise.resolve<SocialPostResult>({
-              ok: false,
-              summary: "Skipped — could not prepare an Instagram-safe image.",
-            }),
-      ]);
-      result = {
-        ok: fbPin.ok && ig.ok,
-        summary: `FB/Pinterest: ${fbPin.summary} | Instagram: ${ig.summary}`,
-      };
-    }
-  }
+  // Instagram and Pinterest reject posts without media; Facebook still posts.
+  // With an image, the shared delivery path pads tall or wide artwork for
+  // Instagram while Facebook and Pinterest keep the original proportions.
+  const wanted: SocialPlatform[] = imageUrl
+    ? ["instagram", "facebook", "pinterest"]
+    : ["facebook"];
+  const result = await deliverSocialPost({
+    post: caption,
+    platforms: wanted,
+    imageUrl,
+    imageSlug: doc.slug,
+    logger: payload.logger,
+    pinterestOptions,
+  });
+  const platforms = result.platforms;
 
   await payload
     .create({

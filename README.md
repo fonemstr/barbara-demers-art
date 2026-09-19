@@ -40,7 +40,6 @@ Open <http://localhost:3000>.
 | `META_PAGE_ID`, `META_IG_USER_ID`, `META_PAGE_ACCESS_TOKEN` | for social posting | Facebook Page + linked Instagram account. Setup steps in `SOCIAL.md`. Without them, those platforms report a clear failure and everything else works. |
 | `PINTEREST_APP_ID`, `PINTEREST_APP_SECRET`, `PINTEREST_REFRESH_TOKEN`, `PINTEREST_BOARD_ID` | for social posting | Pinterest app credentials and the board that receives pins. See `SOCIAL.md`. |
 | `CRON_SECRET` | for scheduled social posts | Any random string; the same value goes in the GitHub repo secret `CRON_SECRET` so the scheduler workflow can call `/api/cron/social-posts`. |
-| `AYRSHARE_API_KEY` | legacy, optional | Only read by the footer's social links, which fall back to a hardcoded profile list without it. Posting no longer uses it. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
 Graceful fallbacks:
@@ -128,7 +127,7 @@ Posts go straight to Instagram, Facebook, and Pinterest through the platforms' o
 - **Auto-announce:** tick **Announce on social** on a painting in `/admin` and save — the site composes the caption (Budderlee arrivals get the "new resident" treatment), attaches the painting's image, and posts to Instagram, Facebook, and Pinterest (Facebook only if the painting has no image). Fires once per tick; the delivery report lands in **Social Posts**.
 - **Composer:** create a **Social Post** in `/admin` — message, optional image, platform selection, and an optional schedule date. Set status to **Send** and save: it posts now (status → Posted) or is queued (status → Scheduled) and delivered by `/api/cron/social-posts`, which a GitHub Actions workflow pings every 15 minutes. Failures show the reason in the result field; fix and set Send again to retry.
 
-Notes: Instagram and Pinterest require an image. A platform whose credentials are missing never blocks a save — it reports `FAILED (…not set)` in the delivery report. The Pinterest refresh token lasts about a year; when pins start failing with `token refresh failed`, redo the authorize steps in `SOCIAL.md`.
+Notes: Instagram and Pinterest require an image. Very tall or wide images are padded with white for Instagram (it only accepts 4:5 to 1.91:1); Facebook and Pinterest get the original. A scheduled post that is more than 24 hours past its time when the scheduler finds it is marked Failed with a "Missed window" note instead of being sent late. A platform whose credentials are missing never blocks a save — it reports `FAILED (…not set)` in the delivery report. The Pinterest refresh token lasts about a year; when pins start failing with `token refresh failed`, redo the authorize steps in `SOCIAL.md`.
 
 ## Newsletter
 
