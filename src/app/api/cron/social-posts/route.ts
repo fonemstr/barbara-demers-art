@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { sendSocialPost, type SocialPlatform } from "@/lib/social-direct";
+import { type SocialPlatform } from "@/lib/social-direct";
+import { deliverSocialPost, imageSlugFrom } from "@/lib/social-delivery";
 
 // Delivers scheduled social posts that have come due. Triggered every 15
 // minutes by the GitHub Actions workflow (.github/workflows/social-cron.yml);
@@ -49,19 +50,21 @@ export async function GET(req: Request): Promise<Response> {
       continue;
     }
 
-    let mediaUrls: string[] = [];
+    let imageUrl: string | null = null;
     if (doc.image) {
       const imageId = typeof doc.image === "object" ? doc.image.id : doc.image;
       const media = await payload
         .findByID({ collection: "media", id: imageId, overrideAccess: true })
         .catch(() => null);
-      if (media?.url) mediaUrls = [media.url];
+      imageUrl = media?.url ?? null;
     }
 
-    const result = await sendSocialPost({
+    const result = await deliverSocialPost({
       post: doc.message ?? "",
       platforms: (doc.platforms ?? []) as SocialPlatform[],
-      mediaUrls,
+      imageUrl,
+      imageSlug: imageSlugFrom(doc.title),
+      logger: payload.logger,
     });
 
     await payload.update({

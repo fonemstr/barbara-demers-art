@@ -1,5 +1,6 @@
 import type { CollectionConfig } from "payload";
-import { sendSocialPost, SOCIAL_PLATFORM_OPTIONS, type SocialPlatform } from "../lib/social-direct";
+import { SOCIAL_PLATFORM_OPTIONS, type SocialPlatform } from "../lib/social-direct";
+import { deliverSocialPost, imageSlugFrom } from "../lib/social-delivery";
 
 export const SocialPosts: CollectionConfig = {
   slug: "social-posts",
@@ -37,7 +38,8 @@ export const SocialPosts: CollectionConfig = {
       type: "upload",
       relationTo: "media",
       admin: {
-        description: "Optional image. Instagram and Pinterest require one.",
+        description:
+          "Optional image. Instagram and Pinterest require one. Very tall or wide images are padded with white for Instagram; other platforms get the original.",
       },
     },
     {
@@ -102,18 +104,20 @@ export const SocialPosts: CollectionConfig = {
           return data;
         }
 
-        let mediaUrls: string[] = [];
+        let imageUrl: string | null = null;
         if (data.image) {
           const media = await req.payload
             .findByID({ collection: "media", id: data.image, overrideAccess: true })
             .catch(() => null);
-          if (media?.url) mediaUrls = [media.url];
+          imageUrl = media?.url ?? null;
         }
 
-        const result = await sendSocialPost({
+        const result = await deliverSocialPost({
           post: data.message ?? "",
           platforms: (data.platforms ?? []) as SocialPlatform[],
-          mediaUrls,
+          imageUrl,
+          imageSlug: imageSlugFrom(data.title),
+          logger: req.payload.logger,
         });
 
         data.status = result.ok ? "posted" : "failed";
