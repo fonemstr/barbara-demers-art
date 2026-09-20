@@ -69,15 +69,22 @@ function toAddress(name: string | null | undefined, a: Stripe.Address | null | u
   };
 }
 
+// The live webhook endpoint is pinned to an older API version than the
+// SDK, so event payloads can carry the older field names. Objects fetched
+// through the SDK always have the current ones.
+type LegacySubscription = Stripe.Subscription & { current_period_end?: number | null };
+type LegacyInvoice = Stripe.Invoice & { subscription?: string | { id: string } | null };
+
 function subscriptionFields(sub: Stripe.Subscription) {
   const item = sub.items.data[0];
+  const periodEnd = item?.current_period_end ?? (sub as LegacySubscription).current_period_end;
   const reason = sub.cancellation_details;
   const cancelReason = reason
     ? [reason.feedback, reason.comment].filter(Boolean).join(": ") || reason.reason || null
     : null;
   return {
     status: mapStatus(sub),
-    currentPeriodEnd: unixToIso(item?.current_period_end),
+    currentPeriodEnd: unixToIso(periodEnd),
     trialEnd: unixToIso(sub.trial_end),
     canceledAt: unixToIso(sub.canceled_at),
     cancelReason,
@@ -103,9 +110,12 @@ async function findBySubscriptionId(payload: Payload, id: string) {
 export async function handlePostCheckoutCompleted(
   stripe: Stripe,
   payload: Payload,
-  session: Stripe.Checkout.Session,
+  eventSession: Stripe.Checkout.Session,
   livemode: boolean,
 ) {
+  // Read the session fresh so the shipping details are where the SDK
+  // expects them, whatever API version the event was rendered in.
+  const session = await stripe.checkout.sessions.retrieve(eventSession.id);
   const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
   if (!subId) {
     console.error(`[budderlee-post] session ${session.id} completed without a subscription.`);
@@ -231,7 +241,8 @@ export async function handlePostSubscriptionEvent(
 
 /** A renewal charge failed. Stripe retries and emails them; Barbara just hears about it. */
 export async function handlePostInvoiceFailed(payload: Payload, invoice: Stripe.Invoice, livemode: boolean) {
-  const subRef = invoice.parent?.subscription_details?.subscription;
+  const subRef =
+    invoice.parent?.subscription_details?.subscription ?? (invoice as LegacyInvoice).subscription;
   const subId = typeof subRef === "string" ? subRef : subRef?.id;
   if (!subId) return;
   const existing = await findBySubscriptionId(payload, subId);
