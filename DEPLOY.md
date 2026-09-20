@@ -40,7 +40,7 @@ Pushes to `main` auto-deploy. The build command is `pnpm vercel-build`, which ru
 Before flipping the phase to **Open** in `/admin` → The Budderlee Post:
 
 1. In Stripe, create the product "The Budderlee Post" with a recurring monthly price ($12) and the statement descriptor `BUDDERLEE POST`. Paste the price ID (`price_...`) into the settings global.
-2. Under Settings → Billing → Customer portal, turn on: update payment method, update shipping address, pause subscription, cancel subscription (with a reason). The manage page sends subscribers there.
+2. Under Settings → Billing → Customer portal, turn on: update payment method, update shipping address (under Customer information; it is off by default), cancel subscription at the end of the billing period (with a reason). The manage page sends subscribers there. The portal settings page has no pause option, so a pause is done by hand from the subscription's page in the Stripe dashboard; the webhook still mirrors it.
 3. Make sure the webhook endpoint has the events listed above.
 4. If the accountant says to collect sales tax, enable Stripe Tax in the dashboard and tick "Collect sales tax through Stripe Tax" in the settings global.
 5. Test in test mode first: set the phase to Open with a test-mode price ID on a preview deployment, subscribe with card `4242 4242 4242 4242`, and check the Subscribers collection, the welcome email, and the manage link.
