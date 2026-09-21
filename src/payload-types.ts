@@ -77,6 +77,7 @@ export interface Config {
     waitlist: Waitlist;
     issues: Issue;
     subscribers: Subscriber;
+    shipments: Shipment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +95,7 @@ export interface Config {
     waitlist: WaitlistSelect<false> | WaitlistSelect<true>;
     issues: IssuesSelect<false> | IssuesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -673,6 +675,54 @@ export interface Subscriber {
   createdAt: string;
 }
 /**
+ * The shipping list for each issue, generated from the Fulfillment page. Tick rows Shipped as they go out (select several and Edit to do a batch), or use Mark all shipped on the Fulfillment page.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shipments".
+ */
+export interface Shipment {
+  id: number;
+  /**
+   * The recipient, for the list view.
+   */
+  label?: string | null;
+  issue: number | Issue;
+  subscriber: number | Subscriber;
+  /**
+   * Shipped counts the package for the subscriber. Skipped leaves it out of the CSV.
+   */
+  status: 'pending' | 'shipped' | 'skipped';
+  /**
+   * Optional. Paste from the label tool.
+   */
+  trackingNumber?: string | null;
+  shippedAt?: string | null;
+  /**
+   * Write the welcome note instead of the thank-you.
+   */
+  firstPackage?: boolean | null;
+  /**
+   * Founding member's first package: add the sticker.
+   */
+  includeFoundingSticker?: boolean | null;
+  email?: string | null;
+  addressSnapshot?: {
+    name?: string | null;
+    line1?: string | null;
+    line2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    postalCode?: string | null;
+    country?: string | null;
+  };
+  /**
+   * Anything about this one package.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -735,6 +785,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'subscribers';
         value: number | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'shipments';
+        value: number | Shipment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1045,6 +1099,35 @@ export interface SubscribersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shipments_select".
+ */
+export interface ShipmentsSelect<T extends boolean = true> {
+  label?: T;
+  issue?: T;
+  subscriber?: T;
+  status?: T;
+  trackingNumber?: T;
+  shippedAt?: T;
+  firstPackage?: T;
+  includeFoundingSticker?: T;
+  email?: T;
+  addressSnapshot?:
+    | T
+    | {
+        name?: T;
+        line1?: T;
+        line2?: T;
+        city?: T;
+        state?: T;
+        postalCode?: T;
+        country?: T;
+      };
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1124,6 +1207,10 @@ export interface BudderleePost {
    */
   stripePriceId?: string | null;
   /**
+   * When a renewal charge fails, Stripe retries for about a week. Ticked: they still get that month's package. Unticked: they're left off the shipping list until the charge goes through.
+   */
+  includePastDue?: boolean | null;
+  /**
    * Only after the accountant says to, and after Stripe Tax is switched on in the Stripe dashboard. Adds tax at checkout based on the shipping address.
    */
   collectTax?: boolean | null;
@@ -1143,6 +1230,7 @@ export interface BudderleePostSelect<T extends boolean = true> {
   priceCents?: T;
   foundingWindowEnds?: T;
   stripePriceId?: T;
+  includePastDue?: T;
   collectTax?: T;
   updatedAt?: T;
   createdAt?: T;
