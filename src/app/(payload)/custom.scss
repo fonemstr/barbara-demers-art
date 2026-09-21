@@ -317,13 +317,18 @@ html[data-theme="dark"] .analytics-view {
 /* Budderlee Post fulfillment view (src/components/admin/fulfillment-view.tsx) */
 .fulfillment-view {
   padding-block: calc(var(--base) * 2);
-  max-width: 1040px;
+  max-width: 1120px;
+  // The admin's body text is 13px, which was too small to read comfortably
+  // here. Sizes are in px so they don't depend on the admin's root size.
+  font-size: 16px;
+  line-height: 1.5;
 
   .fv-heading { margin: 0 0 calc(var(--base) * 1.5); }
-  .fv-muted { color: var(--theme-elevation-600); font-size: 0.85rem; }
+  .fv-muted { color: var(--theme-elevation-600); font-size: 14.5px; }
   .fv-footnote { margin-top: calc(var(--base) * 0.75); }
 
   .fv-banner {
+    font-size: 16px;
     padding: calc(var(--base) * 0.6) calc(var(--base) * 0.9);
     border-radius: 4px;
     margin-bottom: calc(var(--base) * 1.25);
@@ -342,8 +347,8 @@ html[data-theme="dark"] .analytics-view {
     border: 1px solid var(--theme-elevation-100);
     border-radius: 6px;
     padding: calc(var(--base) * 0.9) calc(var(--base) * 1);
-    &__label { font-size: 0.8rem; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
-    &__value { font-size: 1.8rem; font-weight: 600; margin: calc(var(--base) * 0.2) 0; font-variant-numeric: tabular-nums; }
+    &__label { font-size: 13.5px; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
+    &__value { font-size: 34px; line-height: 1.2; font-weight: 600; margin: calc(var(--base) * 0.2) 0; font-variant-numeric: tabular-nums; }
   }
 
   .fv-card {
@@ -352,7 +357,7 @@ html[data-theme="dark"] .analytics-view {
     border-radius: 6px;
     padding: calc(var(--base) * 1.1) calc(var(--base) * 1.25);
     margin-bottom: calc(var(--base) * 1.25);
-    &__title { margin: 0 0 calc(var(--base) * 0.75); font-size: 1.1rem; }
+    &__title { margin: 0 0 calc(var(--base) * 0.75); font-size: 21px; }
   }
 
   .fv-table-wrap { overflow-x: auto; }
@@ -360,12 +365,12 @@ html[data-theme="dark"] .analytics-view {
     width: 100%;
     border-collapse: collapse;
     th, td { text-align: left; vertical-align: top; padding: calc(var(--base) * 0.6) calc(var(--base) * 0.5); border-top: 1px solid var(--theme-elevation-100); }
-    th { border-top: 0; font-size: 0.8rem; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
+    th { border-top: 0; font-size: 13.5px; color: var(--theme-elevation-600); text-transform: uppercase; letter-spacing: 0.06em; }
   }
   .fv-actions {
     display: flex; flex-wrap: wrap; gap: calc(var(--base) * 0.4); align-items: flex-start;
     form { margin: 0; }
-    .btn { margin: 0; }
+    .btn { margin: 0; font-size: 15px; }
   }
 
   .fv-steps {
