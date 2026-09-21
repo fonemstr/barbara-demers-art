@@ -7,7 +7,7 @@ import { BUDDERLEE_POST } from "@/lib/budderlee-post";
 export const metadata = {
   title: `Manage your ${BUDDERLEE_POST.name} subscription`,
   alternates: { canonical: "/budderlee/post/manage" },
-  description: "Update your address or card, pause, or cancel your Budderlee Post subscription.",
+  description: "Update your address or card, or cancel your Budderlee Post subscription.",
 };
 
 export default async function ManagePage({
@@ -35,7 +35,7 @@ export default async function ManagePage({
           </h1>
           <p className="mt-6 text-lg text-on-surface-muted leading-relaxed text-pretty">
             Enter the email you subscribed with and we&rsquo;ll send a secure link.
-            From there you can update your address or card, pause, or cancel.
+            From there you can update your address or card, or cancel.
           </p>
           {note && (
             <p className="mt-4 inline-block rounded-full bg-surface-container-highest px-4 py-2 text-sm text-on-surface" role="status">

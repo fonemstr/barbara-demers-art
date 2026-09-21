@@ -21,8 +21,16 @@ export function isPostSubscription(sub: Stripe.Subscription): boolean {
   return sub.metadata?.[POST_METADATA_KEY] === "1";
 }
 
+// A signup after the cutoff is active in Stripe from day one, but has no
+// invoice until its billing date on the next cutoff.
+function firstChargePending(sub: Stripe.Subscription): boolean {
+  return sub.status === "active" && !sub.latest_invoice;
+}
+
 function mapStatus(sub: Stripe.Subscription): SubscriberStatus {
   if (sub.pause_collection) return "paused";
+  // Kept off the shipping list until the first charge, the same as a trial.
+  if (firstChargePending(sub)) return "trialing";
   switch (sub.status) {
     case "active":
     case "trialing":
@@ -82,10 +90,12 @@ function subscriptionFields(sub: Stripe.Subscription) {
   const cancelReason = reason
     ? [reason.feedback, reason.comment].filter(Boolean).join(": ") || reason.reason || null
     : null;
+  // Left untouched once the charge has happened, so the date stays on record.
+  const firstChargeOn = sub.trial_end ?? (firstChargePending(sub) ? sub.billing_cycle_anchor : null);
   return {
     status: mapStatus(sub),
     currentPeriodEnd: unixToIso(periodEnd),
-    trialEnd: unixToIso(sub.trial_end),
+    ...(firstChargeOn ? { trialEnd: unixToIso(firstChargeOn) } : {}),
     canceledAt: unixToIso(sub.canceled_at),
     cancelReason,
   };
@@ -180,7 +190,7 @@ export async function handlePostCheckoutCompleted(
   }
 
   const schedule = getSignupSchedule(settings.cutoffDay);
-  const chargesNow = !sub.trial_end;
+  const chargesNow = !sub.trial_end && !firstChargePending(sub);
   const testNote = livemode ? "" : " (TEST MODE)";
   await sendWelcomeEmail({
     to: email,
