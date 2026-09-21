@@ -47,7 +47,7 @@ export default async function WelcomePage({
     },
     {
       title: "Manage it from your inbox",
-      body: "Update your address or card, pause, or cancel from a link sent to your email. No account to keep track of.",
+      body: "Update your address or card, or cancel, from a link sent to your email. No account to keep track of.",
     },
   ];
 
@@ -62,7 +62,8 @@ export default async function WelcomePage({
             Welcome to {BUDDERLEE_POST.name}.
           </h1>
           <p className="mt-6 text-lg text-on-surface-muted leading-relaxed text-pretty">
-            {email ? `A welcome note is on its way to ${email}, and Stripe has sent your receipt.` : "A welcome note is on its way, and Stripe has sent your receipt."}{" "}
+            {email ? `A welcome note is on its way to ${email}` : "A welcome note is on its way"}
+            {chargesNow ? ", and Stripe has sent your receipt." : ", and Stripe sends your receipt when the first charge goes through."}{" "}
             Your first resident arrives in the first week of {firstMailing}.
           </p>
         </div>
