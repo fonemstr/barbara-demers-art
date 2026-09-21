@@ -28,7 +28,7 @@ export const metadata = {
     images: [
       {
         url: "/budderlee/seal.webp",
-        alt: "The Budderlee village seal — an oak tree, rooted in kindness",
+        alt: "The Budderlee village seal: an oak tree, rooted in kindness",
       },
     ],
   },
@@ -73,9 +73,9 @@ const FAQ = [
       `Subscribe on or before the ${ordinal(cutoffDay)} of a month and the next mailing is yours. Subscribe after the ${ordinal(cutoffDay)} and your first package is the one after that. Either way, your card is only charged for packages you'll receive.`,
   },
   {
-    q: "Can I cancel or pause?",
+    q: "Can I cancel or skip a month?",
     a: () =>
-      "Yes, any time. Ask for a link on the manage page or use the one in your emails. No phone calls, no forms. Cancel before the cutoff and you won't be charged again.",
+      "Yes. Cancel any time: ask for a link on the manage page or use the one in your emails. No phone calls, no forms. Cancel before the cutoff and you won't be charged again. To skip a month, reply to any email from Barbara and she'll pause it for you.",
   },
   {
     q: "Do you ship outside the United States?",
@@ -245,7 +245,7 @@ export default async function BudderleePostPage() {
             {
               n: "3",
               t: "Manage it from your inbox",
-              b: "Update your address or card, pause, or cancel from a link in your emails. No account to remember.",
+              b: "Update your address or card, or cancel, from a link in your emails. No account to remember.",
             },
           ].map((s) => (
             <li key={s.n} className="relative rounded-[var(--radius-lg)] bg-surface-container-low p-6 pt-8">
@@ -273,7 +273,7 @@ export default async function BudderleePostPage() {
           </div>
           <SubscribeButton label={`Subscribe for ${price} a month`} />
           <p className="mt-6 text-center text-xs text-on-surface-subtle">
-            Secure checkout by Stripe. U.S. addresses only. Change your address or card, pause, or cancel any time from a link in your emails.
+            Secure checkout by Stripe. U.S. addresses only. Change your address or card, or cancel any time, from a link in your emails.
           </p>
         </Section>
       ) : (

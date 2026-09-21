@@ -1,7 +1,7 @@
-import type { SocialProfile } from "@/lib/ayrshare";
+import type { SocialProfile } from "@/lib/social-profiles";
 
 // Brand marks as plain paths (Simple Icons, CC0) so the footer needs no
-// icon bundle. Platforms Ayrshare can return that aren't listed here fall
+// icon bundle. Platforms in the profile list that aren't listed here fall
 // back to a text link, so nothing is silently dropped.
 const ICONS: Record<string, { label: string; path: string }> = {
   instagram: {

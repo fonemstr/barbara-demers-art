@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Analytics } from "@vercel/analytics/next";
 import { MobileNav } from "@/components/mobile-nav";
 import { SocialLinks } from "@/components/social-links";
-import { getSocialProfiles } from "@/lib/ayrshare";
+import { SOCIAL_PROFILES } from "@/lib/social-profiles";
 import { getFeaturedPaintings } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
 import { JsonLd } from "@/components/json-ld";
@@ -72,10 +72,7 @@ export default async function SiteLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // The artist entity's image: the featured painting, same as the share image.
-  const [featured, socialProfiles] = await Promise.all([
-    getFeaturedPaintings(1),
-    getSocialProfiles(),
-  ]);
+  const featured = await getFeaturedPaintings(1);
   const siteShareImage = featured[0]?.images[0];
   return (
     <html
@@ -148,7 +145,7 @@ export default async function SiteLayout({
               </p>
             </div>
             <div className="flex flex-col items-start md:items-end gap-4">
-              <SocialLinks profiles={socialProfiles} />
+              <SocialLinks profiles={SOCIAL_PROFILES} />
               <div className="text-sm text-on-surface-subtle">
                 © {new Date().getFullYear()} Barbara J Demers. All artwork
                 rights reserved.

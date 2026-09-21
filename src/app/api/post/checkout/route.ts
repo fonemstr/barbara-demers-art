@@ -9,8 +9,10 @@ import {
 import { POST_METADATA_KEY } from "@/lib/budderlee-post-stripe";
 
 // Starts a Stripe Checkout for The Budderlee Post. Signups on or before
-// the cutoff are charged now; later ones start with a free period that
-// ends on the next cutoff, so nobody pays weeks before a package ships.
+// the cutoff are charged now; later ones have their billing date anchored
+// to the next cutoff with nothing due until then, so nobody pays weeks
+// before a package ships. An anchor rather than a trial, because Stripe
+// words a trial as "24 days free" on its pages and this isn't a free sample.
 export async function POST(request: Request) {
   try {
     const settings = await getBudderleePostSettings();
@@ -54,7 +56,10 @@ export async function POST(request: Request) {
         metadata: { [POST_METADATA_KEY]: "1" },
         ...(schedule.chargesNow
           ? {}
-          : { trial_end: Math.floor(schedule.chargeDate.getTime() / 1000) }),
+          : {
+              billing_cycle_anchor: Math.floor(schedule.chargeDate.getTime() / 1000),
+              proration_behavior: "none" as const,
+            }),
       },
       metadata: {
         [POST_METADATA_KEY]: "1",

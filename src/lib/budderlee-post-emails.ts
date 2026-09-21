@@ -60,7 +60,8 @@ export async function sendWelcomeEmail(opts: {
     timing, "",
     founding, founding ? "" : null,
     "Every package has a resident of Budderlee on a 5×7 card with their story on the back, a chapter of Tales from Budderlee, a recipe card, a sticker, and a note from me.", "",
-    `Need to change your address or card, pause, or cancel? Ask for a link here: ${manage}`, "",
+    `Need to change your address or card, or cancel? Ask for a link here: ${manage}`,
+    "Want to skip a month? Just reply to this email.", "",
     "Barbara J Demers", site,
   ].filter((l) => l !== null).join("\n");
   const html = shell(
@@ -69,7 +70,7 @@ export async function sendWelcomeEmail(opts: {
     p(timing) +
     (founding ? p(founding) : "") +
     p("Every package has a resident of Budderlee on a 5×7 card with their story on the back, a chapter of <em>Tales from Budderlee</em>, a recipe card, a sticker, and a note from me.") +
-    p(`Need to change your address or card, pause, or cancel? ${link(manage, "Ask for a link here")}.`),
+    p(`Need to change your address or card, or cancel? ${link(manage, "Ask for a link here")}. Want to skip a month? Just reply to this email.`),
   );
   await send(opts.to, `Welcome to ${BUDDERLEE_POST.name}`, text, html, TO_EMAIL);
 }
@@ -78,16 +79,16 @@ export async function sendPortalLinkEmail(opts: { to: string; url: string }) {
   const text = [
     `Here's your link to manage your ${BUDDERLEE_POST.name} subscription:`, "",
     opts.url, "",
-    "It works for the next hour. You can update your address or card, pause, or cancel there. If you didn't ask for this, you can ignore it.", "",
+    "It works for the next hour. You can update your address or card, or cancel there. If you didn't ask for this, you can ignore it.", "",
     "Barbara J Demers", site,
   ].join("\n");
   const html = shell(
     h1("Manage your subscription") +
     p(`Here's your link to manage your ${BUDDERLEE_POST.name} subscription. It works for the next hour.`) +
     p(link(opts.url, "Open your subscription")) +
-    p(`<span style="font-size:13px;color:#8a887e;">You can update your address or card, pause, or cancel there. If you didn't ask for this, you can ignore it.</span>`),
+    p(`<span style="font-size:13px;color:#8a887e;">You can update your address or card, or cancel there. If you didn't ask for this, you can ignore it.</span>`),
   );
-  await send(opts.to, `Your ${BUDDERLEE_POST.name} link`, text, html, TO_EMAIL);
+  await send(opts.to, `Your link to manage ${BUDDERLEE_POST.name}`, text, html, TO_EMAIL);
 }
 
 export async function notifyStudio(subject: string, lines: string[]) {

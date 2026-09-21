@@ -21,8 +21,16 @@ export function isPostSubscription(sub: Stripe.Subscription): boolean {
   return sub.metadata?.[POST_METADATA_KEY] === "1";
 }
 
+// A signup after the cutoff is active in Stripe from day one, but has no
+// invoice until its billing date on the next cutoff.
+function firstChargePending(sub: Stripe.Subscription): boolean {
+  return sub.status === "active" && !sub.latest_invoice;
+}
+
 function mapStatus(sub: Stripe.Subscription): SubscriberStatus {
   if (sub.pause_collection) return "paused";
+  // Kept off the shipping list until the first charge, the same as a trial.
+  if (firstChargePending(sub)) return "trialing";
   switch (sub.status) {
     case "active":
     case "trialing":
@@ -69,16 +77,25 @@ function toAddress(name: string | null | undefined, a: Stripe.Address | null | u
   };
 }
 
+// The live webhook endpoint is pinned to an older API version than the
+// SDK, so event payloads can carry the older field names. Objects fetched
+// through the SDK always have the current ones.
+type LegacySubscription = Stripe.Subscription & { current_period_end?: number | null };
+type LegacyInvoice = Stripe.Invoice & { subscription?: string | { id: string } | null };
+
 function subscriptionFields(sub: Stripe.Subscription) {
   const item = sub.items.data[0];
+  const periodEnd = item?.current_period_end ?? (sub as LegacySubscription).current_period_end;
   const reason = sub.cancellation_details;
   const cancelReason = reason
     ? [reason.feedback, reason.comment].filter(Boolean).join(": ") || reason.reason || null
     : null;
+  // Left untouched once the charge has happened, so the date stays on record.
+  const firstChargeOn = sub.trial_end ?? (firstChargePending(sub) ? sub.billing_cycle_anchor : null);
   return {
     status: mapStatus(sub),
-    currentPeriodEnd: unixToIso(item?.current_period_end),
-    trialEnd: unixToIso(sub.trial_end),
+    currentPeriodEnd: unixToIso(periodEnd),
+    ...(firstChargeOn ? { trialEnd: unixToIso(firstChargeOn) } : {}),
     canceledAt: unixToIso(sub.canceled_at),
     cancelReason,
   };
@@ -103,9 +120,12 @@ async function findBySubscriptionId(payload: Payload, id: string) {
 export async function handlePostCheckoutCompleted(
   stripe: Stripe,
   payload: Payload,
-  session: Stripe.Checkout.Session,
+  eventSession: Stripe.Checkout.Session,
   livemode: boolean,
 ) {
+  // Read the session fresh so the shipping details are where the SDK
+  // expects them, whatever API version the event was rendered in.
+  const session = await stripe.checkout.sessions.retrieve(eventSession.id);
   const subId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
   if (!subId) {
     console.error(`[budderlee-post] session ${session.id} completed without a subscription.`);
@@ -170,7 +190,7 @@ export async function handlePostCheckoutCompleted(
   }
 
   const schedule = getSignupSchedule(settings.cutoffDay);
-  const chargesNow = !sub.trial_end;
+  const chargesNow = !sub.trial_end && !firstChargePending(sub);
   const testNote = livemode ? "" : " (TEST MODE)";
   await sendWelcomeEmail({
     to: email,
@@ -231,7 +251,8 @@ export async function handlePostSubscriptionEvent(
 
 /** A renewal charge failed. Stripe retries and emails them; Barbara just hears about it. */
 export async function handlePostInvoiceFailed(payload: Payload, invoice: Stripe.Invoice, livemode: boolean) {
-  const subRef = invoice.parent?.subscription_details?.subscription;
+  const subRef =
+    invoice.parent?.subscription_details?.subscription ?? (invoice as LegacyInvoice).subscription;
   const subId = typeof subRef === "string" ? subRef : subRef?.id;
   if (!subId) return;
   const existing = await findBySubscriptionId(payload, subId);

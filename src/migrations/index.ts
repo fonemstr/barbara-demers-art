@@ -12,6 +12,7 @@ import * as migration_20260912_add_budderlee_post_waitlist from './20260912_add_
 import * as migration_20260913_add_resident_profile_and_issues from './20260913_add_resident_profile_and_issues';
 import * as migration_20260914_add_subscribers from './20260914_add_subscribers';
 import * as migration_20260915_add_shipments from './20260915_add_shipments';
+import * as migration_20260918_add_media_email_size from './20260918_add_media_email_size';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260915_add_shipments.up,
     down: migration_20260915_add_shipments.down,
     name: '20260915_add_shipments',
+  },
+  {
+    up: migration_20260918_add_media_email_size.up,
+    down: migration_20260918_add_media_email_size.down,
+    name: '20260918_add_media_email_size',
   },
 ];
