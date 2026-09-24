@@ -71,7 +71,7 @@ export function CommissionDeposit() {
               : "Choose a size"}
         </Button>
         <p className="text-[13px] text-on-surface-subtle">
-          Secure checkout by Stripe. Applied toward the final price.
+          Secure checkout by Stripe. Applied toward the final price. Sales tax is added where it applies.
         </p>
       </div>
 

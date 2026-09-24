@@ -6,6 +6,7 @@ import {
 } from "@/data/paintings";
 import { printLabel } from "@/lib/utils";
 import { requireStripe } from "@/lib/stripe";
+import { getBudderleePostSettings } from "@/lib/budderlee-post";
 
 export async function POST(request: Request) {
   try {
@@ -45,6 +46,11 @@ export async function POST(request: Request) {
       request.headers.get("origin") ||
       process.env.NEXT_PUBLIC_SITE_URL ||
       "http://localhost:3000";
+    // One switch for every checkout on the site. Tax is added on top of
+    // the price, based on the shipping address, wherever Barbara is
+    // registered to collect it (Stripe Tax returns zero elsewhere).
+    const { collectTax } = await getBudderleePostSettings();
+    const taxed = collectTax ? { tax_behavior: "exclusive" as const } : {};
 
     const productImages = painting.images
       .filter((src) => src.startsWith("http"))
@@ -61,6 +67,7 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             unit_amount: printOption.priceCents,
+            ...taxed,
             product_data: {
               name: `${painting.title} — Giclée print`,
               description: `Archival giclée print · ${printLabel(printOption)}`,
@@ -74,6 +81,7 @@ export async function POST(request: Request) {
           price_data: {
             currency: "usd",
             unit_amount: painting.priceCents,
+            ...taxed,
             product_data: {
               name: painting.title,
               description: `${painting.medium} · ${painting.widthIn}×${painting.heightIn} in`,
@@ -96,10 +104,12 @@ export async function POST(request: Request) {
             type: "fixed_amount",
             display_name: shipping.label,
             fixed_amount: { amount: shipping.cents, currency: "usd" },
+            ...taxed,
           },
         },
       ],
       shipping_address_collection: { allowed_countries: ["US"] },
+      ...(collectTax ? { automatic_tax: { enabled: true } } : {}),
       metadata: {
         painting_slug: painting.slug,
         ...(printOption

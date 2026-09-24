@@ -220,8 +220,9 @@ export default async function PaintingPage({
                   </div>
                   <BuyButton slug={painting.slug} />
                   <p className="text-xs text-on-surface-subtle">
-                    Secure checkout by Stripe. Packed and shipped directly
-                    from the studio within 5 business days.
+                    Secure checkout by Stripe. Sales tax is added where it
+                    applies. Packed and shipped directly from the studio
+                    within 5 business days.
                   </p>
                   <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
                     10% of profits from this painting are donated to animal
@@ -246,7 +247,7 @@ export default async function PaintingPage({
                   {PRINT_SHIPPING_RATE.cents === 0
                     ? "Free shipping on prints."
                     : `Flat ${formatPrice(PRINT_SHIPPING_RATE.cents)} shipping per print order.`}{" "}
-                  Secure checkout by Stripe.
+                  Secure checkout by Stripe. Sales tax is added where it applies.
                 </p>
               </div>
             )}

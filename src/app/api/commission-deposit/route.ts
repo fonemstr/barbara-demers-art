@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCommissionTier } from "@/data/commissions";
 import { requireStripe } from "@/lib/stripe";
+import { getBudderleePostSettings } from "@/lib/budderlee-post";
 
 export async function POST(request: Request) {
   try {
@@ -27,14 +28,25 @@ export async function POST(request: Request) {
       process.env.NEXT_PUBLIC_SITE_URL ||
       "http://localhost:3000";
 
+    // The deposit is part of the price of a painting that ships to the
+    // buyer, so it is taxed like the painting, on the shipping address.
+    const { collectTax } = await getBudderleePostSettings();
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      ...(collectTax
+        ? {
+            automatic_tax: { enabled: true },
+            shipping_address_collection: { allowed_countries: ["US"] },
+          }
+        : {}),
       line_items: [
         {
           quantity: 1,
           price_data: {
             currency: "usd",
             unit_amount: tier.depositCents,
+            ...(collectTax ? { tax_behavior: "exclusive" as const } : {}),
             product_data: {
               name: `Commission deposit — ${tier.label} (${tier.sizeNote})`,
               description:
