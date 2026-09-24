@@ -78,6 +78,11 @@ const FAQ = [
       "Yes. Cancel any time: ask for a link on the manage page or use the one in your emails. No phone calls, no forms. Cancel before the cutoff and you won't be charged again. To skip a month, reply to any email from Barbara and she'll pause it for you.",
   },
   {
+    q: "Is there sales tax?",
+    a: () =>
+      "Where the law requires it, yes. It's added at checkout on top of the $12, based on your shipping address, and shown before you confirm.",
+  },
+  {
     q: "Do you ship outside the United States?",
     a: () =>
       "Not yet. U.S. addresses only to start, with shipping included in the price. Canada is on the list to look at once the first few mailings have gone out.",
@@ -273,7 +278,7 @@ export default async function BudderleePostPage() {
           </div>
           <SubscribeButton label={`Subscribe for ${price} a month`} />
           <p className="mt-6 text-center text-xs text-on-surface-subtle">
-            Secure checkout by Stripe. U.S. addresses only. Change your address or card, or cancel any time, from a link in your emails.
+            Secure checkout by Stripe. U.S. addresses only. Sales tax is added where it applies. Change your address or card, or cancel any time, from a link in your emails.
           </p>
         </Section>
       ) : (

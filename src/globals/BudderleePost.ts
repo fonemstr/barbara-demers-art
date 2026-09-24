@@ -148,7 +148,7 @@ export const BudderleePost: GlobalConfig = {
       defaultValue: false,
       admin: {
         description:
-          "Only after the accountant says to, and after Stripe Tax is switched on in the Stripe dashboard. Adds tax at checkout based on the shipping address.",
+          "Applies to every checkout on the site: the subscription, paintings, prints and commission deposits. Adds tax on top of the price at checkout, based on the shipping address, wherever a registration is on file in Stripe Tax. Stripe Tax must be set up in the Stripe dashboard first or checkouts will fail.",
       },
     },
   ],
