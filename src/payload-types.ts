@@ -321,6 +321,22 @@ export interface Painting {
          * $75 = 7500
          */
         priceCents: number;
+        /**
+         * Tick to send paid orders for this size straight to Lumaprints. Leave unticked to get an email and print it yourself.
+         */
+        lumaprints?: boolean | null;
+        /**
+         * 103001 = Archival Matte Fine Art Paper.
+         */
+        lumaprintsSubcategoryId?: number | null;
+        /**
+         * Option names as the Lumaprints dashboard shows them, separated by commas.
+         */
+        lumaprintsOptions?: string | null;
+        /**
+         * The full-resolution file Lumaprints prints from, sized for the print plus bleed. Leave empty to use the painting's first image.
+         */
+        printFile?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -401,7 +417,7 @@ export interface SocialPost {
    */
   message: string;
   /**
-   * Optional image. Instagram and Pinterest require one.
+   * Optional image. Instagram and Pinterest require one. Very tall or wide images are padded with white for Instagram; other platforms get the original.
    */
   image?: (number | null) | Media;
   /**
@@ -951,6 +967,10 @@ export interface PaintingsSelect<T extends boolean = true> {
         widthIn?: T;
         heightIn?: T;
         priceCents?: T;
+        lumaprints?: T;
+        lumaprintsSubcategoryId?: T;
+        lumaprintsOptions?: T;
+        printFile?: T;
         id?: T;
       };
   images?:
@@ -1211,7 +1231,7 @@ export interface BudderleePost {
    */
   includePastDue?: boolean | null;
   /**
-   * Only after the accountant says to, and after Stripe Tax is switched on in the Stripe dashboard. Adds tax at checkout based on the shipping address.
+   * Applies to every checkout on the site: the subscription, paintings, prints and commission deposits. Adds tax on top of the price at checkout, based on the shipping address, wherever a registration is on file in Stripe Tax. Stripe Tax must be set up in the Stripe dashboard first or checkouts will fail.
    */
   collectTax?: boolean | null;
   updatedAt?: string | null;

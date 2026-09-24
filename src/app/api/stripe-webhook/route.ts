@@ -9,6 +9,7 @@ import {
   handlePostSubscriptionEvent,
   isPostSession,
 } from "@/lib/budderlee-post-stripe";
+import { fulfillPrintWithLumaprints } from "@/lib/lumaprints-fulfillment";
 
 // Stripe webhooks must read the raw body for signature verification.
 export const runtime = "nodejs";
@@ -142,6 +143,30 @@ export async function POST(request: Request) {
       // Just tell Barbara what to print and where to ship it.
       const printSize = session.metadata?.print_size;
       if (session.metadata?.print_option_id) {
+        // Lab-printed sizes go straight to Lumaprints; the studio email
+        // below then reports the order number, or asks Barbara to place
+        // the order by hand if it could not be sent.
+        const lumaprints =
+          session.metadata.print_fulfillment === "lumaprints"
+            ? await fulfillPrintWithLumaprints(stripe, session.id, event.livemode)
+            : null;
+        if (lumaprints) {
+          console.log(
+            `[stripe-webhook] Lumaprints for session ${session.id}: ${lumaprints.status}${"orderNumber" in lumaprints ? ` #${lumaprints.orderNumber}` : ` (${lumaprints.reason})`}`,
+          );
+        }
+        const lumaprintsLines = !lumaprints
+          ? [`The original painting's availability is unchanged.`]
+          : lumaprints.status === "not-sent"
+            ? [
+                `ACTION NEEDED: this print was NOT sent to Lumaprints.`,
+                `Reason: ${lumaprints.reason}`,
+                `Place it by hand at https://dashboard.lumaprints.com (New Order) with the address above.`,
+              ]
+            : [
+                `Sent to Lumaprints${lumaprints.env === "sandbox" ? " SANDBOX (not printed)" : ""}: order #${lumaprints.orderNumber}${lumaprints.status === "already-submitted" ? " (already placed earlier)" : ""}.`,
+                `Nothing to do; Lumaprints prints and ships it. Track it at https://dashboard.lumaprints.com/order/list`,
+              ];
         if (resend) {
           const { getPainting } = await import("@/data/paintings");
           const title = (await getPainting(slug))?.title ?? slug;
@@ -150,9 +175,16 @@ export async function POST(request: Request) {
               ? `$${(session.amount_total / 100).toFixed(2)}`
               : "amount unavailable";
           const buyer = session.customer_details;
-          const address = buyer?.address;
+          // The endpoint's older API version can put the billing address
+          // here; re-read the session for the shipping one.
+          const shippingDetails = await stripe.checkout.sessions
+            .retrieve(session.id)
+            .then((fresh) => fresh.collected_information?.shipping_details)
+            .catch(() => null);
+          const address = shippingDetails?.address ?? buyer?.address;
           const addressLines = address
             ? [
+                shippingDetails?.name,
                 address.line1,
                 address.line2,
                 [address.city, address.state, address.postal_code]
@@ -169,7 +201,7 @@ export async function POST(request: Request) {
             await resend.emails.send({
               from: FROM_EMAIL,
               to: TO_EMAIL,
-              subject: `Print sold: ${title}${printSize ? ` (${printSize})` : ""}${testNote}`,
+              subject: `${lumaprints?.status === "not-sent" ? "ACTION NEEDED: " : ""}Print sold: ${title}${printSize ? ` (${printSize})` : ""}${testNote}`,
               text: [
                 `A giclée print of "${title}"${printSize ? ` at ${printSize}` : ""} just sold for ${amount}.${testNote}`,
                 ``,
@@ -179,7 +211,8 @@ export async function POST(request: Request) {
                   : `Shipping address: see the Stripe dashboard`,
                 ``,
                 `Quantity and totals: https://dashboard.stripe.com/payments — session ${session.id}`,
-                `The original painting's availability is unchanged.`,
+                ``,
+                ...lumaprintsLines,
               ].join("\n"),
             });
           } catch (err) {

@@ -242,11 +242,24 @@ export default async function PaintingPage({
                     made to order and rated to hold their color for decades.
                   </p>
                 </div>
-                <PrintBuy slug={painting.slug} prints={prints} />
+                {/* Only what the picker needs reaches the browser; the
+                    Lumaprints settings stay on the server. */}
+                <PrintBuy
+                  slug={painting.slug}
+                  prints={prints.map(({ id, widthIn, heightIn, priceCents }) => ({
+                    id,
+                    widthIn,
+                    heightIn,
+                    priceCents,
+                  }))}
+                />
                 <p className="text-xs text-on-surface-subtle">
                   {PRINT_SHIPPING_RATE.cents === 0
                     ? "Free shipping on prints."
                     : `Flat ${formatPrice(PRINT_SHIPPING_RATE.cents)} shipping per print order.`}{" "}
+                  {prints.every((opt) => opt.lumaprints)
+                    ? "Printed to order at our fine-art print lab and shipped with tracking, usually within a week. "
+                    : ""}
                   Secure checkout by Stripe. Sales tax is added where it applies.
                 </p>
               </div>

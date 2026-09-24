@@ -45,6 +45,20 @@ Before flipping the phase to **Open** in `/admin` → The Budderlee Post:
 4. If the accountant says to collect sales tax, enable Stripe Tax in the dashboard and tick "Collect sales tax through Stripe Tax" in the settings global.
 5. Test in test mode first: set the phase to Open with a test-mode price ID on a preview deployment, subscribe with card `4242 4242 4242 4242`, and check the Subscribers collection, the welcome email, and the manage link.
 
+## Lumaprints (print-on-demand) setup
+
+Print sizes with **Printed and shipped by Lumaprints** ticked (Paintings → Print options) are ordered from Lumaprints automatically when Stripe confirms payment. Barbara still gets the "Print sold" email, with the Lumaprints order number, or an **ACTION NEEDED** subject if the order could not be sent (she then places it by hand in the Lumaprints dashboard). There are no automatic retries, so an order is never placed twice.
+
+**Never send a test order to the production Lumaprints API.** Lumaprints permanently revokes API access for that. `LUMAPRINTS_ENV` defaults to `sandbox`. In production, a Stripe test-mode payment is never forwarded.
+
+1. **Sandbox first.** Register at https://sandbox.lumaprints.com, create a Standard Store, add test card `4111 1111 1111 1111` as the primary payment method, set the store's default billing address, and create an API key under Developer → API Keys. Put those keys on the **Preview** environment with `LUMAPRINTS_ENV=sandbox`.
+2. Check the setup (read-only, places nothing): `node --env-file=.env.local --import tsx scripts/lumaprints-check.ts`. It prints the store IDs and confirms "0.50in Bleed" matches an option.
+3. On a preview deploy, tick Lumaprints on a print size, buy it with Stripe test card `4242 4242 4242 4242`, and confirm the email shows a sandbox order number.
+4. **Production.** In the live dashboard (store "Barbara J Demers", ID 9461), confirm the primary payment method and the store's default billing address (Stores → Store Settings), then create an API key. Set the production variables with `LUMAPRINTS_ENV=production` and redeploy.
+5. **Tracking emails.** In the Lumaprints dashboard, Developer → Webhooks, subscribe the `shipping` event to `https://www.barbarajdemers.com/api/lumaprints-webhook` with the webhook username and password below. Buyers then get their tracking number by email.
+
+**Print files.** Lumaprints downloads the file from a public URL. The originals in the Lumaprints image library are private, so upload each full-resolution file to the painting's print size (**Print file**). Size it for the print plus bleed: 7 × 7 in for a 6 × 6 print with 0.5 in bleed. Without one, the painting's first image is used, which may be too small; Lumaprints rejects undersized files and the email says so.
+
 ## Environment variables
 
 ### Auto-set by Vercel integrations (don't add manually)
@@ -65,6 +79,11 @@ Before flipping the phase to **Open** in `/admin` → The Budderlee Post:
 | `RESEND_FROM_EMAIL` | e.g. `Barbara Demers Studio <studio@barbarademers.com>` — sending domain must be verified in Resend |
 | `RESEND_TO_EMAIL` | Where commission inquiries land (e.g. `barbara@barbarademers.com`) |
 | `NEXT_PUBLIC_SITE_URL` | Production URL, no trailing slash (e.g. `https://barbarademers.com`) |
+| `LUMAPRINTS_API_KEY` / `LUMAPRINTS_API_SECRET` | Lumaprints → Developer → API Keys (sandbox keys for Preview) |
+| `LUMAPRINTS_STORE_ID` | Standard Store ID (`9461` in production; the sandbox store has its own) |
+| `LUMAPRINTS_ENV` | `production` on Production only; anything else uses the sandbox |
+| `LUMAPRINTS_SHIPPING_METHOD` | Optional, default `usps_ground_advantage` |
+| `LUMAPRINTS_WEBHOOK_USERNAME` / `LUMAPRINTS_WEBHOOK_PASSWORD` | Any values; enter the same ones when subscribing the Lumaprints webhook |
 
 ### Per-environment notes
 

@@ -116,6 +116,9 @@ export async function POST(request: Request) {
           ? {
               print_option_id: printOption.id,
               print_size: printLabel(printOption),
+              ...(printOption.lumaprints
+                ? { print_fulfillment: "lumaprints" }
+                : {}),
             }
           : {}),
       },
