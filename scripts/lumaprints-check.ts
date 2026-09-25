@@ -1,8 +1,14 @@
-// Read-only check of the Lumaprints setup: lists the stores the API key
-// can order under and the options for the default product, and resolves
-// the default "0.50in Bleed" option. Places no orders.
+// Check of the Lumaprints setup: lists the stores the API key can order
+// under and the options for the default product, and resolves the
+// default "0.50in Bleed" option. Places no orders unless --order is given.
 //
-//   node --env-file=.env.local --import tsx scripts/lumaprints-check.ts
+//   node --env-file=.env.lumaprints --import tsx scripts/lumaprints-check.ts
+//
+// --order <painting-slug> places one SANDBOX order for that painting's
+// 6×6 print, built the same way a paid checkout builds it (the print
+// file, or the painting's first image, read from the live site). It
+// refuses to run against production: Lumaprints revokes API access for
+// test orders sent there.
 import {
   DEFAULT_OPTIONS,
   DEFAULT_SUBCATEGORY_ID,
@@ -10,7 +16,71 @@ import {
   getSubcategoryOptions,
   lumaprintsConfig,
   resolveOptionIds,
+  submitOrder,
 } from "../src/lib/lumaprints";
+
+const SITE = "https://www.barbarajdemers.com";
+
+type SitePainting = {
+  slug: string;
+  images?: { image?: { url?: string | null } | null }[];
+  printOptions?: {
+    widthIn: number;
+    heightIn: number;
+    lumaprints?: boolean | null;
+    lumaprintsSubcategoryId?: number | null;
+    lumaprintsOptions?: string | null;
+    printFile?: { url?: string | null } | null;
+  }[];
+};
+
+async function placeSandboxOrder(slug: string) {
+  const config = lumaprintsConfig()!;
+  if (config.env !== "sandbox") {
+    throw new Error("--order only runs against the sandbox (unset LUMAPRINTS_ENV).");
+  }
+  const res = await fetch(
+    `${SITE}/api/paintings?where[slug][equals]=${encodeURIComponent(slug)}&depth=1&limit=1`,
+  );
+  const painting = ((await res.json()) as { docs: SitePainting[] }).docs[0];
+  if (!painting) throw new Error(`No painting "${slug}" on ${SITE}.`);
+  const print = painting.printOptions?.find((opt) => opt.lumaprints);
+  if (!print) throw new Error(`"${slug}" has no Lumaprints print size.`);
+
+  const raw = print.printFile?.url ?? painting.images?.[0]?.image?.url;
+  if (!raw) throw new Error(`"${slug}" has no image.`);
+  const imageUrl = raw.startsWith("/") ? `${SITE}${raw}` : raw;
+  const subcategoryId = print.lumaprintsSubcategoryId ?? DEFAULT_SUBCATEGORY_ID;
+  const optionIds = await resolveOptionIds(config, subcategoryId, print.lumaprintsOptions ?? undefined);
+
+  console.log(`\nPlacing a SANDBOX order: ${print.widthIn}×${print.heightIn} of "${slug}"`);
+  console.log(`  file: ${imageUrl}${print.printFile?.url ? "" : " (painting image; no print file uploaded)"}`);
+  console.log(`  product ${subcategoryId}, options ${optionIds.join(", ") || "(defaults)"}`);
+  const orderNumber = await submitOrder(config, {
+    externalId: `sandbox-test-${Date.now()}`,
+    recipient: {
+      firstName: "Sandbox",
+      lastName: "Test",
+      addressLine1: "123 Main St.",
+      city: "New York",
+      state: "NY",
+      zipCode: "10001",
+      country: "US",
+    },
+    items: [
+      {
+        externalItemId: `${slug}-test`,
+        subcategoryId,
+        quantity: 1,
+        width: print.widthIn,
+        height: print.heightIn,
+        imageUrl,
+        optionIds,
+      },
+    ],
+  });
+  console.log(`\nAccepted: sandbox order #${orderNumber}. It shows at https://sandbox.lumaprints.com/order/list within a few minutes.`);
+}
 
 async function main() {
   const config = lumaprintsConfig();
@@ -42,6 +112,11 @@ async function main() {
 
   const ids = await resolveOptionIds(config, DEFAULT_SUBCATEGORY_ID, DEFAULT_OPTIONS);
   console.log(`\n"${DEFAULT_OPTIONS}" resolves to option ${ids.join(", ")}.`);
+
+  const orderFlag = process.argv.indexOf("--order");
+  if (orderFlag !== -1) {
+    await placeSandboxOrder(process.argv[orderFlag + 1] ?? "fox-in-suit");
+  }
 }
 
 main().catch((err) => {
