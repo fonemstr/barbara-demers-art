@@ -8,6 +8,7 @@ import {
 export { SUBJECT_GROUPS, SUBJECT_GROUP_LABELS };
 export type { SubjectGroup };
 import type { StarSign } from "@/lib/zodiac";
+import { DEFAULT_SUBCATEGORY_ID } from "@/lib/lumaprints";
 
 export type SizeTier = "free" | "small" | "medium" | "large" | "oversize";
 
@@ -18,6 +19,13 @@ export type PrintOption = {
   widthIn: number;
   heightIn: number;
   priceCents: number;
+  /** Set when Lumaprints prints and ships this size. Server-side only. */
+  lumaprints?: {
+    subcategoryId: number;
+    options?: string;
+    /** Full-resolution print file; the painting's first image when unset. */
+    fileUrl?: string;
+  };
 };
 
 export type Painting = {
@@ -216,6 +224,10 @@ type PayloadPainting = {
     widthIn: number;
     heightIn: number;
     priceCents: number;
+    lumaprints?: boolean | null;
+    lumaprintsSubcategoryId?: number | null;
+    lumaprintsOptions?: string | null;
+    printFile?: { url?: string | null } | number | null;
   }> | null;
   collection?: PaintingCollection | null;
   characterName?: string | null;
@@ -270,6 +282,17 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
       widthIn: opt.widthIn,
       heightIn: opt.heightIn,
       priceCents: opt.priceCents,
+      ...(opt.lumaprints
+        ? {
+            lumaprints: {
+              subcategoryId: opt.lumaprintsSubcategoryId ?? DEFAULT_SUBCATEGORY_ID,
+              options: normalizeOptionalText(opt.lumaprintsOptions),
+              fileUrl:
+                (typeof opt.printFile === "object" && opt.printFile?.url) ||
+                undefined,
+            },
+          }
+        : {}),
     })),
     collection: p.collection ?? "none",
     characterName: normalizeOptionalText(p.characterName),

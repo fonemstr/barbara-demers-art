@@ -431,6 +431,54 @@ export const Paintings: CollectionConfig = {
             },
           ],
         },
+        {
+          name: "lumaprints",
+          label: "Printed and shipped by Lumaprints",
+          type: "checkbox",
+          defaultValue: false,
+          admin: {
+            description:
+              "Tick to send paid orders for this size straight to Lumaprints. Leave unticked to get an email and print it yourself.",
+          },
+        },
+        {
+          type: "row",
+          admin: { condition: (_, sibling) => !!sibling?.lumaprints },
+          fields: [
+            {
+              name: "lumaprintsSubcategoryId",
+              label: "Lumaprints product ID",
+              type: "number",
+              defaultValue: 103001,
+              admin: {
+                description: "103001 = Archival Matte Fine Art Paper.",
+                width: "35%",
+              },
+            },
+            {
+              name: "lumaprintsOptions",
+              label: "Lumaprints options",
+              type: "text",
+              defaultValue: "0.50in Bleed",
+              admin: {
+                description:
+                  "Option names as the Lumaprints dashboard shows them, separated by commas.",
+                width: "65%",
+              },
+            },
+          ],
+        },
+        {
+          name: "printFile",
+          label: "Print file",
+          type: "upload",
+          relationTo: "media",
+          admin: {
+            condition: (_, sibling) => !!sibling?.lumaprints,
+            description:
+              "The full-resolution file Lumaprints prints from, sized for the print plus bleed. Leave empty to use the painting's first image.",
+          },
+        },
       ],
     },
     {
