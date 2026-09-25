@@ -14,6 +14,7 @@ import * as migration_20260914_add_subscribers from './20260914_add_subscribers'
 import * as migration_20260915_add_shipments from './20260915_add_shipments';
 import * as migration_20260918_add_media_email_size from './20260918_add_media_email_size';
 import * as migration_20260924_add_lumaprints_print_fields from './20260924_add_lumaprints_print_fields';
+import * as migration_20260925_add_resident_lumaprints_prints from './20260925_add_resident_lumaprints_prints';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20260924_add_lumaprints_print_fields.up,
     down: migration_20260924_add_lumaprints_print_fields.down,
     name: '20260924_add_lumaprints_print_fields',
+  },
+  {
+    up: migration_20260925_add_resident_lumaprints_prints.up,
+    down: migration_20260925_add_resident_lumaprints_prints.down,
+    name: '20260925_add_resident_lumaprints_prints',
   },
 ];
