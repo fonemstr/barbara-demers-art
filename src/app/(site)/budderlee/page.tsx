@@ -103,6 +103,9 @@ export default async function BudderleePage() {
               Originals $195 · prints of every resident · collect them
               all and build the village
             </p>
+            <ButtonLink href="/budderlee/village" variant="secondary">
+              Walk through the village
+            </ButtonLink>
           </div>
         </div>
       </Section>
