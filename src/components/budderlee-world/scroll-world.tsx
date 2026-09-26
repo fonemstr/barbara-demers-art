@@ -10,7 +10,7 @@ import { mountScrollWorld } from "./scrub-engine";
 
 const ASSETS = "/budderlee/world";
 // The clips (~75 MB) live in Vercel Blob, not git. Upload or replace them with
-// scripts/upload-budderlee-world-videos.ts.
+// scripts/upload-budderlee-world-assets.ts.
 const BUDDERLEE_WORLD_VIDEO_BASE =
   "https://bw2yer8zvkn0tmxl.public.blob.vercel-storage.com/budderlee/world/vid";
 const still = (id: string) => `${ASSETS}/${id}.webp`;
