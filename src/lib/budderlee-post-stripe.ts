@@ -209,7 +209,7 @@ export async function handlePostCheckoutCompleted(
     address ? `Ships to: ${[address.line1, address.line2, [address.city, address.state, address.postalCode].filter(Boolean).join(", ")].filter(Boolean).join(", ")}` : "",
     "",
     `Subscribers in the admin: ${SITE_URL}/admin/collections/subscribers`,
-    `Stripe: https://dashboard.stripe.com/${livemode ? "" : "test/"}subscriptions/${sub.id}`,
+    `Stripe subscription: ${sub.id}`,
   ]);
 }
 

@@ -114,7 +114,7 @@ export async function POST(request: Request) {
                 ``,
                 `The deposit reserves their spot and counts toward the final price;`,
                 `the balance is due when the painting is finished, before shipping.`,
-                `Payment details: https://dashboard.stripe.com/payments — session ${session.id}`,
+                `Stripe checkout session: ${session.id}`,
               ].join("\n"),
             });
           } catch (err) {
@@ -210,7 +210,7 @@ export async function POST(request: Request) {
                   ? `Ship to:\n${addressLines.join("\n")}`
                   : `Shipping address: see the Stripe dashboard`,
                 ``,
-                `Quantity and totals: https://dashboard.stripe.com/payments — session ${session.id}`,
+                `Quantity and totals: see Stripe, checkout session ${session.id}`,
                 ``,
                 ...lumaprintsLines,
               ].join("\n"),
@@ -307,7 +307,7 @@ export async function POST(request: Request) {
                 : `Shipping address: see the Stripe dashboard`,
               ``,
               `The painting is now marked sold on the site.`,
-              `Payment details: https://dashboard.stripe.com/payments — session ${session.id}`,
+              `Stripe checkout session: ${session.id}`,
             ].join("\n"),
           });
         } catch (err) {
