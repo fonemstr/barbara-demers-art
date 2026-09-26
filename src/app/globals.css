@@ -251,3 +251,15 @@ p { text-wrap: pretty; }
 
 /* Generous paragraph rhythm only when there's more than one */
 .rich-text > * + * { margin-top: 1.25rem; }
+
+/* Budderlee scroll world (/budderlee/village): theme the scroll-world engine
+   with the site's type and the parchment of the diorama scenes. */
+.budderlee-world {
+  --sw-bg: #f1e3c2;
+  --sw-ink: var(--on-surface);
+  --sw-ink-soft: var(--on-surface-muted);
+  --sw-accent: var(--primary);
+  --sw-font-display: var(--font-noto-serif), Georgia, serif;
+  --sw-font-body: var(--font-plus-jakarta), system-ui, sans-serif;
+}
+.budderlee-world .sw-particles { display: none; }
