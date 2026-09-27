@@ -501,6 +501,10 @@ export interface Newsletter {
    */
   previewText?: string | null;
   /**
+   * Subscribers choose Original artwork, Budderlee, or both when they sign up. Pick a topic to send only to people who asked for it.
+   */
+  audience: 'all' | 'artwork' | 'budderlee';
+  /**
    * The newsletter itself. To add a picture, put the cursor on an empty line, open the + menu in the toolbar and choose Upload — then pick a new file or one already in Media. Pictures are resized for email automatically.
    */
   body: {
@@ -519,7 +523,7 @@ export interface Newsletter {
     [k: string]: unknown;
   };
   /**
-   * “Send me a test” emails only the studio and returns to Draft. “Send to the collector list” goes to every subscriber. Both happen when you save.
+   * “Send me a test” emails only the studio and returns to Draft. “Send to the collector list” goes to everyone chosen under “Who gets this”. Both happen when you save.
    */
   status: 'draft' | 'test' | 'send' | 'sent' | 'failed';
   sentAt?: string | null;
@@ -1045,6 +1049,7 @@ export interface CommissionedPortraitsSelect<T extends boolean = true> {
 export interface NewslettersSelect<T extends boolean = true> {
   subject?: T;
   previewText?: T;
+  audience?: T;
   body?: T;
   status?: T;
   sentAt?: T;

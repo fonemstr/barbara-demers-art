@@ -1,14 +1,32 @@
 import { NextResponse } from "next/server";
 import { FROM_EMAIL, TO_EMAIL, requireResend } from "@/lib/resend";
 import { SITE_URL } from "@/lib/site-url";
+import {
+  ALL_INTERESTS,
+  INTERESTS,
+  type Interest,
+  isInterest,
+  resolveTopicIds,
+} from "@/lib/newsletter-topics";
+
+// What each interest brings, for the welcome email.
+const EXPECT: Record<Interest, string> = {
+  artwork: "first look at new original paintings, the stories behind them, and commission news",
+  budderlee: "new residents arriving in Budderlee",
+};
+
+function expectLine(interests: Interest[]) {
+  return interests.map((i) => EXPECT[i]).join(", plus ");
+}
 
 // Sent once, to first-time signups only. Broadcasts from the Resend
 // dashboard carry their own unsubscribe link; this is a one-off hello.
-function welcomeEmail() {
+function welcomeEmail(interests: Interest[]) {
+  const expect = expectLine(interests);
   const text = [
     "Thank you for joining the collector list.",
     "",
-    "Here's what to expect: first look at new original paintings, new residents arriving in Budderlee, the stories behind the paintings, and commission news. Two emails a month at most.",
+    `Here's what to expect: ${expect}. Two emails a month at most. Every email has a link to change what you get.`,
     "",
     `Browse available work: ${SITE_URL}/gallery`,
     `Meet the Residents of Budderlee: ${SITE_URL}/budderlee`,
@@ -24,10 +42,9 @@ function welcomeEmail() {
     <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;padding:36px 32px;font-family:Georgia,'Times New Roman',serif;color:#3a3a33;">
       <h1 style="margin:0 0 18px;font-size:26px;font-weight:normal;line-height:1.25;">You're on the collector list.</h1>
       <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">
-        Thank you for joining. Here's what to expect: first look at new
-        original paintings, new residents arriving in Budderlee, the
-        stories behind the paintings, and commission news. Two emails a
-        month at most.
+        Thank you for joining. Here's what to expect: ${expect}. Two
+        emails a month at most. Every email has a link to change what you
+        get.
       </p>
       <p style="margin:0 0 8px;font-size:16px;line-height:1.6;">
         While you're here:
@@ -52,9 +69,21 @@ function welcomeEmail() {
 
 export async function POST(request: Request) {
   try {
-    const { email } = (await request.json()) as { email?: string };
+    const body = (await request.json()) as { email?: string; interests?: unknown };
+    const { email } = body;
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
+    }
+    // No interests field (an older cached form) means everything.
+    const picked = Array.isArray(body.interests)
+      ? body.interests.filter(isInterest)
+      : ALL_INTERESTS;
+    const interests = ALL_INTERESTS.filter((i) => picked.includes(i));
+    if (interests.length === 0) {
+      return NextResponse.json(
+        { error: "Pick at least one kind of news." },
+        { status: 400 },
+      );
     }
 
     const resend = requireResend();
@@ -90,12 +119,30 @@ export async function POST(request: Request) {
       );
     }
 
+    // Record which topics they want. contacts.create doesn't change
+    // topics on an existing contact, so this is a separate update, which
+    // also lets a repeat signup change their choice. Best effort: both
+    // topics default to opt-in, so a failure means they get everything.
+    try {
+      const topicIds = await resolveTopicIds(resend);
+      const { error: topicError } = await resend.contacts.topics.update({
+        email,
+        topics: ALL_INTERESTS.map((i) => ({
+          id: topicIds[i],
+          subscription: interests.includes(i) ? "opt_in" : "opt_out",
+        })),
+      });
+      if (topicError) throw new Error(topicError.message);
+    } catch (err) {
+      console.error("[newsletter] topic preferences failed:", err);
+    }
+
     // Welcome the subscriber, but only on a first-time signup — a repeat
     // signup already got one. Best effort: the contact is stored, so an
     // email hiccup must not fail the signup.
     if (!alreadySubscribed) {
       try {
-        const { text, html } = welcomeEmail();
+        const { text, html } = welcomeEmail(interests);
         await resend.emails.send({
           from: FROM_EMAIL,
           to: email,
@@ -114,7 +161,7 @@ export async function POST(request: Request) {
         from: FROM_EMAIL,
         to: TO_EMAIL,
         subject: "New newsletter signup",
-        text: `${email} joined the studio list. The contact was added to Resend automatically — no action needed.`,
+        text: `${email} joined the studio list for: ${interests.map((i) => INTERESTS[i].name).join(" and ")}. The contact was added to Resend automatically — no action needed.`,
       });
     } catch (err) {
       console.error("[newsletter] notification email failed:", err);
