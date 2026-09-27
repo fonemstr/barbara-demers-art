@@ -89,19 +89,19 @@ export default async function CommissionsPage() {
 
           {/* Hero image with overlapping mini-card */}
           {hero && (
-            <div className="relative self-stretch min-h-[520px]">
+            <div className="relative flex flex-col items-end">
               <Blob size={380} color="var(--surface-container-highest)" style={{ right: -40, top: 60 }} />
-              <div className="relative z-[1] ml-auto w-[92%] aspect-[4/5] max-h-[560px] overflow-hidden shadow-lifted">
-                <Image
-                  src={hero.images[0]}
-                  alt={hero.title}
-                  fill
-                  priority
-                  sizes="(min-width: 768px) 40vw, 90vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="absolute left-[-20px] bottom-10 z-[2] bg-surface-container-lowest rounded-[32px] p-5 pr-7 shadow-ambient max-w-[260px]">
+              {/* Shown uncropped at the painting's own proportions */}
+              <Image
+                src={hero.images[0]}
+                alt={hero.title}
+                width={1200}
+                height={1500}
+                priority
+                sizes="(min-width: 768px) 40vw, 90vw"
+                className="relative z-[1] block h-auto w-auto max-w-[92%] max-h-[560px] shadow-lifted"
+              />
+              <div className="relative z-[2] mt-5 self-start bg-surface-container-lowest rounded-[32px] p-5 pr-7 shadow-ambient max-w-[260px] md:ml-[-20px]">
                 <Eyebrow className="mb-2">Currently on the easel</Eyebrow>
                 <p className="font-serif text-lg leading-tight text-on-surface">
                   {hero.title}
@@ -123,15 +123,14 @@ export default async function CommissionsPage() {
           {testimonialImg && (
             <div className="relative">
               <Blob size={320} color="var(--surface-variant)" style={{ left: -60, top: 40, opacity: 0.6 }} />
-              <div className="relative z-[1] aspect-[5/6] overflow-hidden shadow-ambient-lg">
-                <Image
-                  src={testimonialImg}
-                  alt="A commission in progress"
-                  fill
-                  sizes="(min-width: 768px) 45vw, 90vw"
-                  className="object-cover"
-                />
-              </div>
+              <Image
+                src={testimonialImg}
+                alt="A commission in progress"
+                width={1200}
+                height={1500}
+                sizes="(min-width: 768px) 45vw, 90vw"
+                className="relative z-[1] mx-auto block h-auto w-auto max-w-full max-h-[640px] shadow-ambient-lg"
+              />
             </div>
           )}
 
@@ -226,15 +225,14 @@ export default async function CommissionsPage() {
                   key={portrait.id}
                   className="bg-surface-container-lowest rounded-[var(--radius-lg)] overflow-hidden shadow-ambient-sm"
                 >
-                  <div className="relative aspect-[4/3] bg-surface-container">
-                    <Image
-                      src={portrait.images[0]}
-                      alt={`${portrait.title}${portrait.subject ? ` — commissioned portrait of a ${portrait.subject.toLowerCase()}` : " — commissioned portrait"}`}
-                      fill
-                      sizes="(min-width: 768px) 45vw, 90vw"
-                      className="object-cover"
-                    />
-                  </div>
+                  <Image
+                    src={portrait.images[0]}
+                    alt={`${portrait.title}${portrait.subject ? ` — commissioned portrait of a ${portrait.subject.toLowerCase()}` : " — commissioned portrait"}`}
+                    width={1200}
+                    height={1500}
+                    sizes="(min-width: 768px) 45vw, 90vw"
+                    className="block h-auto w-full"
+                  />
                   <figcaption className="p-7 md:p-8">
                     <h3 className="font-serif text-2xl leading-tight text-on-surface">
                       {portrait.title}
