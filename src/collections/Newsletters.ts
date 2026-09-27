@@ -8,6 +8,7 @@ import {
   resolveCollectorSegmentId,
   syncAllContactsIntoSegment,
 } from "../lib/newsletter-email";
+import { INTERESTS, isInterest, resolveTopicIds } from "../lib/newsletter-topics";
 
 // Compose newsletters in the admin and send them to the collector list
 // through Resend broadcasts — no dashboard hopping. Same send mechanics
@@ -43,6 +44,22 @@ export const Newsletters: CollectionConfig = {
       },
     },
     {
+      name: "audience",
+      label: "Who gets this",
+      type: "select",
+      required: true,
+      defaultValue: "all",
+      options: [
+        { label: "Everyone on the list", value: "all" },
+        { label: "Original artwork subscribers", value: "artwork" },
+        { label: "Budderlee subscribers", value: "budderlee" },
+      ],
+      admin: {
+        description:
+          "Subscribers choose Original artwork, Budderlee, or both when they sign up. Pick a topic to send only to people who asked for it.",
+      },
+    },
+    {
       name: "body",
       type: "richText",
       required: true,
@@ -72,7 +89,7 @@ export const Newsletters: CollectionConfig = {
       ],
       admin: {
         description:
-          "“Send me a test” emails only the studio and returns to Draft. “Send to the collector list” goes to every subscriber. Both happen when you save.",
+          "“Send me a test” emails only the studio and returns to Draft. “Send to the collector list” goes to everyone chosen under “Who gets this”. Both happen when you save.",
       },
     },
     {
@@ -133,8 +150,13 @@ export const Newsletters: CollectionConfig = {
               );
             }
             const total = await syncAllContactsIntoSegment(resend, segmentId);
+            const audience = data.audience;
+            const topicId = isInterest(audience)
+              ? (await resolveTopicIds(resend))[audience]
+              : undefined;
             const broadcast = await resend.broadcasts.create({
               segmentId,
+              topicId,
               from: FROM_EMAIL,
               replyTo: TO_EMAIL,
               subject: data.subject as string,
@@ -146,7 +168,10 @@ export const Newsletters: CollectionConfig = {
             if (broadcast.error) throw new Error(broadcast.error.message);
             data.status = "sent";
             data.sentAt = new Date().toISOString();
-            data.result = `Sent to the collector list — ${total} contact${total === 1 ? "" : "s"}, minus unsubscribes. Broadcast ${broadcast.data?.id ?? ""} (delivery details in the Resend dashboard).`;
+            const who = isInterest(audience)
+              ? `the ${INTERESTS[audience].name} subscribers among ${total} contact${total === 1 ? "" : "s"}`
+              : `${total} contact${total === 1 ? "" : "s"}`;
+            data.result = `Sent to the collector list — ${who}, minus unsubscribes. Broadcast ${broadcast.data?.id ?? ""} (delivery details in the Resend dashboard).`;
           }
         } catch (err) {
           data.status = "failed";
