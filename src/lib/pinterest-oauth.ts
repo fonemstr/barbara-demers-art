@@ -5,7 +5,7 @@
 // (see SOCIAL.md); social-direct.ts mints access tokens from it at send time.
 
 export const PINTEREST_API = "https://api.pinterest.com/v5";
-export const PINTEREST_SCOPES = ["boards:read", "pins:read", "pins:write", "user_accounts:read"];
+export const PINTEREST_SCOPES = ["boards:read", "boards:write", "pins:read", "pins:write", "user_accounts:read"];
 export const STATE_COOKIE = "pinterest_oauth_state";
 
 /** Must match a redirect URI registered on the Pinterest app exactly. */
