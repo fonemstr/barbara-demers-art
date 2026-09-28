@@ -89,31 +89,17 @@ without App Review.
    (https://www.barbarajdemers.com/privacy). Pinterest then reviews the
    request; the app secret stays hidden until trial access is approved,
    which took about two weeks.
-2. Add `https://localhost/` as a redirect URI.
-3. Authorize once in a browser:
-   `https://www.pinterest.com/oauth/?client_id=APP_ID&redirect_uri=https://localhost/&response_type=code&scope=boards:read,pins:read,pins:write`
-   — after approving, copy the `code` from the address bar.
-4. Exchange it (within a few minutes):
-   ```bash
-   curl -X POST https://api.pinterest.com/v5/oauth/token \
-     -u 'APP_ID:APP_SECRET' \
-     -d 'grant_type=authorization_code' \
-     -d 'code=THE_CODE' \
-     -d 'redirect_uri=https://localhost/'
-   ```
-   Save the `refresh_token` from the response as `PINTEREST_REFRESH_TOKEN`.
-5. `GET https://api.pinterest.com/v5/boards` (with the access token from the
-   same response) lists boards — copy the target board's `id` as
-   `PINTEREST_BOARD_ID`.
+2. Add `https://www.barbarajdemers.com/api/pinterest/callback` as a redirect
+   URI (and `http://localhost:3000/api/pinterest/callback` for local testing).
+3. Signed in to the Payload admin, open `/api/pinterest/connect`. It sends
+   you to Pinterest's consent screen; after **Give access** you land on a
+   "Pinterest connected" page showing the account and its boards.
+4. First time only: expand **Refresh token** on that page, save it in Vercel
+   as `PINTEREST_REFRESH_TOKEN`, set `PINTEREST_BOARD_ID` to the ID listed
+   beside the target board, and redeploy.
 
 Refresh tokens expire after about a year; when posts start failing with
 `token refresh failed`, redo steps 3–4.
-
-If the app is already authorized, the link in step 3 skips the consent
-screen and lands straight on `https://localhost/?code=...`. The page shows a
-connection error, which is expected; only the address bar matters. Codes are
-single-use and expire within minutes (error `283 The authorization grant is
-invalid` means it was too late).
 
 **Trial access makes pins private.** Pins created through the API under the
 Trial tier are visible only to the account that created them. Public pins
