@@ -10,6 +10,11 @@ import { SITE_URL } from "@/lib/site-url";
 
 const GRAPH = "https://graph.facebook.com/v23.0";
 const PINTEREST = "https://api.pinterest.com/v5";
+// Apps on Pinterest's Trial tier may only create pins in the API sandbox,
+// which has its own token (from the app page, valid 30 days) and its own
+// boards. Setting PINTEREST_SANDBOX_TOKEN routes pins there; remove it once
+// the app has Standard access.
+const PINTEREST_SANDBOX = "https://api-sandbox.pinterest.com/v5";
 
 export type SocialPlatform = "instagram" | "facebook" | "pinterest";
 
@@ -134,14 +139,26 @@ async function postToPinterest(
   imageUrl?: string,
   options?: { link?: string; title?: string },
 ): Promise<string> {
-  const boardId = process.env.PINTEREST_BOARD_ID;
-  if (!boardId) return fail("pinterest", "PINTEREST_BOARD_ID not set");
+  const sandboxToken = process.env.PINTEREST_SANDBOX_TOKEN;
+  const boardId = sandboxToken
+    ? process.env.PINTEREST_SANDBOX_BOARD_ID
+    : process.env.PINTEREST_BOARD_ID;
+  if (!boardId) {
+    return fail(
+      "pinterest",
+      sandboxToken ? "PINTEREST_SANDBOX_BOARD_ID not set" : "PINTEREST_BOARD_ID not set",
+    );
+  }
   if (!imageUrl) return fail("pinterest", "Pinterest requires an image");
 
-  const { token, error } = await pinterestAccessToken();
-  if (!token) return fail("pinterest", error ?? "no access token");
+  let token = sandboxToken;
+  if (!token) {
+    const minted = await pinterestAccessToken();
+    if (!minted.token) return fail("pinterest", minted.error ?? "no access token");
+    token = minted.token;
+  }
 
-  const res = await fetch(`${PINTEREST}/pins`, {
+  const res = await fetch(`${sandboxToken ? PINTEREST_SANDBOX : PINTEREST}/pins`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -154,7 +171,7 @@ async function postToPinterest(
   });
   const json = (await res.json().catch(() => ({}))) as { message?: string };
   if (!res.ok) return fail("pinterest", json.message ?? `HTTP ${res.status}`);
-  return "pinterest: posted";
+  return sandboxToken ? "pinterest: posted (sandbox)" : "pinterest: posted";
 }
 
 // --- Fan-out ---------------------------------------------------------------
