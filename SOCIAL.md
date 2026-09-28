@@ -101,10 +101,26 @@ without App Review.
 Refresh tokens expire after about a year; when posts start failing with
 `token refresh failed`, redo steps 3–4.
 
-**Trial access makes pins private.** Pins created through the API under the
-Trial tier are visible only to the account that created them. Public pins
-need Standard access: use **Upgrade access** on the app page once a few real
-pins exist, since Pinterest reviews actual usage.
+**Trial access posts only to the sandbox.** Pinterest rejects pins from
+Trial apps on the production API ("use API Sandbox"). Until the app has
+Standard access:
+
+1. On the app page at https://developers.pinterest.com/apps/, generate a
+   **Sandbox token** (valid 30 days) and save it in Vercel as
+   `PINTEREST_SANDBOX_TOKEN`.
+2. Sandbox boards are separate from real ones. Create one:
+   ```bash
+   curl -X POST https://api-sandbox.pinterest.com/v5/boards \
+     -H "Authorization: Bearer SANDBOX_TOKEN" \
+     -H 'Content-Type: application/json' \
+     -d '{"name": "Barbara Demers Art"}'
+   ```
+   Save the `id` from the response as `PINTEREST_SANDBOX_BOARD_ID`, then redeploy.
+
+Sandbox pins are visible only to the account owner, on their own profile.
+Once Standard access is approved (Upgrade access on the app page; the
+review wants a video of the connect flow and a pin being posted), delete
+`PINTEREST_SANDBOX_TOKEN` and redeploy to post publicly again.
 
 ## Scheduler
 
