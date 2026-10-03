@@ -21,30 +21,15 @@ export function PaintingGallery({
   const current = images[selected] ?? images[0];
 
   return (
-    <>
-      <div
-        className="relative z-[1] overflow-hidden shadow-lifted bg-surface-container-lowest"
-        style={{ aspectRatio: `${widthIn} / ${heightIn}` }}
-      >
-        <Image
-          key={current}
-          src={current}
-          alt={
-            selected === 0 ? title : `${title} — detail ${selected}`
-          }
-          fill
-          sizes="(min-width: 1152px) 690px, (min-width: 768px) 60vw, 100vw"
-          className={selected === 0 ? "object-cover" : "object-contain"}
-          priority
-          fetchPriority="high"
-        />
-      </div>
+    // Thumbnails sit in a vertical strip left of the painting on desktop
+    // and drop to a row underneath on phones.
+    <div className="relative z-[1] flex flex-col-reverse gap-4 md:flex-row md:items-start">
       {images.length > 1 && (
-        <div className="relative z-[1] mt-6">
-          <p className="text-xs uppercase tracking-[0.18em] text-on-surface-subtle">
+        <div className="md:w-20 md:shrink-0">
+          <p className="text-xs uppercase tracking-[0.18em] text-on-surface-subtle md:sr-only">
             Look closer
           </p>
-          <div className="mt-3 grid grid-cols-4 gap-3">
+          <div className="mt-3 grid grid-cols-4 gap-3 md:mt-0 md:grid-cols-1">
             {images.map((src, i) => (
               <button
                 key={src + i}
@@ -64,7 +49,7 @@ export function PaintingGallery({
                   src={src}
                   alt={`${title} — ${i === 0 ? "full painting" : `detail ${i}`}`}
                   fill
-                  sizes="15vw"
+                  sizes="(min-width: 768px) 80px, 25vw"
                   className="object-cover"
                 />
               </button>
@@ -72,6 +57,23 @@ export function PaintingGallery({
           </div>
         </div>
       )}
-    </>
+      <div
+        className="relative min-w-0 flex-1 overflow-hidden shadow-lifted bg-surface-container-lowest"
+        style={{ aspectRatio: `${widthIn} / ${heightIn}` }}
+      >
+        <Image
+          key={current}
+          src={current}
+          alt={
+            selected === 0 ? title : `${title} — detail ${selected}`
+          }
+          fill
+          sizes="(min-width: 1152px) 600px, (min-width: 768px) 55vw, 100vw"
+          className={selected === 0 ? "object-cover" : "object-contain"}
+          priority
+          fetchPriority="high"
+        />
+      </div>
+    </div>
   );
 }

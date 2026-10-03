@@ -8,7 +8,7 @@ import {
   SHIPPING_RATES,
   SUBJECT_GROUP_LABELS,
 } from "@/data/paintings";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
 import { PaintingGallery } from "@/components/painting-gallery";
 import { PrintBuy } from "@/components/print-buy";
@@ -85,6 +85,12 @@ export default async function PaintingPage({
   const painting = await getPainting(slug);
   if (!painting) notFound();
 
+  const story = painting.storyBehindPainting ?? DEFAULT_PAINTING_STORY;
+  // Blank lines in the admin textarea start a new paragraph.
+  const storyParagraphs = story
+    .split(/\n\s*\n/)
+    .map((para) => para.trim())
+    .filter(Boolean);
   const shipping = SHIPPING_RATES[painting.sizeTier];
   const prints = painting.prints ?? [];
   const allPaintings = await getAllPaintings();
@@ -149,13 +155,6 @@ export default async function PaintingPage({
               the photo reference and let the living presence come forward.
             </ArtistNote>
 
-            <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6">
-              <Eyebrow>The story behind the painting</Eyebrow>
-              <p className="mt-3 text-[16px] leading-relaxed text-on-surface-muted text-pretty">
-                {painting.storyBehindPainting ?? DEFAULT_PAINTING_STORY}
-              </p>
-            </div>
-
             {/* Spec rows — no dividers, just tonal shift */}
             <dl className="mt-2 rounded-[var(--radius-lg)] bg-surface-container-low p-6 grid grid-cols-[auto_1fr] gap-x-10 gap-y-3 text-[15px]">
               <dt className="text-on-surface-subtle">Medium</dt>
@@ -180,91 +179,119 @@ export default async function PaintingPage({
                 )}
               </dd>
             </dl>
+          </div>
+        </div>
 
-            {/* Price + buy */}
-            <div className="mt-4 flex flex-col gap-4">
-              {painting.sold ? (
-                <>
-                  <div className="flex items-baseline gap-3">
-                    <p className="font-serif text-3xl text-on-surface-faint line-through tabular-nums">
-                      {formatPrice(painting.priceCents)}
-                    </p>
-                    <p className="font-serif text-xl text-on-surface">
-                      Found a home
-                    </p>
-                  </div>
-                  <p className="text-sm text-on-surface-muted">
-                    {prints.length > 0
-                      ? "The original has found its home, but archival prints keep this painting available — or ask about a commission in the same spirit."
-                      : "Love this one? A commission in the same spirit is the next best thing."}
-                  </p>
-                  <ButtonLink
-                    href="/commissions"
-                    variant="primary"
-                    size="md"
-                  >
-                    Ask about a similar commission
-                  </ButtonLink>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-baseline gap-3">
-                    <p className="font-serif text-4xl tabular-nums text-on-surface">
-                      {formatPrice(painting.priceCents)}
-                    </p>
-                    <p className="text-sm text-on-surface-subtle">
-                      {shipping.cents === 0
-                        ? "Free shipping"
-                        : `+ ${formatPrice(shipping.cents)} shipping`}
-                    </p>
-                  </div>
-                  <BuyButton slug={painting.slug} />
-                  <p className="text-xs text-on-surface-subtle">
-                    Secure checkout by Stripe. Sales tax is added where it
-                    applies. Packed and shipped directly from the studio
-                    within 5 business days.
-                  </p>
-                  <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
-                    10% of profits from this painting are donated to animal
-                    welfare.
-                  </p>
-                </>
-              )}
-            </div>
+        {/* STORY — right under the painting, across the full page width */}
+        <div className="mt-12 rounded-[var(--radius-lg)] bg-surface-container p-6 md:p-8">
+          <Eyebrow>The story behind the painting</Eyebrow>
+          <div
+            className={cn(
+              "mt-4 text-[17px] leading-relaxed text-on-surface-muted text-pretty",
+              // Long stories flow into two columns on wide screens so lines
+              // stay a comfortable reading length.
+              story.length > 300 && "lg:columns-2 lg:gap-16"
+            )}
+          >
+            {storyParagraphs.map((para, i) => (
+              <p key={i} className="mb-4 last:mb-0 break-inside-avoid-column">
+                {para}
+              </p>
+            ))}
+          </div>
+        </div>
 
-            {/* Giclée prints — stay available after the original sells */}
-            {prints.length > 0 && (
-              <div className="mt-2 rounded-[var(--radius-lg)] bg-surface-container-low p-6 flex flex-col gap-4">
-                <div>
-                  <Eyebrow>Archival giclée prints</Eyebrow>
-                  <p className="mt-3 text-[15px] leading-relaxed text-on-surface-muted text-pretty">
-                    Museum-quality pigment prints on archival fine-art paper,
-                    made to order and rated to hold their color for decades.
+        {/* BUY — the original and, when offered, prints side by side */}
+        <div
+          className={cn(
+            "mt-10 grid gap-8 items-start",
+            prints.length > 0 && "md:grid-cols-2"
+          )}
+        >
+          {/* Price + buy */}
+          <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6 flex flex-col gap-4">
+            <Eyebrow>{painting.sold ? "The original" : "Own the original"}</Eyebrow>
+            {painting.sold ? (
+              <>
+                <div className="flex items-baseline gap-3">
+                  <p className="font-serif text-3xl text-on-surface-faint line-through tabular-nums">
+                    {formatPrice(painting.priceCents)}
+                  </p>
+                  <p className="font-serif text-xl text-on-surface">
+                    Found a home
                   </p>
                 </div>
-                {/* Only what the picker needs reaches the browser; the
-                    Lumaprints settings stay on the server. */}
-                <PrintBuy
-                  slug={painting.slug}
-                  prints={prints.map(({ id, widthIn, heightIn, priceCents }) => ({
-                    id,
-                    widthIn,
-                    heightIn,
-                    priceCents,
-                  }))}
-                />
-                <p className="text-xs text-on-surface-subtle">
-                  {PRINT_SHIPPING_RATE.cents === 0
-                    ? "Free shipping on prints."
-                    : `Flat ${formatPrice(PRINT_SHIPPING_RATE.cents)} shipping per print order.`}{" "}
-                  {prints.every((opt) => opt.lumaprints)
-                    ? "Printed to order at our fine-art print lab and shipped with tracking, usually within a week. "
-                    : ""}
-                  Secure checkout by Stripe. Sales tax is added where it applies.
+                <p className="text-sm text-on-surface-muted">
+                  {prints.length > 0
+                    ? "The original has found its home, but archival prints keep this painting available — or ask about a commission in the same spirit."
+                    : "Love this one? A commission in the same spirit is the next best thing."}
                 </p>
-              </div>
+                <ButtonLink
+                  href="/commissions"
+                  variant="primary"
+                  size="md"
+                >
+                  Ask about a similar commission
+                </ButtonLink>
+              </>
+            ) : (
+              <>
+                <div className="flex items-baseline gap-3">
+                  <p className="font-serif text-4xl tabular-nums text-on-surface">
+                    {formatPrice(painting.priceCents)}
+                  </p>
+                  <p className="text-sm text-on-surface-subtle">
+                    {shipping.cents === 0
+                      ? "Free shipping"
+                      : `+ ${formatPrice(shipping.cents)} shipping`}
+                  </p>
+                </div>
+                <BuyButton slug={painting.slug} />
+                <p className="text-xs text-on-surface-subtle">
+                  Secure checkout by Stripe. Sales tax is added where it
+                  applies. Packed and shipped directly from the studio
+                  within 5 business days.
+                </p>
+                <p className="rounded-[var(--radius-md)] bg-primary-container-dim px-5 py-4 text-sm font-medium text-on-primary-container">
+                  10% of profits from this painting are donated to animal
+                  welfare.
+                </p>
+              </>
             )}
           </div>
+
+          {/* Giclée prints — stay available after the original sells */}
+          {prints.length > 0 && (
+            <div className="rounded-[var(--radius-lg)] bg-surface-container-low p-6 flex flex-col gap-4">
+              <div>
+                <Eyebrow>Archival giclée prints</Eyebrow>
+                <p className="mt-3 text-[15px] leading-relaxed text-on-surface-muted text-pretty">
+                  Museum-quality pigment prints on archival fine-art paper,
+                  made to order and rated to hold their color for decades.
+                </p>
+              </div>
+              {/* Only what the picker needs reaches the browser; the
+                  Lumaprints settings stay on the server. */}
+              <PrintBuy
+                slug={painting.slug}
+                prints={prints.map(({ id, widthIn, heightIn, priceCents }) => ({
+                  id,
+                  widthIn,
+                  heightIn,
+                  priceCents,
+                }))}
+              />
+              <p className="text-xs text-on-surface-subtle">
+                {PRINT_SHIPPING_RATE.cents === 0
+                  ? "Free shipping on prints."
+                  : `Flat ${formatPrice(PRINT_SHIPPING_RATE.cents)} shipping per print order.`}{" "}
+                {prints.every((opt) => opt.lumaprints)
+                  ? "Printed to order at our fine-art print lab and shipped with tracking, usually within a week. "
+                  : ""}
+                Secure checkout by Stripe. Sales tax is added where it applies.
+              </p>
+            </div>
+          )}
         </div>
       </Section>
 
