@@ -23,7 +23,7 @@ Each standard package contains:
 | **Personal note** | A short welcome for a subscriber's first package, a thank-you for every one after. |
 
 Founding members (waitlist members who subscribe at launch) also receive
-an exclusive Founding Member sticker in their first package. That sticker
+an exclusive Founding Member iron-on in their first package. That iron-on
 is a separate, one-time design.
 
 First resident: **Walter, Resident 001, the Tailor**. First cutoff
@@ -40,7 +40,7 @@ print partner ever ships direct, only the fulfillment step changes.
 | Name | The Budderlee Post. Card statement reads `BUDDERLEE POST`. |
 | Price | $12 a month, U.S. shipping included. Monthly only at launch; annual and gift options later. |
 | Self-service | Stripe Customer Portal. No accounts on the site. A "Manage my subscription" page emails the subscriber a secure portal link. |
-| Launch | Waitlist first, then open to the waitlist with the Founding Member sticker. |
+| Launch | Waitlist first, then open to the waitlist with the Founding Member iron-on. |
 | Cap | 100 subscribers. At the cap, the page returns visitors to the waitlist. |
 | Cutoff and mailing | Signups through the 15th get the next mailing. Packages mail the first week of the following month. |
 | Shipping | United States only. Canada evaluated after the routine settles. |
@@ -235,10 +235,10 @@ On an **Issue**:
 
 - **Generate shipping list** at the cutoff. Snapshots every `active`
   subscriber (and `past_due` inside Stripe's retry window, Barbara's
-  call) into Shipments rows with the first-package and founding-sticker
+  call) into Shipments rows with the first-package and founding-iron-on
   flags set.
 - **Download CSV**: name, address lines, email, first package yes/no,
-  founding sticker yes/no. Column layout matches what Pirate Ship and
+  founding iron-on yes/no. Column layout matches what Pirate Ship and
   USPS Click-N-Ship import.
 - **Mark shipped**, all at once or row by row. Increments each
   subscriber's `packagesSent`.
@@ -279,7 +279,7 @@ actual vendors. Not quotes.
 | After Stripe fees | $1,135 |
 | After package costs | about $465 to $815 |
 
-That is before Barbara's time and before the Founding Member sticker
+That is before Barbara's time and before the Founding Member iron-on
 run. The price is low for what's in the envelope, which is a fine choice
 for a launch and easy to raise for new subscribers later (Stripe lets
 existing subscribers keep their price). Postage is the biggest single
@@ -326,7 +326,7 @@ change.
   open. Barbara's questions to the accountant are prepared.
 - **Card and sticker vendors and their turnaround.** Decides whether a
   15th cutoff can reliably mail in the first week of the next month.
-- **The Founding Member sticker design.** A one-time run; needs to be
+- **The Founding Member iron-on design.** A one-time run; needs to be
   ordered before the November mailing.
 
 ## 11. Risks and notes

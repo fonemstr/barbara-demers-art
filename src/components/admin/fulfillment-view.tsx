@@ -178,7 +178,7 @@ export async function FulfillmentView({ initPageResult, params, searchParams }: 
           <h2 className="fv-card__title">The month, in order</h2>
           <ol className="fv-steps">
             <li><strong>1st to the {settings.cutoffDay}th.</strong> Write the issue: story, recipe, sticker. Signups accumulate.</li>
-            <li><strong>On the {settings.cutoffDay}th.</strong> Generate the shipping list. It snapshots every shipping subscriber and their address, marks who gets a welcome note (first package) and who gets the Founding Member sticker. Download the CSV for the label tool and order prints for that count.</li>
+            <li><strong>On the {settings.cutoffDay}th.</strong> Generate the shipping list. It snapshots every shipping subscriber and their address, marks who gets a welcome note (first package) and who gets the Founding Member iron-on. Download the CSV for the label tool and order prints for that count.</li>
             <li><strong>Before mailing.</strong> New signups since the cutoff go on next month&rsquo;s list. If someone must be added or left off, open the Shipments list: set a row to Skipped, or press Add new signups.</li>
             <li><strong>Mailing week.</strong> Pack from the CSV. Press Mark all shipped, or tick rows one by one in Shipments. Each shipped row counts a package for that subscriber.</li>
           </ol>

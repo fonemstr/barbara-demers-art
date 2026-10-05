@@ -141,7 +141,7 @@ export async function buildShippingCsv(payload: Payload, issueId: number | strin
 
   const header = [
     "Name", "Address 1", "Address 2", "City", "State", "Zip", "Country", "Email",
-    "First package", "Founding sticker", "Status", "Tracking", "Subscriber notes", "Shipment notes",
+    "First package", "Founding iron-on", "Status", "Tracking", "Subscriber notes", "Shipment notes",
   ];
   const lines = [header.map(csvCell).join(",")];
   for (const s of shipments.docs) {

@@ -197,7 +197,7 @@ export default async function BudderleePage() {
                 {post.phase === "open" ? "Subscribe" : "Join the waitlist"}
               </ButtonLink>
               <p className="text-xs text-on-surface-subtle text-center md:text-right">
-                Waitlist members get the Founding Member sticker.
+                Waitlist members get the Founding Member iron-on.
               </p>
             </div>
           </div>

@@ -205,7 +205,7 @@ export async function handlePostCheckoutCompleted(
     "",
     chargesNow ? "Charged today." : `First charge on ${schedule.chargeDateLabel}.`,
     `First package: ${session.metadata?.first_mailing ?? schedule.firstMailingLabel}.`,
-    foundingMember ? "Founding member: include the Founding Member sticker in their first package." : "",
+    foundingMember ? "Founding member: include the Founding Member iron-on in their first package." : "",
     address ? `Ships to: ${[address.line1, address.line2, [address.city, address.state, address.postalCode].filter(Boolean).join(", ")].filter(Boolean).join(", ")}` : "",
     "",
     `Subscribers in the admin: ${SITE_URL}/admin/collections/subscribers`,

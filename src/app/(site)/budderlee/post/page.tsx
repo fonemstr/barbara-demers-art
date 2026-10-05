@@ -90,7 +90,7 @@ const FAQ = [
   {
     q: "What does it mean to be a founding member?",
     a: () =>
-      "Everyone on the waitlist who subscribes when signups open is a founding member and gets an exclusive Founding Member sticker in their first package. It's a one-time design that won't be printed again.",
+      "Everyone on the waitlist who subscribes when signups open is a founding member and gets an exclusive Founding Member iron-on in their first package. It's a one-time design that won't be printed again.",
   },
 ];
 
@@ -218,10 +218,10 @@ export default async function BudderleePostPage() {
             </li>
           ))}
           <li className="rounded-[var(--radius-lg)] bg-secondary-container-soft p-6">
-            <h3 className="font-serif text-xl leading-tight text-on-secondary-container">Founding Member sticker</h3>
+            <h3 className="font-serif text-xl leading-tight text-on-secondary-container">Founding Member iron-on</h3>
             <p className="mt-3 text-[15px] text-on-surface-muted leading-relaxed">
               Join the waitlist now and subscribe when signups open, and your
-              first package carries an exclusive one-time sticker.
+              first package carries an exclusive one-time iron-on.
             </p>
           </li>
         </ul>
