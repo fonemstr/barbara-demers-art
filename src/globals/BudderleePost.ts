@@ -117,7 +117,7 @@ export const BudderleePost: GlobalConfig = {
           admin: {
             date: { pickerAppearance: "dayOnly" },
             description:
-              "Waitlist members who subscribe before this date are founding members and get the Founding Member sticker.",
+              "Waitlist members who subscribe before this date are founding members and get the Founding Member iron-on.",
           },
         },
         {

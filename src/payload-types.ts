@@ -655,7 +655,7 @@ export interface Subscriber {
    */
   status: 'active' | 'trialing' | 'past_due' | 'paused' | 'canceled' | 'incomplete';
   /**
-   * Was on the waitlist and subscribed at launch. Gets the Founding Member sticker in the first package.
+   * Was on the waitlist and subscribed at launch. Gets the Founding Member iron-on in the first package.
    */
   foundingMember?: boolean | null;
   /**
@@ -722,7 +722,7 @@ export interface Shipment {
    */
   firstPackage?: boolean | null;
   /**
-   * Founding member's first package: add the sticker.
+   * Founding member's first package: add the iron-on.
    */
   includeFoundingSticker?: boolean | null;
   email?: string | null;
@@ -1224,7 +1224,7 @@ export interface BudderleePost {
    */
   priceCents?: number | null;
   /**
-   * Waitlist members who subscribe before this date are founding members and get the Founding Member sticker.
+   * Waitlist members who subscribe before this date are founding members and get the Founding Member iron-on.
    */
   foundingWindowEnds?: string | null;
   /**

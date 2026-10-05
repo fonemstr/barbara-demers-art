@@ -99,7 +99,7 @@ export function WaitlistForm({
           {status === "loading" ? "Joining…" : buttonLabel}
         </Button>
         <p className="text-xs text-on-surface-subtle leading-relaxed">
-          No charge, no commitment. One email when signups open, and the Founding Member sticker in your first package.
+          No charge, no commitment. One email when signups open, and the Founding Member iron-on in your first package.
         </p>
       </div>
       {error && (

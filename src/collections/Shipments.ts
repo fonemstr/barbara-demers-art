@@ -5,7 +5,7 @@ import type { CollectionConfig } from "payload";
 // snapshot taken at that moment, so a portal change after labels are
 // bought applies to next month, not this batch. Marking a row shipped
 // counts the package on the subscriber, which is how "first package"
-// and the Founding Member sticker are worked out next time.
+// and the Founding Member iron-on are worked out next time.
 export const Shipments: CollectionConfig = {
   slug: "shipments",
   labels: { singular: "Shipment", plural: "Shipments" },
@@ -111,10 +111,10 @@ export const Shipments: CollectionConfig = {
         },
         {
           name: "includeFoundingSticker",
-          label: "Founding Member sticker",
+          label: "Founding Member iron-on",
           type: "checkbox",
           defaultValue: false,
-          admin: { readOnly: true, description: "Founding member's first package: add the sticker." },
+          admin: { readOnly: true, description: "Founding member's first package: add the iron-on." },
         },
       ],
     },

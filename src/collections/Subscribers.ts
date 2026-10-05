@@ -52,7 +52,7 @@ export const Subscribers: CollectionConfig = {
           label: "Founding member",
           type: "checkbox",
           defaultValue: false,
-          admin: { description: "Was on the waitlist and subscribed at launch. Gets the Founding Member sticker in the first package." },
+          admin: { description: "Was on the waitlist and subscribed at launch. Gets the Founding Member iron-on in the first package." },
         },
         {
           name: "packagesSent",

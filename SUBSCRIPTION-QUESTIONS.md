@@ -27,7 +27,7 @@ can be considered later.
 ## 4. Founding-member offer
 
 Waitlist members who subscribe at launch receive an **exclusive Founding
-Member sticker** in their first package.
+Member iron-on** in their first package.
 
 ## 5. Subscriber limit
 
@@ -60,7 +60,7 @@ remain **completely separate**.
 ## 10. Stickers
 
 Monthly stickers will be professionally produced as die-cut stickers and
-ordered in bulk. The Founding Member sticker will be a separate,
+ordered in bulk. The Founding Member iron-on will be a separate,
 exclusive one-time design.
 
 ## 11. Sales tax
@@ -82,7 +82,7 @@ Each standard monthly package will contain:
 - A short personal note: a welcome for new subscribers, a thank-you for
   returning ones
 
-Founding members will also receive the exclusive Founding Member sticker
+Founding members will also receive the exclusive Founding Member iron-on
 in their first mailing.
 
 ---
