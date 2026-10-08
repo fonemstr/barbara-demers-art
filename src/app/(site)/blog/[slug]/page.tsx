@@ -85,16 +85,16 @@ export default async function BlogPostPage({
         </header>
 
         {post.cover && (
-          <div className="relative mt-12 aspect-[16/10] overflow-hidden shadow-ambient-lg">
-            <Image
-              src={post.cover}
-              alt=""
-              fill
-              sizes="(min-width: 768px) 64rem, 100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
+          // Shown whole at its own shape; the size only reserves space until it loads.
+          <Image
+            src={post.cover}
+            alt=""
+            width={post.coverWidth ?? 1600}
+            height={post.coverHeight ?? 1000}
+            sizes="(min-width: 768px) 64rem, 100vw"
+            className="mt-12 mx-auto h-auto max-h-[80vh] w-auto max-w-full shadow-ambient-lg"
+            priority
+          />
         )}
       </Section>
 

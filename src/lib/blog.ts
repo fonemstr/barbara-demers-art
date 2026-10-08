@@ -9,6 +9,9 @@ export type BlogPost = {
   date: string;
   excerpt: string;
   cover?: string;
+  // Known for Payload media; file posts fall back to a 16:10 placeholder.
+  coverWidth?: number;
+  coverHeight?: number;
   content: string; // MDX source or serialized rich text string
   isRichText?: boolean;
   richTextDoc?: unknown;
@@ -54,22 +57,21 @@ type PayloadJournalPost = {
   publishedAt?: string;
   updatedAt: string;
   status: "draft" | "published";
-  cover?: { url?: string } | string | null;
+  cover?: { url?: string; width?: number; height?: number } | string | null;
   body?: unknown;
 };
 
 function mapPayloadPost(doc: PayloadJournalPost): BlogPost {
-  const coverUrl =
-    doc.cover && typeof doc.cover !== "string"
-      ? doc.cover.url
-      : undefined;
+  const cover = doc.cover && typeof doc.cover !== "string" ? doc.cover : undefined;
 
   return {
     slug: doc.slug,
     title: doc.title,
     date: doc.publishedAt ?? doc.updatedAt,
     excerpt: doc.excerpt ?? "",
-    cover: coverUrl,
+    cover: cover?.url,
+    coverWidth: cover?.width,
+    coverHeight: cover?.height,
     content: "",
     isRichText: true,
     richTextDoc: doc.body,
