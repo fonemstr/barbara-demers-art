@@ -30,7 +30,7 @@ export default function AboutPage() {
                 <br /> in all living beings.
               </>
             }
-            lede="Barbara J Demers creates original paintings of animals, insects, and the natural world — work shaped by bold color, symbolic detail, and narrative titles that invite the viewer to pause and look again."
+            lede="Barbara J Demers creates original paintings of animals, insects, and the natural world. Her work is shaped by bold color, symbolic detail, and narrative titles that invite the viewer to pause and look again."
           />
         </div>
       </Section>
@@ -62,7 +62,7 @@ export default function AboutPage() {
               details to bring forward the feeling behind the image.
             </p>
             <p className="text-[19px] leading-[1.7] text-on-surface-muted text-pretty">
-              I want each painting to make the viewer pause — to see the animal
+              I want each painting to make the viewer pause, to see the animal
               or insect not as a category, a number, a pest, a product, or a
               background detail, but as a living being with presence.
             </p>
@@ -113,7 +113,7 @@ export default function AboutPage() {
               Every title carries the feeling behind the painting.
             </h2>
             <p className="mt-5 text-[16px] leading-relaxed text-on-surface-muted">
-              Titles such as <em>You Are Not a Number, You Are Love</em>, <em>Eyes of a Different You</em>, and <em>The Kindness of One</em> are not labels. They are part of the work — a doorway into the meaning of the image.
+              Titles such as <em>You Are Not a Number, You Are Love</em>, <em>Eyes of a Different You</em>, and <em>The Kindness of One</em> are not labels. They are part of the work, a doorway into the meaning of the image.
             </p>
           </div>
 
