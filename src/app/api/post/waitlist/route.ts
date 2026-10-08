@@ -14,7 +14,7 @@ function confirmationEmail(name: string | undefined, nextMailing: string) {
     "",
     `You're on the list for ${BUDDERLEE_POST.name}.`,
     "",
-    "Here's what's coming: one resident of Budderlee in your mailbox every month. A 5×7 art card with the character's story on the back, a chapter of Tales from Budderlee, a recipe card, and a surprise sticker. The first mailing is planned for " +
+    "Here's what's coming: one resident of Budderlee in your mailbox every month. A 5×7 art card with the character's story on the back, a chapter of Tales from Budderlee, a recipe card, a paper doll, and a surprise sticker. The first mailing is planned for " +
       nextMailing +
       ".",
     "",
@@ -37,7 +37,7 @@ function confirmationEmail(name: string | undefined, nextMailing: string) {
         Thank you for your interest in ${BUDDERLEE_POST.name}. Here's what's
         coming: one resident of Budderlee in your mailbox every month. A 5×7
         art card with the character's story on the back, a chapter of
-        <em>Tales from Budderlee</em>, a recipe card, and a surprise sticker.
+        <em>Tales from Budderlee</em>, a recipe card, a paper doll, and a surprise sticker.
         The first mailing is planned for ${nextMailing}.
       </p>
       <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">
