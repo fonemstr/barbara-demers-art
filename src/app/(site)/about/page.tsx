@@ -45,8 +45,8 @@ export default function AboutPage() {
               style={{ transform: "rotate(-1deg)" }}
             >
               <Image
-                src="/studio/barbara-at-easel.png"
-                alt="Barbara J Demers at her easel"
+                src="/studio/barbara-in-studio.webp"
+                alt="Barbara J Demers in her studio, arms crossed, holding a paintbrush"
                 fill
                 sizes="(min-width: 768px) 40vw, 90vw"
                 className="object-cover"

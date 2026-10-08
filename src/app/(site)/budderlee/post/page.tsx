@@ -19,7 +19,7 @@ export const metadata = {
   title: `${BUDDERLEE_POST.name}, a Monthly Story-and-Art Subscription by Mail`,
   alternates: { canonical: "/budderlee/post" },
   description:
-    "One resident of Budderlee in your mailbox every month: a 5×7 art card with the character's story on the back, a chapter of Tales from Budderlee, a recipe card, and a surprise sticker. $12 a month, U.S. shipping included.",
+    "One resident of Budderlee in your mailbox every month: a 5×7 art card with the character's story on the back, a chapter of Tales from Budderlee, a recipe card, a paper doll, and a surprise sticker. $12 a month, U.S. shipping included.",
   openGraph: {
     type: "website",
     siteName: "Barbara J Demers",
@@ -50,6 +50,10 @@ const CONTENTS = [
   {
     title: "Recipe card",
     body: "A tested, original recipe with the character's stamp on it. The pie maker gets a pie.",
+  },
+  {
+    title: "Paper doll",
+    body: "The month's resident to cut out and stand up, with a fold-back base and a few of their favorite things. Walter comes with his cap, his mug, a plate of biscuits and his shop sign.",
   },
   {
     title: "Surprise sticker",
@@ -139,7 +143,7 @@ export default async function BudderleePostPage() {
             <p className="text-lg text-on-surface-muted leading-relaxed text-pretty max-w-xl">
               Every month, one resident of Budderlee arrives in your mailbox:
               their portrait on a 5×7 card, their story on the back, a new
-              chapter of <em>Tales from Budderlee</em>, a recipe, and a sticker.
+              chapter of <em>Tales from Budderlee</em>, a recipe, a paper doll, and a sticker.
               Collect the village one envelope at a time.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-2">
@@ -207,9 +211,23 @@ export default async function BudderleePostPage() {
         <div className="text-center mb-10">
           <Eyebrow>What&rsquo;s in the envelope</Eyebrow>
           <h2 className="mt-3 font-serif text-3xl md:text-4xl leading-[1.1] tracking-[-0.015em] text-balance">
-            Five small things, made with care.
+            Open it slowly. There&rsquo;s a lot tucked inside.
           </h2>
         </div>
+        {/* Walter's month, photographed by Barbara and cut out of the greenery */}
+        <figure className="mx-auto mb-14 max-w-5xl">
+          <Image
+            src="/budderlee/post/walter-month-flat-lay.webp"
+            alt="Walter's month laid out together: the Tales from Budderlee gazette, his resident art card, a cut-out paper doll, the shortbread recipe card, the round Budderlee sticker and a Walter iron-on"
+            width={1384}
+            height={869}
+            sizes="(min-width: 1024px) 1024px, 100vw"
+            className="h-auto w-full drop-shadow-[0_18px_36px_rgb(var(--shadow-color)/0.18)]"
+          />
+          <figcaption className="mt-8 text-center text-sm italic text-on-surface-muted">
+            Walter&rsquo;s month, Resident No. 001. The iron-on is the Founding Member gift.
+          </figcaption>
+        </figure>
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {CONTENTS.map((c) => (
             <li key={c.title} className="rounded-[var(--radius-lg)] bg-surface-container-lowest p-6">

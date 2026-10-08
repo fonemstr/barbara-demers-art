@@ -187,7 +187,7 @@ export default async function BudderleePage() {
               <p className="mt-4 text-on-surface-muted leading-relaxed text-pretty">
                 One resident in your mailbox every month: their portrait on
                 a 5×7 card, their story on the back, a chapter of{" "}
-                <em>Tales from Budderlee</em>, a recipe, and a sticker.{" "}
+                <em>Tales from Budderlee</em>, a recipe, a paper doll, and a sticker.{" "}
                 {formatDollars(post.priceCents)} a month, U.S. shipping
                 included. First mailing {post.nextMailing}.
               </p>
