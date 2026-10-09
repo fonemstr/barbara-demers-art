@@ -135,6 +135,9 @@ export type SignupSchedule = {
   /** First day of the month the first package mails in. */
   firstMailing: Date;
   firstMailingLabel: string;
+  /** The end of the cutoff day: sign up before this to get firstMailing. */
+  signupDeadline: Date;
+  signupDeadlineLabel: string;
 };
 
 /**
@@ -162,6 +165,8 @@ export function getSignupSchedule(cutoffDay: number, now = new Date()): SignupSc
     chargeDateLabel: chargesNow ? "today" : `${MONTHS[cm - 1]} ${cutoffDay}`,
     firstMailing: zonedTime(my, mm, 1, 0),
     firstMailingLabel: `${MONTHS[mm - 1]} ${my}`,
+    signupDeadline: zonedTime(cy, cm, cutoffDay + 1, 0),
+    signupDeadlineLabel: `${MONTHS[cm - 1]} ${cutoffDay}`,
   };
 }
 
