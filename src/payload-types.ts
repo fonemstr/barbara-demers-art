@@ -343,9 +343,9 @@ export interface Painting {
   images: {
     image: number | Media;
     /**
-     * Tick the one photo that shows exactly what the buyer receives, frame included. The site marks it "As it ships" and notes that the other photos are styled scenes.
+     * Tick for a photo that shows the painting staged in a themed scene. The site captions it: "Photo shows this painting in a themed scene. The frame and setting are for display only."
      */
-    asShipped?: boolean | null;
+    themedScene?: boolean | null;
     id?: string | null;
   }[];
   /**

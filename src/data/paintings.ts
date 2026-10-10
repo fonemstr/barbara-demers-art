@@ -42,8 +42,8 @@ export type Painting = {
   description: string;
   storyBehindPainting?: string;
   images: string[];
-  /** Index into images of the photo showing the painting as it ships. */
-  asShippedImage?: number;
+  /** Indexes into images of photos staged in a themed scene. */
+  themedImages?: number[];
   prints?: PrintOption[];
   collection?: PaintingCollection;
   characterName?: string;
@@ -220,7 +220,7 @@ type PayloadPainting = {
   sizeTier: SizeTier;
   description: string;
   storyBehindPainting?: string | null;
-  images?: Array<{ image: { url?: string } | string; asShipped?: boolean | null }>;
+  images?: Array<{ image: { url?: string } | string; themedScene?: boolean | null }>;
   printOptions?: Array<{
     id?: string | null;
     widthIn: number;
@@ -257,11 +257,11 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     .map((entry) => {
       const img = entry.image;
       if (!img || typeof img === "string" || !img.url) return null;
-      return { url: img.url, asShipped: !!entry.asShipped };
+      return { url: img.url, themed: !!entry.themedScene };
     })
-    .filter((e): e is { url: string; asShipped: boolean } => !!e);
+    .filter((e): e is { url: string; themed: boolean } => !!e);
   const images = entries.map((e) => e.url);
-  const asShippedImage = entries.findIndex((e) => e.asShipped);
+  const themedImages = entries.flatMap((e, i) => (e.themed ? [i] : []));
 
   return {
     slug: p.slug,
@@ -279,7 +279,7 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     description: p.description,
     storyBehindPainting: normalizeOptionalText(p.storyBehindPainting),
     images: images.length ? images : ["/paintings/placeholder-1.svg"],
-    ...(asShippedImage >= 0 ? { asShippedImage } : {}),
+    ...(themedImages.length ? { themedImages } : {}),
     prints: (p.printOptions ?? []).map((opt) => ({
       // Payload array rows always carry an id; the dimension fallback keeps
       // checkout working if a row ever arrives without one.
