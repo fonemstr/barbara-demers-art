@@ -9,6 +9,7 @@ import {
   formatDollars,
   getActiveSubscriberCount,
   getBudderleePostSettings,
+  getFoundingWindow,
   getSignupSchedule,
   type PostResident,
 } from "@/lib/budderlee-post";
@@ -93,13 +94,13 @@ const UNPACK: UnpackStep[] = [
   },
 ];
 
-const FOUNDING_STEP: UnpackStep = {
+const foundingStep = (lastDay: string): UnpackStep => ({
   kicker: "Founding members",
   title: "The Walter iron-on",
-  body: "Waitlist members who subscribe when signups open get an exclusive iron-on in their first package. It won't be printed again.",
+  body: `Subscribe by ${lastDay} and get an exclusive iron-on in your first package. It won't be printed again.`,
   badge: "Founding members only",
   box: [0.095, 0.5, 0.41, 1],
-};
+});
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -113,11 +114,6 @@ function monthAfter(label: string, n: number) {
   if (m < 0 || !Number(year)) return undefined;
   const total = m + n;
   return `${MONTHS[total % 12].slice(0, 3)} ${Number(year) + Math.floor(total / 12)}`;
-}
-
-/** Founding Member gifts go to waitlist members who join before this date. */
-function foundingWindowOpen(ends?: string) {
-  return !!ends && new Date(ends).getTime() > Date.now();
 }
 
 function ordinal(n: number) {
@@ -138,7 +134,8 @@ export default async function BudderleePage() {
   const full = post.phase === "open" && activeCount >= post.subscriberCap;
   const canSubscribe = post.phase === "open" && !full && !!post.stripePriceId;
   const schedule = getSignupSchedule(post.cutoffDay);
-  const founding = post.phase !== "closed" && foundingWindowOpen(post.foundingWindowEnds);
+  const foundingWindow = getFoundingWindow(post.foundingWindowEnds);
+  const founding = post.phase !== "closed" && foundingWindow?.open ? foundingWindow : undefined;
   // The countdown's resident is only right while the next open mailing is
   // the one the featured resident is in.
   const featuredMailsNext = !!featured && schedule.firstMailingLabel === post.nextMailing;
@@ -151,7 +148,7 @@ export default async function BudderleePage() {
         ? "Join the list for a spot"
         : "Join the waitlist";
 
-  const unpack = founding ? [...UNPACK, FOUNDING_STEP] : UNPACK;
+  const unpack = founding ? [...UNPACK, foundingStep(founding.label)] : UNPACK;
 
   // The strip of months: the featured resident first, then residents still
   // to come, kept a surprise.
@@ -316,9 +313,8 @@ export default async function BudderleePage() {
                   <div className={s.ironOn}>
                     <Image src="/budderlee/seal.webp" alt="" width={64} height={64} />
                     <p className="text-sm leading-snug text-[#eaebe5]">
-                      <b className="text-primary-container">Founding Member gift.</b> Join the
-                      waitlist and subscribe when signups open, and your first envelope
-                      includes the Walter iron-on.
+                      <b className="text-primary-container">Founding Member gift.</b>{" "}
+                      {`Subscribe by ${founding.label}, and your first envelope includes the Walter iron-on.`}
                     </p>
                   </div>
                 )}

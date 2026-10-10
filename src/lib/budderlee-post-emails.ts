@@ -52,7 +52,7 @@ export async function sendWelcomeEmail(opts: {
     ? `Your first package mails in the first week of ${opts.firstMailingLabel}. Your card was charged today, and it renews on the same day each month.`
     : `Nothing has been charged yet. Your card will be charged on ${opts.chargeDateLabel}, and your first package mails in the first week of ${opts.firstMailingLabel}. After that it renews monthly on the ${opts.chargeDateLabel.split(" ")[1]}.`;
   const founding = opts.foundingMember
-    ? "You joined from the waitlist, so you're a founding member: the Founding Member iron-on will be in your first package."
+    ? "You're a founding member, so the Founding Member iron-on will be in your first package."
     : "";
   const text = [
     hello, "",

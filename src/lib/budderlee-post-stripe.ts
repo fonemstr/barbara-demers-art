@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import type { Payload } from "payload";
-import { getBudderleePostSettings, getSignupSchedule } from "./budderlee-post";
+import { getBudderleePostSettings, getFoundingWindow, getSignupSchedule } from "./budderlee-post";
 import { notifyStudio, sendWelcomeEmail } from "./budderlee-post-emails";
 import { SITE_URL } from "./site-url";
 
@@ -150,9 +150,9 @@ export async function handlePostCheckoutCompleted(
     }
   }
 
-  // Founding member: on the waitlist, and subscribed inside the window.
+  // Founding member: anyone who subscribes inside the founding window.
   const settings = await getBudderleePostSettings();
-  let foundingMember = false;
+  const foundingMember = !!getFoundingWindow(settings.foundingWindowEnds)?.open;
   if (email) {
     const wl = await payload.find({
       collection: "waitlist",
@@ -161,8 +161,6 @@ export async function handlePostCheckoutCompleted(
       overrideAccess: true,
     });
     const row = wl.docs[0];
-    const windowOpen = !settings.foundingWindowEnds || Date.now() < new Date(settings.foundingWindowEnds).getTime();
-    if (row && windowOpen) foundingMember = true;
     if (row && !row.subscribedAt) {
       await payload
         .update({ collection: "waitlist", id: row.id, data: { subscribedAt: new Date().toISOString() }, overrideAccess: true })

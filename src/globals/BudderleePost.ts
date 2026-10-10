@@ -117,7 +117,7 @@ export const BudderleePost: GlobalConfig = {
           admin: {
             date: { pickerAppearance: "dayOnly" },
             description:
-              "Waitlist members who subscribe before this date are founding members and get the Founding Member iron-on.",
+              "Anyone who subscribes through the end of this day (studio time) is a founding member and gets the Founding Member iron-on. The site shows this date in its iron-on offer.",
           },
         },
         {

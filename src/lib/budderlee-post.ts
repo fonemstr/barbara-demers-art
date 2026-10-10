@@ -170,6 +170,32 @@ export function getSignupSchedule(cutoffDay: number, now = new Date()): SignupSc
   };
 }
 
+export type FoundingWindow = {
+  /** True while signups still earn the Founding Member iron-on. */
+  open: boolean;
+  /** The last day that counts, e.g. "October 15". */
+  label: string;
+};
+
+/**
+ * The founding window: anyone who subscribes through the end of the
+ * "Founding window ends" day, studio time, is a founding member and gets
+ * the Founding Member iron-on. The admin stores that day as a date, so its
+ * calendar day is read in UTC.
+ */
+export function getFoundingWindow(ends?: string, now = new Date()): FoundingWindow | undefined {
+  if (!ends) return undefined;
+  const d = new Date(ends);
+  if (Number.isNaN(d.getTime())) return undefined;
+  const year = d.getUTCFullYear();
+  const month = d.getUTCMonth() + 1;
+  const day = d.getUTCDate();
+  return {
+    open: now.getTime() < zonedTime(year, month, day + 1, 0).getTime(),
+    label: `${MONTHS[month - 1]} ${day}`,
+  };
+}
+
 /** Subscribers who count against the cap: anyone Stripe still bills. */
 export async function getActiveSubscriberCount(): Promise<number> {
   const payload = await getPayloadClient();
