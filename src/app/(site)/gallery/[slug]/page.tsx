@@ -125,13 +125,22 @@ export default async function PaintingPage({
               images={painting.images}
               widthIn={painting.widthIn}
               heightIn={painting.heightIn}
+              asShippedIndex={painting.asShippedImage}
             />
-            {/* Budderlee residents are photographed staged in themed scenes. */}
-            {painting.collection === "budderlee" && (
+            {/* Budderlee residents are photographed staged in themed scenes;
+                one photo may be marked as showing the painting as it ships. */}
+            {painting.asShippedImage !== undefined ? (
               <p className="relative z-[1] mt-4 text-sm italic text-on-surface-subtle">
-                Photos show this painting styled in a themed scene. The frame and
-                setting are for display and may not match what ships.
+                The photo marked &ldquo;As it ships&rdquo; shows exactly what you&rsquo;ll
+                receive. The others show the painting styled in a themed scene.
               </p>
+            ) : (
+              painting.collection === "budderlee" && (
+                <p className="relative z-[1] mt-4 text-sm italic text-on-surface-subtle">
+                  Photos show this painting styled in a themed scene. The frame and
+                  setting are for display and may not match what ships.
+                </p>
+              )
             )}
           </div>
 

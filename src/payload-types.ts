@@ -342,6 +342,10 @@ export interface Painting {
     | null;
   images: {
     image: number | Media;
+    /**
+     * Tick the one photo that shows exactly what the buyer receives, frame included. The site marks it "As it ships" and notes that the other photos are styled scenes.
+     */
+    asShipped?: boolean | null;
     id?: string | null;
   }[];
   /**

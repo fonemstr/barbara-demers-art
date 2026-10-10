@@ -42,6 +42,8 @@ export type Painting = {
   description: string;
   storyBehindPainting?: string;
   images: string[];
+  /** Index into images of the photo showing the painting as it ships. */
+  asShippedImage?: number;
   prints?: PrintOption[];
   collection?: PaintingCollection;
   characterName?: string;
@@ -218,7 +220,7 @@ type PayloadPainting = {
   sizeTier: SizeTier;
   description: string;
   storyBehindPainting?: string | null;
-  images?: Array<{ image: { url?: string } | string }>;
+  images?: Array<{ image: { url?: string } | string; asShipped?: boolean | null }>;
   printOptions?: Array<{
     id?: string | null;
     widthIn: number;
@@ -251,13 +253,15 @@ function normalizeOptionalText(value?: string | null): string | undefined {
 }
 
 function mapPayloadPainting(p: PayloadPainting): Painting {
-  const images = (p.images ?? [])
+  const entries = (p.images ?? [])
     .map((entry) => {
       const img = entry.image;
-      if (!img || typeof img === "string") return null;
-      return img.url ?? null;
+      if (!img || typeof img === "string" || !img.url) return null;
+      return { url: img.url, asShipped: !!entry.asShipped };
     })
-    .filter((url): url is string => !!url);
+    .filter((e): e is { url: string; asShipped: boolean } => !!e);
+  const images = entries.map((e) => e.url);
+  const asShippedImage = entries.findIndex((e) => e.asShipped);
 
   return {
     slug: p.slug,
@@ -275,6 +279,7 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     description: p.description,
     storyBehindPainting: normalizeOptionalText(p.storyBehindPainting),
     images: images.length ? images : ["/paintings/placeholder-1.svg"],
+    ...(asShippedImage >= 0 ? { asShippedImage } : {}),
     prints: (p.printOptions ?? []).map((opt) => ({
       // Payload array rows always carry an id; the dimension fallback keeps
       // checkout working if a row ever arrives without one.

@@ -369,6 +369,9 @@ export default async function BudderleePage() {
           <p className="md:col-start-2 -mt-2 text-sm italic text-on-surface-subtle">
             Photos show each painting styled in a themed scene. The frame and
             setting are for display and may not match what ships.
+            {residents.length > 0 &&
+              residents.every((r) => r.asShippedImage !== undefined) &&
+              " Each painting\u2019s page includes a photo of it as it ships."}
           </p>
         </div>
 

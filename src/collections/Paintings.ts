@@ -494,6 +494,16 @@ export const Paintings: CollectionConfig = {
           relationTo: "media",
           required: true,
         },
+        {
+          name: "asShipped",
+          type: "checkbox",
+          label: "Shows the painting as it ships",
+          defaultValue: false,
+          admin: {
+            description:
+              "Tick the one photo that shows exactly what the buyer receives, frame included. The site marks it \"As it ships\" and notes that the other photos are styled scenes.",
+          },
+        },
       ],
     },
     {

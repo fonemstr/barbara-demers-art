@@ -16,6 +16,7 @@ import * as migration_20260918_add_media_email_size from './20260918_add_media_e
 import * as migration_20260924_add_lumaprints_print_fields from './20260924_add_lumaprints_print_fields';
 import * as migration_20260925_add_resident_lumaprints_prints from './20260925_add_resident_lumaprints_prints';
 import * as migration_20260926_add_newsletter_audience from './20260926_add_newsletter_audience';
+import * as migration_20261010_add_painting_image_as_shipped from './20261010_add_painting_image_as_shipped';
 
 export const migrations = [
   {
@@ -107,5 +108,10 @@ export const migrations = [
     up: migration_20260926_add_newsletter_audience.up,
     down: migration_20260926_add_newsletter_audience.down,
     name: '20260926_add_newsletter_audience',
+  },
+  {
+    up: migration_20261010_add_painting_image_as_shipped.up,
+    down: migration_20261010_add_painting_image_as_shipped.down,
+    name: '20261010_add_painting_image_as_shipped',
   },
 ];

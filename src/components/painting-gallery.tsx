@@ -6,16 +6,20 @@ import Image from "next/image";
 // Main image + clickable detail thumbnails. The box keeps the painting's
 // real aspect ratio; detail shots (often tighter crops) are letterboxed
 // inside it rather than cropped, so brushwork close-ups stay whole.
+// The photo Barbara marked as showing the painting as it ships carries an
+// "As it ships" badge; the rest may be styled scenes.
 export function PaintingGallery({
   title,
   images,
   widthIn,
   heightIn,
+  asShippedIndex,
 }: {
   title: string;
   images: string[];
   widthIn: number;
   heightIn: number;
+  asShippedIndex?: number;
 }) {
   const [selected, setSelected] = useState(0);
   const current = images[selected] ?? images[0];
@@ -36,7 +40,11 @@ export function PaintingGallery({
                 type="button"
                 onClick={() => setSelected(i)}
                 aria-label={
-                  i === 0 ? "View full painting" : `View detail ${i}`
+                  i === asShippedIndex
+                    ? "View the painting as it ships"
+                    : i === 0
+                      ? "View full painting"
+                      : `View detail ${i}`
                 }
                 aria-pressed={i === selected}
                 className={`relative aspect-square overflow-hidden bg-surface-container cursor-pointer transition-opacity ${
@@ -52,6 +60,11 @@ export function PaintingGallery({
                   sizes="(min-width: 768px) 80px, 25vw"
                   className="object-cover"
                 />
+                {i === asShippedIndex && (
+                  <span className="absolute inset-x-0 bottom-0 bg-on-surface/85 py-0.5 text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-surface">
+                    As it ships
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -65,7 +78,11 @@ export function PaintingGallery({
           key={current}
           src={current}
           alt={
-            selected === 0 ? title : `${title} — detail ${selected}`
+            selected === asShippedIndex
+              ? `${title}, as it ships`
+              : selected === 0
+                ? title
+                : `${title} — detail ${selected}`
           }
           fill
           sizes="(min-width: 1152px) 600px, (min-width: 768px) 55vw, 100vw"
@@ -73,6 +90,11 @@ export function PaintingGallery({
           priority
           fetchPriority="high"
         />
+        {selected === asShippedIndex && (
+          <span className="absolute left-3 top-3 rounded-full bg-on-surface/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-surface">
+            As it ships
+          </span>
+        )}
       </div>
     </div>
   );
