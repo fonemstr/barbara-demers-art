@@ -64,7 +64,7 @@ const UNPACK: UnpackStep[] = [
   {
     kicker: "01",
     title: "Resident art card",
-    body: "A 5×7 card-stock portrait of the month's resident, a themed recreation of Barbara's original painting. On the back: the resident's number, birthday, star sign, job in the village and friends.",
+    body: "A 5×7 card-stock print of the month's painting. On the back: the resident's number, birthday, star sign, job in the village and friends.",
     box: [0.385, 0.355, 0.755, 0.97],
   },
   {
@@ -249,10 +249,6 @@ export default async function BudderleePage() {
             This is Walter&rsquo;s month, Resident No. 001, exactly as it ships.
             Scroll to unpack it piece by piece.
           </p>
-          <p className="mt-3 text-sm italic text-on-surface-subtle">
-            The resident art in each envelope is a themed recreation of
-            Barbara&rsquo;s original painting, made for the Post.
-          </p>
         </div>
         <UnpackViewer steps={unpack} />
       </Section>
@@ -366,10 +362,13 @@ export default async function BudderleePage() {
           </div>
           <p className="text-[17px] text-on-surface-muted leading-relaxed">
             Every resident starts as a one-of-a-kind 5×5 inch original by Barbara.
-            The Post carries themed recreations of them, so the original painting
-            is the only one. Originals tend to find homes quickly, and prints of
-            every resident are available too.
+            Originals tend to find homes quickly, and prints of every resident are
+            available too.
             {residents.length > 1 && ` ${residents.length} residents have arrived so far.`}
+          </p>
+          <p className="md:col-start-2 -mt-2 text-sm italic text-on-surface-subtle">
+            Photos show each painting styled in a themed scene. The frame and
+            setting are for display and may not match what ships.
           </p>
         </div>
 

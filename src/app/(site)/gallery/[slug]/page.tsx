@@ -126,6 +126,13 @@ export default async function PaintingPage({
               widthIn={painting.widthIn}
               heightIn={painting.heightIn}
             />
+            {/* Budderlee residents are photographed staged in themed scenes. */}
+            {painting.collection === "budderlee" && (
+              <p className="relative z-[1] mt-4 text-sm italic text-on-surface-subtle">
+                Photos show this painting styled in a themed scene. The frame and
+                setting are for display and may not match what ships.
+              </p>
+            )}
           </div>
 
           {/* Metadata + buy column */}

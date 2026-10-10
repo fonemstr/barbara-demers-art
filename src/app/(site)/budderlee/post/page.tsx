@@ -41,7 +41,7 @@ export const revalidate = 60;
 const CONTENTS = [
   {
     title: "Resident art card",
-    body: "A 5×7 card-stock portrait of the month's resident, a themed recreation of Barbara's original painting. On the back: the resident's number, birthday, star sign, job in the village, and friends.",
+    body: "A 5×7 card-stock print of the month's painting. On the back: the resident's number, birthday, star sign, job in the village, and friends.",
   },
   {
     title: "Tales from Budderlee",
@@ -225,7 +225,7 @@ export default async function BudderleePostPage() {
             className="h-auto w-full drop-shadow-[0_18px_36px_rgb(var(--shadow-color)/0.18)]"
           />
           <figcaption className="mt-8 text-center text-sm italic text-on-surface-muted">
-            Walter&rsquo;s month, Resident No. 001. The resident art is a themed recreation of Barbara&rsquo;s original painting. The iron-on is the Founding Member gift.
+            Walter&rsquo;s month, Resident No. 001. The iron-on is the Founding Member gift.
           </figcaption>
         </figure>
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
