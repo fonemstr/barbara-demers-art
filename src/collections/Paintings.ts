@@ -494,6 +494,16 @@ export const Paintings: CollectionConfig = {
           relationTo: "media",
           required: true,
         },
+        {
+          name: "themedScene",
+          type: "checkbox",
+          label: "Themed scene",
+          defaultValue: false,
+          admin: {
+            description:
+              "Tick for a photo that shows the painting staged in a themed scene. The site captions it: \"Photo shows this painting in a themed scene. The frame and setting are for display only.\"",
+          },
+        },
       ],
     },
     {

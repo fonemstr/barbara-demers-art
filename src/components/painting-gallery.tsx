@@ -6,19 +6,24 @@ import Image from "next/image";
 // Main image + clickable detail thumbnails. The box keeps the painting's
 // real aspect ratio; detail shots (often tighter crops) are letterboxed
 // inside it rather than cropped, so brushwork close-ups stay whole.
+// Photos Barbara tagged as themed scenes (the painting staged with a frame
+// and props) carry a "Themed scene" tag and a caption saying so.
 export function PaintingGallery({
   title,
   images,
   widthIn,
   heightIn,
+  themedIndexes = [],
 }: {
   title: string;
   images: string[];
   widthIn: number;
   heightIn: number;
+  themedIndexes?: number[];
 }) {
   const [selected, setSelected] = useState(0);
   const current = images[selected] ?? images[0];
+  const themed = themedIndexes.includes(selected);
 
   return (
     // Thumbnails sit in a vertical strip left of the painting on desktop
@@ -57,23 +62,36 @@ export function PaintingGallery({
           </div>
         </div>
       )}
-      <div
-        className="relative min-w-0 flex-1 overflow-hidden shadow-lifted bg-surface-container-lowest"
-        style={{ aspectRatio: `${widthIn} / ${heightIn}` }}
-      >
-        <Image
-          key={current}
-          src={current}
-          alt={
-            selected === 0 ? title : `${title} — detail ${selected}`
-          }
-          fill
-          sizes="(min-width: 1152px) 600px, (min-width: 768px) 55vw, 100vw"
-          className={selected === 0 ? "object-cover" : "object-contain"}
-          priority
-          fetchPriority="high"
-        />
-      </div>
+      <figure className="min-w-0 flex-1">
+        <div
+          className="relative overflow-hidden shadow-lifted bg-surface-container-lowest"
+          style={{ aspectRatio: `${widthIn} / ${heightIn}` }}
+        >
+          <Image
+            key={current}
+            src={current}
+            alt={
+              selected === 0 ? title : `${title} — detail ${selected}`
+            }
+            fill
+            sizes="(min-width: 1152px) 600px, (min-width: 768px) 55vw, 100vw"
+            className={selected === 0 ? "object-cover" : "object-contain"}
+            priority
+            fetchPriority="high"
+          />
+          {themed && (
+            <span className="absolute left-3 top-3 rounded-full bg-on-surface/85 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-surface">
+              Themed scene
+            </span>
+          )}
+        </div>
+        {themed && (
+          <figcaption className="mt-3 text-sm italic text-on-surface-subtle">
+            Photo shows this painting in a themed scene. The frame and setting are
+            for display only.
+          </figcaption>
+        )}
+      </figure>
     </div>
   );
 }

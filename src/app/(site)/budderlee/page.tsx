@@ -366,6 +366,10 @@ export default async function BudderleePage() {
             available too.
             {residents.length > 1 && ` ${residents.length} residents have arrived so far.`}
           </p>
+          <p className="md:col-start-2 -mt-2 text-sm italic text-on-surface-subtle">
+            Photos show each painting in a themed scene. The frame and setting
+            are for display only.
+          </p>
         </div>
 
         {residents.length > 0 && (

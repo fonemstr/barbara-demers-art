@@ -125,6 +125,7 @@ export default async function PaintingPage({
               images={painting.images}
               widthIn={painting.widthIn}
               heightIn={painting.heightIn}
+              themedIndexes={painting.themedImages}
             />
           </div>
 

@@ -342,6 +342,10 @@ export interface Painting {
     | null;
   images: {
     image: number | Media;
+    /**
+     * Tick for a photo that shows the painting staged in a themed scene. The site captions it: "Photo shows this painting in a themed scene. The frame and setting are for display only."
+     */
+    themedScene?: boolean | null;
     id?: string | null;
   }[];
   /**
