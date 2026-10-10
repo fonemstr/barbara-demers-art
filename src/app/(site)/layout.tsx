@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Noto_Serif, Plus_Jakarta_Sans } from "next/font/google";
+import { Noto_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import Link from "next/link";
 import Image from "next/image";
 import { Analytics } from "@vercel/analytics/next";
@@ -23,10 +24,16 @@ const notoSerif = Noto_Serif({
   display: "swap",
 });
 
-const plusJakarta = Plus_Jakarta_Sans({
+// Plus Jakarta Sans is self-hosted (Google's Latin files via Fontsource,
+// OFL): fetching it from Google at build time intermittently failed Vercel
+// builds.
+const plusJakarta = localFont({
   variable: "--font-plus-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  src: [
+    { path: "../fonts/plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff2", weight: "500", style: "normal" },
+    { path: "../fonts/plus-jakarta-sans/plus-jakarta-sans-latin-600-normal.woff2", weight: "600", style: "normal" },
+  ],
   display: "swap",
 });
 
