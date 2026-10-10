@@ -214,14 +214,14 @@ export default async function BudderleePostPage() {
             Open it slowly. There&rsquo;s a lot tucked inside.
           </h2>
         </div>
-        {/* Walter's month, photographed by Barbara and cut out of the greenery */}
-        <figure className="mx-auto mb-14 max-w-5xl">
+        {/* Walter's month, photographed by Barbara and cut out of the grey paper */}
+        <figure className="mx-auto mb-14 max-w-4xl">
           <Image
             src="/budderlee/post/walter-month-flat-lay.webp"
             alt="Walter's month laid out together: the Tales from Budderlee gazette, his resident art card, a cut-out paper doll, the shortbread recipe card, the round Budderlee sticker and a Walter iron-on"
-            width={1384}
-            height={869}
-            sizes="(min-width: 1024px) 1024px, 100vw"
+            width={1678}
+            height={1376}
+            sizes="(min-width: 896px) 896px, 100vw"
             className="h-auto w-full drop-shadow-[0_18px_36px_rgb(var(--shadow-color)/0.18)]"
           />
           <figcaption className="mt-8 text-center text-sm italic text-on-surface-muted">

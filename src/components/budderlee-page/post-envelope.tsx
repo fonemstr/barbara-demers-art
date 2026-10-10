@@ -39,9 +39,9 @@ export function PostEnvelope() {
               <Image
                 src={FLAT_LAY}
                 alt="Walter's month from The Budderlee Post: the Tales from Budderlee gazette, his resident art card, a paper doll, a shortbread recipe card, the Budderlee sticker and a Walter iron-on"
-                width={1384}
-                height={869}
-                sizes="(min-width: 768px) 560px, 100vw"
+                width={1678}
+                height={1376}
+                sizes="(min-width: 768px) 500px, 100vw"
                 priority
               />
             </div>

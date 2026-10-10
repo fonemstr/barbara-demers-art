@@ -65,31 +65,31 @@ const UNPACK: UnpackStep[] = [
     kicker: "01",
     title: "Resident art card",
     body: "A 5×7 card-stock print of the month's painting. On the back: the resident's number, birthday, star sign, job in the village and friends.",
-    box: [0.34, 0.355, 0.615, 1],
+    box: [0.385, 0.355, 0.755, 0.97],
   },
   {
     kicker: "02",
     title: "Tales from Budderlee",
     body: "A new chapter of the village story, told through that month's resident. Each one picks up where the last left off.",
-    box: [0, 0, 0.46, 1],
+    box: [0, 0.02, 0.47, 0.62],
   },
   {
     kicker: "03",
     title: "Recipe card",
     body: "A tested, original recipe with the character's stamp on it. Walter brings his shortbread biscuits.",
-    box: [0.65, 0.06, 1, 0.79],
+    box: [0.64, 0.015, 1, 0.625],
   },
   {
     kicker: "04",
     title: "Paper doll",
     body: "Cut out the resident and stand them up, with a fold-back base and a few of their favorite things.",
-    box: [0.49, 0.03, 0.78, 0.4],
+    box: [0.38, 0, 0.715, 0.375],
   },
   {
     kicker: "05",
     title: "Sticker, and a note from Barbara",
     body: "A die-cut sticker that's different every month, plus a note from Barbara: a welcome in your first package and a thank-you in every one after.",
-    box: [0.285, 0.75, 0.455, 1],
+    box: [0.725, 0.6, 0.945, 0.856],
   },
 ];
 
@@ -98,7 +98,7 @@ const FOUNDING_STEP: UnpackStep = {
   title: "The Walter iron-on",
   body: "Waitlist members who subscribe when signups open get an exclusive iron-on in their first package. It won't be printed again.",
   badge: "Founding members only",
-  box: [0.61, 0.51, 0.83, 0.995],
+  box: [0.095, 0.5, 0.41, 1],
 };
 
 const MONTHS = [
