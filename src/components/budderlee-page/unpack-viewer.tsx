@@ -12,7 +12,7 @@ export type UnpackStep = {
   box: [number, number, number, number];
 };
 
-const PHOTO = { src: "/budderlee/post/walter-month-flat-lay.webp", width: 1384, height: 869 };
+const PHOTO = { src: "/budderlee/post/walter-month-flat-lay.webp", width: 1678, height: 1376 };
 const MARGIN = 48;
 
 // Scrolling through the steps zooms Walter's month onto each item in turn.
