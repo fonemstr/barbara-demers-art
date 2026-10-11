@@ -659,7 +659,7 @@ export interface Subscriber {
    */
   status: 'active' | 'trialing' | 'past_due' | 'paused' | 'canceled' | 'incomplete';
   /**
-   * Was on the waitlist and subscribed at launch. Gets the Founding Member iron-on in the first package.
+   * Subscribed before the founding window ended. Gets the Founding Member iron-on in the first package.
    */
   foundingMember?: boolean | null;
   /**
@@ -985,6 +985,7 @@ export interface PaintingsSelect<T extends boolean = true> {
     | T
     | {
         image?: T;
+        themedScene?: T;
         id?: T;
       };
   featured?: T;
@@ -1228,7 +1229,7 @@ export interface BudderleePost {
    */
   priceCents?: number | null;
   /**
-   * Waitlist members who subscribe before this date are founding members and get the Founding Member iron-on.
+   * Anyone who subscribes through the end of this day (studio time) is a founding member and gets the Founding Member iron-on. The site shows this date in its iron-on offer.
    */
   foundingWindowEnds?: string | null;
   /**
