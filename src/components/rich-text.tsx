@@ -1,9 +1,11 @@
 import React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 // Minimal Lexical -> React renderer for the fields we use. Covers
-// paragraphs, headings, lists, links, and basic text formatting — enough
-// for a studio journal. Expand as Barbara's posts get fancier.
+// paragraphs, headings, lists, links, basic text formatting and images
+// placed in the text — enough for a studio journal. Expand as Barbara's
+// posts get fancier.
 type LexicalNode = {
   type?: string;
   tag?: string;
@@ -12,6 +14,16 @@ type LexicalNode = {
   url?: string;
   children?: LexicalNode[];
   version?: number;
+  /** Upload nodes: the media doc, populated when fetched with depth >= 1. */
+  value?: number | string | UploadValue | null;
+};
+
+type UploadValue = {
+  url?: string | null;
+  alt?: string | null;
+  width?: number | null;
+  height?: number | null;
+  mimeType?: string | null;
 };
 
 type LexicalDoc = { root: LexicalNode };
@@ -96,6 +108,25 @@ function renderBlock(node: LexicalNode, key: number, index: number, isFirstParag
     }
     case "listitem":
       return <li key={key}>{children.map(renderInline)}</li>;
+    case "upload": {
+      // An image dropped into the text. Shown whole at its own shape, like
+      // the cover; unpopulated (bare ID) or non-image uploads are skipped.
+      const media = node.value;
+      if (!media || typeof media !== "object" || !media.url) return null;
+      if (media.mimeType && !media.mimeType.startsWith("image/")) return null;
+      return (
+        <figure key={key} className="mt-10">
+          <Image
+            src={media.url}
+            alt={media.alt ?? ""}
+            width={media.width ?? 1600}
+            height={media.height ?? 1000}
+            sizes="(min-width: 768px) 48rem, 100vw"
+            className="mx-auto h-auto max-h-[80vh] w-auto max-w-full shadow-ambient"
+          />
+        </figure>
+      );
+    }
     case "quote":
       return (
         <blockquote
