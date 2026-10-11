@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Noto_Serif } from "next/font/google";
 import localFont from "next/font/local";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,17 +15,21 @@ import "../globals.css";
 // Only the weights actually used: headings are serif 700, the italic
 // accents in heroes are serif 400, body is sans 400 with 500/600 accents.
 // Fewer font files on the critical path is the biggest LCP win on the site.
-const notoSerif = Noto_Serif({
+// Fonts are self-hosted (Google's Latin files via Fontsource, OFL licenses
+// alongside): fetching them from Google at build time intermittently
+// failed Vercel builds.
+const notoSerif = localFont({
   variable: "--font-noto-serif",
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
+  src: [
+    { path: "../fonts/noto-serif/noto-serif-latin-400-normal.woff2", weight: "400", style: "normal" },
+    { path: "../fonts/noto-serif/noto-serif-latin-400-italic.woff2", weight: "400", style: "italic" },
+    { path: "../fonts/noto-serif/noto-serif-latin-700-normal.woff2", weight: "700", style: "normal" },
+    { path: "../fonts/noto-serif/noto-serif-latin-700-italic.woff2", weight: "700", style: "italic" },
+  ],
   display: "swap",
+  adjustFontFallback: "Times New Roman",
 });
 
-// Plus Jakarta Sans is self-hosted (Google's Latin files via Fontsource,
-// OFL): fetching it from Google at build time intermittently failed Vercel
-// builds.
 const plusJakarta = localFont({
   variable: "--font-plus-jakarta",
   src: [
