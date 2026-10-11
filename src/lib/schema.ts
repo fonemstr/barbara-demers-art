@@ -1,4 +1,5 @@
 import type { Painting } from "@/data/paintings";
+import { paintingPath } from "./painting-path";
 import { PRINT_SHIPPING_RATE, SHIPPING_RATES } from "@/data/paintings";
 import { COMMISSION_TIERS } from "@/data/commissions";
 import type { BlogPost } from "@/lib/blog";
@@ -66,7 +67,7 @@ export function breadcrumbs(items: { name: string; path: string }[]) {
 }
 
 export function paintingGraph(p: Painting) {
-  const url = `${SITE_URL}/gallery/${p.slug}`;
+  const url = `${SITE_URL}${paintingPath(p)}`;
   const title = p.title.trim();
   const images = p.images.filter((s) => !isPlaceholder(s)).map(abs);
   const image = images[0];
@@ -181,10 +182,18 @@ export function paintingGraph(p: Painting) {
       artwork,
       original,
       ...(prints ? [prints] : []),
-      breadcrumbs([
-        { name: "Available Work", path: "/gallery" },
-        { name: title, path: `/gallery/${p.slug}` },
-      ]),
+      breadcrumbs(
+        p.collection === "budderlee"
+          ? [
+              { name: "Budderlee", path: "/budderlee" },
+              { name: "Meet the Residents", path: "/budderlee/residents" },
+              { name: title, path: paintingPath(p) },
+            ]
+          : [
+              { name: "Available Work", path: "/gallery" },
+              { name: title, path: paintingPath(p) },
+            ],
+      ),
     ],
   };
 }

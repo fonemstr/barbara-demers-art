@@ -1,4 +1,5 @@
 import { notFound, permanentRedirect } from "next/navigation";
+import { paintingPath } from "@/lib/painting-path";
 import Link from "next/link";
 import {
   getAllPaintings,
@@ -84,6 +85,8 @@ export default async function PaintingPage({
   }
   const painting = await getPainting(slug);
   if (!painting) notFound();
+  // Budderlee residents have their own pages in the Budderlee section.
+  if (painting.collection === "budderlee") permanentRedirect(paintingPath(painting));
 
   const story = painting.storyBehindPainting ?? DEFAULT_PAINTING_STORY;
   // Blank lines in the admin textarea start a new paragraph.
@@ -135,11 +138,6 @@ export default async function PaintingPage({
               <Eyebrow>
                 {painting.subject || SUBJECT_GROUP_LABELS[painting.subjectGroup]} · {painting.year}
               </Eyebrow>
-              {painting.collection === "budderlee" && (
-                <Link href="/budderlee">
-                  <Chip>🏡 Resident of Budderlee</Chip>
-                </Link>
-              )}
               {painting.sold && <Chip>Sold</Chip>}
             </div>
 

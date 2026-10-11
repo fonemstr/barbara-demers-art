@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { getTales } from "@/lib/tales";
+import { paintingPath } from "@/lib/painting-path";
 import { getAllPaintings } from "@/data/paintings";
 import { getAllPosts } from "@/lib/blog";
 import { SITE_URL } from "@/lib/site-url";
@@ -24,9 +26,10 @@ const latest = (dates: (string | undefined)[]) => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [paintings, posts] = await Promise.all([
+  const [paintings, posts, tales] = await Promise.all([
     getAllPaintings(),
     getAllPosts(),
+    getTales(),
   ]);
 
   // Listing pages change whenever their newest item does.
@@ -40,6 +43,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE_URL, lastModified: galleryLastMod },
     { url: `${SITE_URL}/gallery`, lastModified: galleryLastMod },
     { url: `${SITE_URL}/budderlee`, lastModified: budderleeLastMod ?? galleryLastMod },
+    { url: `${SITE_URL}/budderlee/village` },
+    { url: `${SITE_URL}/budderlee/residents`, lastModified: budderleeLastMod ?? galleryLastMod },
+    { url: `${SITE_URL}/budderlee/tales`, lastModified: latest(tales.map((t) => t.publishedAt)) },
     { url: `${SITE_URL}/budderlee/post` },
     { url: `${SITE_URL}/budderlee/post/manage` },
     { url: `${SITE_URL}/commissions` },
@@ -51,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const paintingPages: MetadataRoute.Sitemap = paintings.map((p) => {
     const images = realImages(p.images);
     return {
-      url: `${SITE_URL}/gallery/${p.slug}`,
+      url: `${SITE_URL}${paintingPath(p)}`,
       lastModified: p.updatedAt ? new Date(p.updatedAt) : undefined,
       ...(images.length ? { images } : {}),
     };
@@ -63,5 +69,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...(post.cover ? { images: [toAbsolute(post.cover)] } : {}),
   }));
 
-  return [...staticPages, ...paintingPages, ...postPages];
+  const talePages: MetadataRoute.Sitemap = tales.map((t) => ({
+    url: `${SITE_URL}/budderlee/tales/${t.slug}`,
+    lastModified: t.publishedAt ? new Date(t.publishedAt) : undefined,
+  }));
+
+  return [...staticPages, ...paintingPages, ...postPages, ...talePages];
 }

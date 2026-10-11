@@ -1,4 +1,6 @@
 import { SITE_URL } from "@/lib/site-url";
+import { cleanResidentName } from "@/data/paintings";
+import { paintingPath } from "./painting-path";
 import { formatPrice } from "@/lib/utils";
 
 // Caption templates for auto-announced paintings. Kept under X's 280-char
@@ -31,8 +33,8 @@ export function buildAnnouncementCaption(p: AnnounceablePainting): string {
     return clamp(
       [
         `A new resident has arrived in Budderlee 🏡`,
-        `Meet ${p.characterName}${role} — an original 5×5 inch painting${price}.`,
-        `See the whole village: ${SITE_URL}/budderlee`,
+        `Meet ${cleanResidentName(p.characterName)}${role} — an original 5×5 inch painting${price}.`,
+        `${SITE_URL}${paintingPath({ slug: p.slug, collection: p.collection })}`,
       ].join("\n"),
     );
   }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { paintingPath } from "@/lib/painting-path";
 import Image from "next/image";
 import type { Painting } from "@/data/paintings";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
@@ -14,7 +15,7 @@ export function PaintingCard({
   const printsFrom = lowestPrintPriceCents(painting);
   return (
     <Link
-      href={`/gallery/${painting.slug}`}
+      href={paintingPath(painting)}
       className="group block"
     >
       {/* Artwork image container — square corners so the paintings themselves

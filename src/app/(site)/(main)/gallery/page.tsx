@@ -1,4 +1,5 @@
 import { getAllPaintings, getAvailableSubjectGroups } from "@/data/paintings";
+import { paintingPath } from "@/lib/painting-path";
 import { GalleryList } from "@/components/gallery-list";
 import { PageHeader } from "@/components/ui/page-header";
 import { Section } from "@/components/ui/section";
@@ -30,7 +31,7 @@ export default async function GalleryPage() {
           path: "/gallery",
           name: "Available Work",
           description: metadata.description,
-          itemPaths: paintings.map((p) => `/gallery/${p.slug}`),
+          itemPaths: paintings.map((p) => paintingPath(p)),
         })}
       />
       <Section tone="surface" pad="md" className="overflow-hidden">

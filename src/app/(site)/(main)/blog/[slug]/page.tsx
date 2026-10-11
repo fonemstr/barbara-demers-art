@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -9,6 +9,11 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Blob } from "@/components/ui/blob";
 import { JsonLd } from "@/components/json-ld";
 import { blogPostGraph } from "@/lib/schema";
+
+// Journal posts that became Tales of Budderlee, old slug to tale slug.
+const MOVED_TO_TALES: Record<string, string> = {
+  "Pippa-story-festival-candied-apples": "pippa-and-the-last-candied-apple",
+};
 
 export const revalidate = 60;
 
@@ -54,6 +59,9 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Stories moved from the Journal to Tales of Budderlee.
+  const movedTo = MOVED_TO_TALES[slug];
+  if (movedTo) permanentRedirect(`/budderlee/tales/${movedTo}`);
   const post = await getPost(slug);
   if (!post) notFound();
 

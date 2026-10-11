@@ -1,0 +1,371 @@
+/* The Budderlee section's look: parchment paper, ink-brown Garamond
+   headings, olive buttons and fine rules with a leaf sprig, after Barbara's
+   page concept. The theme re-points the site's design tokens, so shared
+   pieces (forms, the Post page, buttons) take on the look inside it. */
+
+.theme {
+  --bd-paper: #f8f3e9;
+  --bd-paper-light: #fcf9f3;
+  --bd-line: #e0d6c3;
+  --bd-ink: #3b2523;
+  --bd-text: #4b3e36;
+  --bd-muted: #6e6055;
+  --bd-olive: #55652f;
+  --bd-olive-dark: #45532a;
+  --bd-sage: #e6e9d4;
+  --bd-rust: #9a4a2c;
+
+  --surface: var(--bd-paper);
+  --surface-container-lowest: #fffdf8;
+  --surface-container-low: #f3ecdf;
+  --surface-container: #efe7d7;
+  --surface-container-high: #e7ddc9;
+  --surface-container-highest: #e2d8c6;
+  --surface-variant: var(--bd-sage);
+  --on-surface: var(--bd-ink);
+  --on-surface-muted: #5a4b41;
+  --on-surface-subtle: var(--bd-muted);
+  --on-surface-faint: #9a8b7d;
+  --primary: var(--bd-olive);
+  --primary-container: #cfd5a6;
+  --primary-container-dim: #eef0df;
+  --on-primary: #fdfbf4;
+  --on-primary-container: #2f3a18;
+  --gradient-primary: linear-gradient(var(--bd-olive), var(--bd-olive));
+  --gradient-primary-hover: linear-gradient(var(--bd-olive-dark), var(--bd-olive-dark));
+  --secondary-container: #f1e2d3;
+  --secondary-container-soft: #f8efe5;
+  --on-secondary-container: #7a3b2a;
+  --outline: #cdbfa7;
+  --shadow-color: 70 50 30;
+  /* Headings everywhere in the section use the concept's Garamond. */
+  --font-noto-serif: var(--font-cormorant);
+
+  background: var(--bd-paper);
+  color: var(--bd-text);
+  font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
+  font-size: 17px;
+}
+.theme :is(h1, h2, h3, h4) {
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--bd-ink);
+}
+/* The concept's buttons are softly squared, not pills. */
+.theme :is(button, a):global(.rounded-full) {
+  border-radius: 6px;
+}
+
+/* ───────────── Masthead and menu ───────────── */
+
+.masthead {
+  background: var(--bd-paper-light);
+}
+.mastheadRow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px 12px;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+.artist {
+  justify-self: start;
+  text-align: center;
+  line-height: 1.1;
+  color: var(--bd-ink);
+}
+.artistName {
+  font-family: var(--font-cormorant), serif;
+  font-size: 22px;
+  font-weight: 500;
+}
+.artistRole {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--bd-ink);
+}
+.wordmarkText {
+  font-family: var(--font-cormorant), serif;
+  font-weight: 600;
+  font-size: clamp(34px, 5vw, 50px);
+  line-height: 1;
+  letter-spacing: -0.005em;
+}
+.tagline {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--bd-ink);
+}
+.tagline img {
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+.nav {
+  border-top: 1px solid var(--bd-line);
+  border-bottom: 1px solid var(--bd-line);
+  background: var(--bd-paper-light);
+}
+.navList {
+  display: flex;
+  justify-content: center;
+  gap: clamp(18px, 6vw, 72px);
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 0 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.navList::-webkit-scrollbar {
+  display: none;
+}
+.navLink {
+  flex: none;
+  padding: 13px 0 11px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bd-ink);
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+.navLink:hover {
+  color: var(--bd-olive);
+}
+.navLinkActive {
+  border-bottom-color: var(--bd-olive);
+  color: var(--bd-olive);
+}
+
+@media (max-width: 767px) {
+  .mastheadRow {
+    grid-template-columns: 1fr auto;
+    padding: 14px 16px 10px;
+  }
+  .wordmark {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  .tagline {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  .navList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 12px;
+    padding: 2px 16px;
+    text-align: center;
+  }
+  .navLink {
+    padding: 9px 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+  }
+}
+
+/* ───────────── Shared pieces ───────────── */
+
+.ornament {
+  display: block;
+  margin: 6px auto 0;
+  color: var(--bd-olive);
+}
+.sectionTitle {
+  text-align: center;
+  font-size: clamp(30px, 4.2vw, 42px);
+  line-height: 1.1;
+}
+.rule {
+  border: 0;
+  border-top: 1px solid var(--bd-line);
+  margin: 0;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 26px;
+  border-radius: 6px;
+  background: var(--bd-olive);
+  color: #fdfbf4;
+  font-family: var(--font-eb-garamond), serif;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 6px 16px -10px rgb(40 50 20 / 0.6);
+  transition: background 0.2s, transform 0.2s;
+}
+.button:hover {
+  background: var(--bd-olive-dark);
+  transform: translateY(-1px);
+}
+.buttonOutline {
+  background: transparent;
+  color: var(--bd-ink);
+  box-shadow: inset 0 0 0 1px var(--outline);
+}
+.buttonOutline:hover {
+  background: #fffdf8;
+  box-shadow: inset 0 0 0 1px var(--bd-ink);
+}
+.arrow {
+  transition: transform 0.2s;
+}
+.button:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* A painting photo as Barbara shot it: no added frame, a soft shadow. */
+.photo {
+  box-shadow: 0 18px 36px -24px rgb(60 40 20 / 0.55);
+}
+
+/* ───────────── Welcome ───────────── */
+
+.welcome {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  min-height: 520px;
+  background: var(--bd-paper);
+}
+.welcomeCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  padding: 36px clamp(20px, 4vw, 56px) 48px;
+}
+.welcomeImage {
+  position: relative;
+  min-height: 360px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
+}
+.welcomeImage img {
+  object-fit: cover;
+  object-position: 55% 50%;
+}
+.seal {
+  mix-blend-mode: multiply;
+}
+@media (max-width: 767px) {
+  .welcome {
+    grid-template-columns: 1fr;
+  }
+  .welcomeImage {
+    order: -1;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  }
+}
+
+/* ───────────── Resident cards ───────────── */
+
+.residentCard {
+  display: block;
+  text-align: center;
+}
+.residentCard .photo {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.residentCard:hover .photo {
+  transform: translateY(-4px);
+}
+.availability {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.available {
+  color: var(--bd-olive);
+}
+.sold {
+  color: var(--bd-rust);
+}
+
+/* ───────────── Letter from the village (Post band) ───────────── */
+
+.letterBand {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: stretch;
+  background: linear-gradient(90deg, var(--bd-paper-light) 0%, var(--bd-sage) 60%);
+}
+.letterImage {
+  position: relative;
+  min-height: 300px;
+}
+.letterImage img {
+  object-fit: contain;
+  padding: 22px;
+}
+@media (max-width: 767px) {
+  .letterBand {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ───────────── Story cards ───────────── */
+
+.storyCard {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 20px 0;
+  border-top: 1px solid var(--bd-line);
+}
+.storyCard:hover h3 {
+  color: var(--bd-olive);
+}
+@media (max-width: 520px) {
+  .storyCard {
+    grid-template-columns: 96px 1fr;
+    gap: 14px;
+  }
+}
+
+/* ───────────── Footer ───────────── */
+
+.footer {
+  margin-top: 0;
+  border-top: 1px solid var(--bd-line);
+  background: var(--bd-paper-light);
+  text-align: center;
+  padding: 26px 24px 30px;
+}
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 22px;
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--bd-muted);
+}
+.footerLinks a:hover {
+  color: var(--bd-ink);
+}

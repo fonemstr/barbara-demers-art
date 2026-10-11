@@ -17,7 +17,9 @@ import { Waitlist } from "./src/collections/Waitlist";
 import { Issues } from "./src/collections/Issues";
 import { Subscribers } from "./src/collections/Subscribers";
 import { Shipments } from "./src/collections/Shipments";
+import { Tales } from "./src/collections/Tales";
 import { BudderleePost } from "./src/globals/BudderleePost";
+import { BudderleePage } from "./src/globals/BudderleePage";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -48,8 +50,8 @@ export default buildConfig({
       ],
     },
   },
-  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters, Waitlist, Issues, Subscribers, Shipments],
-  globals: [BudderleePost],
+  collections: [Users, Media, Paintings, JournalPosts, SocialPosts, CommissionedPortraits, Newsletters, Waitlist, Issues, Subscribers, Shipments, Tales],
+  globals: [BudderleePost, BudderleePage],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "insecure-dev-secret-change-me",
   typescript: {

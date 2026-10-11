@@ -1,4 +1,5 @@
 import type { CollectionConfig, Payload } from "payload";
+import { paintingPath } from "../lib/painting-path";
 import type { SocialPlatform } from "../lib/social-direct";
 import { deliverSocialPost } from "../lib/social-delivery";
 import { buildAnnouncementCaption } from "../lib/social-captions";
@@ -15,8 +16,14 @@ async function revalidatePaintingPaths(slugs: (string | undefined)[]) {
     revalidatePath("/");
     revalidatePath("/gallery");
     revalidatePath("/budderlee");
+    revalidatePath("/budderlee/residents");
+    revalidatePath("/budderlee/village");
+    revalidatePath("/budderlee/tales");
     for (const slug of slugs) {
-      if (slug) revalidatePath(`/gallery/${slug}`);
+      if (slug) {
+        revalidatePath(`/gallery/${slug}`);
+        revalidatePath(`/budderlee/residents/${slug}`);
+      }
     }
   } catch {
     // outside a request context (scripts, migrations) — nothing to do
@@ -69,7 +76,7 @@ async function announcePainting(payload: Payload, doc: PaintingDoc) {
 
   const caption = buildAnnouncementCaption(doc);
   const pinterestOptions = {
-    link: `${SITE_URL}/gallery/${doc.slug}`,
+    link: `${SITE_URL}${paintingPath(doc)}`,
     title: doc.title.slice(0, 100),
   };
 
@@ -307,6 +314,12 @@ export const Paintings: CollectionConfig = {
             ...(id ? { id: { not_equals: id } } : {}),
           }),
           admin: { description: "Other residents. Their names print on the card." },
+        },
+        {
+          name: "home",
+          label: "Home in the village",
+          type: "text",
+          admin: { description: "Where they live or work, e.g. \"Above his tailor shop on Market Street\". Shown on their resident page." },
         },
       ],
     },

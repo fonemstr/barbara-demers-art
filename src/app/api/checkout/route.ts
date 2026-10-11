@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { paintingPath } from "@/lib/painting-path";
 import {
   getPainting,
   PRINT_SHIPPING_RATE,
@@ -123,7 +124,7 @@ export async function POST(request: Request) {
           : {}),
       },
       success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/gallery/${painting.slug}`,
+      cancel_url: `${origin}${paintingPath(painting)}`,
     });
 
     return NextResponse.json({ url: session.url });
