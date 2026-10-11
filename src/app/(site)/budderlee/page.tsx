@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Allura, Cinzel } from "next/font/google";
+import localFont from "next/font/local";
 import { getBudderleePaintings } from "@/data/paintings";
 import { formatPrice, lowestPrintPriceCents } from "@/lib/utils";
 import { NewsletterForm } from "@/components/newsletter-form";
@@ -25,9 +25,23 @@ import s from "@/components/budderlee-page/budderlee-page.module.css";
 
 // The envelope's lettering: Cinzel capitals for the return address and
 // Allura for the handwriting, as on Barbara's printed Budderlee envelope.
-// Loaded here so only this page pays for them.
-const cinzel = Cinzel({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-cinzel", display: "swap" });
-const allura = Allura({ subsets: ["latin"], weight: "400", variable: "--font-allura", display: "swap" });
+// Loaded here so only this page pays for them; self-hosted like the
+// site's other fonts.
+const cinzel = localFont({
+  variable: "--font-cinzel",
+  src: [
+    { path: "../../fonts/cinzel/cinzel-latin-600-normal.woff2", weight: "600", style: "normal" },
+    { path: "../../fonts/cinzel/cinzel-latin-700-normal.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
+});
+const allura = localFont({
+  variable: "--font-allura",
+  src: "../../fonts/allura/allura-latin-400-normal.woff2",
+  weight: "400",
+  display: "swap",
+});
 
 export const metadata = {
   title: "The Budderlee Post and the Residents of Budderlee",
