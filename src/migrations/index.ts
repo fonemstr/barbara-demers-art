@@ -17,6 +17,7 @@ import * as migration_20260924_add_lumaprints_print_fields from './20260924_add_
 import * as migration_20260925_add_resident_lumaprints_prints from './20260925_add_resident_lumaprints_prints';
 import * as migration_20260926_add_newsletter_audience from './20260926_add_newsletter_audience';
 import * as migration_20261010_add_painting_image_themed_scene from './20261010_add_painting_image_themed_scene';
+import * as migration_20261010_founding_iron_on_for_all from './20261010_founding_iron_on_for_all';
 
 export const migrations = [
   {
@@ -113,5 +114,10 @@ export const migrations = [
     up: migration_20261010_add_painting_image_themed_scene.up,
     down: migration_20261010_add_painting_image_themed_scene.down,
     name: '20261010_add_painting_image_themed_scene',
+  },
+  {
+    up: migration_20261010_founding_iron_on_for_all.up,
+    down: migration_20261010_founding_iron_on_for_all.down,
+    name: '20261010_founding_iron_on_for_all',
   },
 ];

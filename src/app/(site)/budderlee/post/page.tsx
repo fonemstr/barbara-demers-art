@@ -12,6 +12,7 @@ import {
   formatDollars,
   getActiveSubscriberCount,
   getBudderleePostSettings,
+  getFoundingWindow,
   getSignupSchedule,
 } from "@/lib/budderlee-post";
 
@@ -93,8 +94,8 @@ const FAQ = [
   },
   {
     q: "What does it mean to be a founding member?",
-    a: () =>
-      "Everyone on the waitlist who subscribes when signups open is a founding member and gets an exclusive Founding Member iron-on in their first package. It's a one-time design that won't be printed again.",
+    a: (_: string, __: number, foundingLastDay?: string) =>
+      `Everyone who subscribes ${foundingLastDay ? `by ${foundingLastDay}` : "at launch"} is a founding member and gets an exclusive Founding Member iron-on in their first package. It's a one-time design that won't be printed again.`,
   },
 ];
 
@@ -106,6 +107,8 @@ function ordinal(n: number) {
 
 export default async function BudderleePostPage() {
   const settings = await getBudderleePostSettings();
+  const foundingWindow = getFoundingWindow(settings.foundingWindowEnds);
+  const founding = foundingWindow?.open ? foundingWindow : undefined;
   const price = formatDollars(settings.priceCents);
   const resident = settings.firstResident;
 
@@ -235,13 +238,14 @@ export default async function BudderleePostPage() {
               <p className="mt-3 text-[15px] text-on-surface-muted leading-relaxed">{c.body}</p>
             </li>
           ))}
-          <li className="rounded-[var(--radius-lg)] bg-secondary-container-soft p-6">
-            <h3 className="font-serif text-xl leading-tight text-on-secondary-container">Founding Member iron-on</h3>
-            <p className="mt-3 text-[15px] text-on-surface-muted leading-relaxed">
-              Join the waitlist now and subscribe when signups open, and your
-              first package carries an exclusive one-time iron-on.
-            </p>
-          </li>
+          {founding && (
+            <li className="rounded-[var(--radius-lg)] bg-secondary-container-soft p-6">
+              <h3 className="font-serif text-xl leading-tight text-on-secondary-container">Founding Member iron-on</h3>
+              <p className="mt-3 text-[15px] text-on-surface-muted leading-relaxed">
+                {`Subscribe by ${founding.label}, and your first package carries an exclusive one-time iron-on.`}
+              </p>
+            </li>
+          )}
         </ul>
       </Section>
 
@@ -332,7 +336,7 @@ export default async function BudderleePostPage() {
             <div key={f.q} className="rounded-[var(--radius-lg)] bg-surface-container-low p-6">
               <dt className="font-serif text-lg leading-tight text-on-surface">{f.q}</dt>
               <dd className="mt-2 text-[15px] text-on-surface-muted leading-relaxed">
-                {f.a(settings.nextMailing, settings.cutoffDay)}
+                {f.a(settings.nextMailing, settings.cutoffDay, founding?.label)}
               </dd>
             </div>
           ))}
