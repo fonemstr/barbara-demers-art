@@ -53,6 +53,8 @@ export type Painting = {
   dateOfBirth?: string;
   starSign?: StarSign;
   friends?: { slug: string; name: string }[];
+  /** Where they live or work in the village. */
+  home?: string;
   sold?: boolean;
   featured?: boolean;
   updatedAt?: string;
@@ -241,11 +243,32 @@ type PayloadPainting = {
     friends?: Array<
       number | { slug?: string; characterName?: string | null; title?: string }
     > | null;
+    home?: string | null;
   } | null;
   sold?: boolean;
   featured?: boolean;
   updatedAt?: string;
 };
+
+/**
+ * A resident's name for display. Barbara sometimes types the number into
+ * the name ("Pippa Resident #013", "Hugo- Resident #007"); the number is
+ * shown on its own, so strip it here.
+ */
+export function cleanResidentName(raw: string): string {
+  const cleaned = raw.replace(/[\s\-–—,]*resident\s*(no\.?|#)?\s*\d+\s*$/i, "").trim();
+  return cleaned || raw.trim();
+}
+
+/** The display name of a resident painting. */
+export function residentName(p: Pick<Painting, "characterName" | "title">): string {
+  return cleanResidentName(p.characterName ?? p.title);
+}
+
+/** "No. 001" */
+export function residentNumberLabel(n?: number): string | undefined {
+  return n != null ? `No. ${String(n).padStart(3, "0")}` : undefined;
+}
 
 function normalizeOptionalText(value?: string | null): string | undefined {
   const trimmed = value?.trim();
@@ -309,10 +332,11 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
     friends: (p.profile?.friends ?? [])
       .map((f) =>
         typeof f === "object" && f.slug
-          ? { slug: f.slug, name: f.characterName || f.title || f.slug }
+          ? { slug: f.slug, name: cleanResidentName(f.characterName || f.title || f.slug) }
           : null,
       )
       .filter((f): f is { slug: string; name: string } => !!f),
+    home: normalizeOptionalText(p.profile?.home),
     sold: p.sold ?? false,
     featured: p.featured ?? false,
     updatedAt: p.updatedAt,
@@ -374,6 +398,19 @@ export async function getAvailablePaintings(): Promise<Painting[]> {
 export async function getBudderleePaintings(): Promise<Painting[]> {
   const all = await getAllPaintings();
   return all.filter((p) => p.collection === "budderlee");
+}
+
+/** Residents in village order: by resident number, unnumbered last. */
+export async function getResidents(): Promise<Painting[]> {
+  const residents = await getBudderleePaintings();
+  return [...residents].sort(
+    (a, b) => (a.residentNumber ?? Infinity) - (b.residentNumber ?? Infinity),
+  );
+}
+
+export async function getResident(slug: string): Promise<Painting | undefined> {
+  const p = await getPainting(slug);
+  return p?.collection === "budderlee" ? p : undefined;
 }
 
 /**

@@ -7,10 +7,16 @@ import {
 } from "@payloadcms/richtext-lexical";
 
 async function revalidateJournalPaths(slugs: (string | undefined)[]) {
-  const { revalidatePath } = await import("next/cache");
-  revalidatePath("/blog");
-  for (const slug of slugs) {
-    if (slug) revalidatePath(`/blog/${slug}`);
+  // Revalidation only works inside a Next request; migrations and scripts
+  // must still be able to save, so never let it fail the write.
+  try {
+    const { revalidatePath } = await import("next/cache");
+    revalidatePath("/blog");
+    for (const slug of slugs) {
+      if (slug) revalidatePath(`/blog/${slug}`);
+    }
+  } catch {
+    // outside a request context (scripts, migrations): nothing to do
   }
 }
 

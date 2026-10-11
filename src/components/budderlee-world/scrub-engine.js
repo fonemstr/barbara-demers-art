@@ -64,8 +64,8 @@
    ----------------------------------------------------------------------------
    LOCAL CHANGES (barbara-demers-art): the upstream engine assumes it owns the
    whole page. Here it sits between the site header and footer, so scroll is
-   measured from the container's own top (`origin`), the fixed layers hide once
-   the visitor scrolls past the container, the engine's page-level html/body
+   measured from the container's own top (`origin`), the fixed layers start
+   at the container and hide once the visitor scrolls past it, the engine's page-level html/body
    rule is dropped, and mountScrollWorld returns a cleanup function for React.
    ========================================================================== */
 
@@ -236,12 +236,15 @@ export function mountScrollWorld(container, config) {
 
   function read() {
     const raw = (window.scrollY || window.pageYOffset) - origin;
-    // The layers are position:fixed. Once the flight has finished, slide them up
-    // with the page so the last scene scrolls away into the footer, then hide
-    // them. Above the container (the site header) counts as the start.
+    // The layers are position:fixed. Before the container reaches the top of
+    // the window (the masthead and intro above it), push them down so they
+    // start where the container starts; once the flight has finished, slide
+    // them up with the page so the last scene scrolls away into the footer.
+    // Off-screen either way, they hide.
+    const ahead = Math.max(0, -raw);
     const past = Math.max(0, raw - totalW * vh);
-    container.style.setProperty('--sw-past', past + 'px');
-    container.classList.toggle('sw-off', past > vh);
+    container.style.setProperty('--sw-past', (past - ahead) + 'px');
+    container.classList.toggle('sw-off', past > vh || ahead > vh);
     // Hold the last frame while the finished flight slides away.
     const y = Math.min(Math.max(0, raw), totalW * vh);
     const fade = CROSSFADE * vh;

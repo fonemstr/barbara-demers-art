@@ -78,6 +78,7 @@ export interface Config {
     issues: Issue;
     subscribers: Subscriber;
     shipments: Shipment;
+    tales: Tale;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +97,7 @@ export interface Config {
     issues: IssuesSelect<false> | IssuesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
+    tales: TalesSelect<false> | TalesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -107,9 +109,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     'budderlee-post': BudderleePost;
+    'budderlee-page': BudderleePage;
   };
   globalsSelect: {
     'budderlee-post': BudderleePostSelect<false> | BudderleePostSelect<true>;
+    'budderlee-page': BudderleePageSelect<false> | BudderleePageSelect<true>;
   };
   locale: null;
   widgets: {
@@ -289,6 +293,10 @@ export interface Painting {
      * Other residents. Their names print on the card.
      */
     friends?: (number | Painting)[] | null;
+    /**
+     * Where they live or work, e.g. "Above his tailor shop on Market Street". Shown on their resident page.
+     */
+    home?: string | null;
   };
   year: number;
   medium: string;
@@ -747,6 +755,55 @@ export interface Shipment {
   createdAt: string;
 }
 /**
+ * Stories of Budderlee, each told through one resident. Published tales appear under /budderlee/tales.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tales".
+ */
+export interface Tale {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier. Lowercase, dashes instead of spaces (e.g. pippa-and-the-candied-apples).
+   */
+  slug: string;
+  /**
+   * Whose eyes the story is told through. Their painting illustrates the tale and links to it.
+   */
+  resident?: (number | null) | Painting;
+  /**
+   * A short introduction for the story cards and the Budderlee page.
+   */
+  excerpt?: string | null;
+  /**
+   * Optional illustration for the top of the story. The resident's painting is used when left empty.
+   */
+  cover?: (number | null) | Media;
+  body: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Shown in "Step into a story". If several are ticked, the newest wins.
+   */
+  featured?: boolean | null;
+  status: 'draft' | 'published';
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -813,6 +870,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'shipments';
         value: number | Shipment;
+      } | null)
+    | ({
+        relationTo: 'tales';
+        value: number | Tale;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -960,6 +1021,7 @@ export interface PaintingsSelect<T extends boolean = true> {
         dateOfBirth?: T;
         starSign?: T;
         friends?: T;
+        home?: T;
       };
   year?: T;
   medium?: T;
@@ -1158,6 +1220,23 @@ export interface ShipmentsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tales_select".
+ */
+export interface TalesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  resident?: T;
+  excerpt?: T;
+  cover?: T;
+  body?: T;
+  featured?: T;
+  status?: T;
+  publishedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1248,6 +1327,25 @@ export interface BudderleePost {
   createdAt?: string | null;
 }
 /**
+ * Content for the Budderlee welcome page (/budderlee). Updates within a minute of saving.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budderlee-page".
+ */
+export interface BudderleePage {
+  id: number;
+  /**
+   * A photograph of a framed original resident painting together with the package it ships in. Shown under "Bring a resident home".
+   */
+  originalsPhoto?: (number | null) | Media;
+  /**
+   * One or two sentences on what comes with an original resident painting. Shown on the Budderlee page and on every resident's page.
+   */
+  originalsIncludes?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "budderlee-post_select".
  */
@@ -1262,6 +1360,17 @@ export interface BudderleePostSelect<T extends boolean = true> {
   stripePriceId?: T;
   includePastDue?: T;
   collectTax?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budderlee-page_select".
+ */
+export interface BudderleePageSelect<T extends boolean = true> {
+  originalsPhoto?: T;
+  originalsIncludes?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

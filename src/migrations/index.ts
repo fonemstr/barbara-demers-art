@@ -18,6 +18,8 @@ import * as migration_20260925_add_resident_lumaprints_prints from './20260925_a
 import * as migration_20260926_add_newsletter_audience from './20260926_add_newsletter_audience';
 import * as migration_20261010_add_painting_image_themed_scene from './20261010_add_painting_image_themed_scene';
 import * as migration_20261010_founding_iron_on_for_all from './20261010_founding_iron_on_for_all';
+import * as migration_20261011_add_tales_and_budderlee_page from './20261011_add_tales_and_budderlee_page';
+import * as migration_20261011_move_pippa_story_to_tales from './20261011_move_pippa_story_to_tales';
 
 export const migrations = [
   {
@@ -119,5 +121,15 @@ export const migrations = [
     up: migration_20261010_founding_iron_on_for_all.up,
     down: migration_20261010_founding_iron_on_for_all.down,
     name: '20261010_founding_iron_on_for_all',
+  },
+  {
+    up: migration_20261011_add_tales_and_budderlee_page.up,
+    down: migration_20261011_add_tales_and_budderlee_page.down,
+    name: '20261011_add_tales_and_budderlee_page',
+  },
+  {
+    up: migration_20261011_move_pippa_story_to_tales.up,
+    down: migration_20261011_move_pippa_story_to_tales.down,
+    name: '20261011_move_pippa_story_to_tales',
   },
 ];
