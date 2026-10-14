@@ -43,10 +43,15 @@ export default buildConfig({
           Component: "/src/components/admin/fulfillment-view#FulfillmentView",
           path: "/fulfillment",
         },
+        orders: {
+          Component: "/src/components/admin/orders-view#OrdersView",
+          path: "/orders",
+        },
       },
       afterNavLinks: [
         "/src/components/admin/analytics-nav-link#AnalyticsNavLink",
         "/src/components/admin/fulfillment-nav-link#FulfillmentNavLink",
+        "/src/components/admin/orders-nav-link#OrdersNavLink",
       ],
     },
   },
