@@ -11,6 +11,7 @@ import {
 } from "@/data/paintings";
 import { cn, formatPrice } from "@/lib/utils";
 import { BuyButton } from "@/components/buy-button";
+import { AffirmMessage } from "@/components/affirm-message";
 import { PaintingGallery } from "@/components/painting-gallery";
 import { PrintBuy } from "@/components/print-buy";
 import { PaintingCard } from "@/components/painting-card";
@@ -245,6 +246,7 @@ export default async function PaintingPage({
                       : `+ ${formatPrice(shipping.cents)} shipping`}
                   </p>
                 </div>
+                <AffirmMessage amountCents={painting.priceCents + shipping.cents} />
                 <BuyButton slug={painting.slug} />
                 <p className="text-xs text-on-surface-subtle">
                   Secure checkout by Stripe. Sales tax is added where it
