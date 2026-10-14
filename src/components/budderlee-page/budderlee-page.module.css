@@ -301,6 +301,9 @@
 @keyframes vanish { to { opacity: 0; transform: translateY(24px) scale(0.96); } }
 
 .contents {
+  /* Where the month comes to rest. On wide screens it sits beside the
+     intro text, so it settles lower, level with the text's middle. */
+  --settle-y: -14%;
   position: absolute;
   left: 50%;
   bottom: 70px;
@@ -313,7 +316,7 @@
 @keyframes rise {
   8% { opacity: 1; }
   50% { transform: translate(-50%, -30%) scale(1); opacity: 1; z-index: 5; }
-  100% { transform: translate(-50%, -14%) scale(1.18); opacity: 1; z-index: 5; }
+  100% { transform: translate(-50%, var(--settle-y)) scale(1.18); opacity: 1; z-index: 5; }
 }
 .contents img {
   width: 100%;
@@ -371,6 +374,15 @@
 }
 .stepOn { opacity: 1; }
 
+/* The page's two-column layout starts at Tailwind's lg breakpoint. The
+   contents' bottom edge sits 106px above the stage floor (the envelope's
+   36px plus their own 70px), so shifting them by half their height less
+   174px puts their middle on the 560px stage's middle (280px), which the
+   grid lines up with the middle of the text. */
+@media (min-width: 1024px) {
+  .contents { --settle-y: calc(50% - 174px); }
+}
+
 /* ───────────── Small screens ───────────── */
 
 @media (max-width: 767px) {
@@ -388,5 +400,5 @@
   .viewer img { animation: none !important; transition: none !important; }
   .front, .shell, .flapGroup, .wax, .daisy { display: none; }
   .back { transform: none; }
-  .contents { opacity: 1; transform: translate(-50%, -14%) scale(1.18); }
+  .contents { opacity: 1; transform: translate(-50%, var(--settle-y)) scale(1.18); }
 }
