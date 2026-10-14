@@ -7,6 +7,8 @@ import Link from "next/link";
 import React from "react";
 
 import { stripe } from "@/lib/stripe";
+import { SHIPPED_AT_KEY, TRACKING_KEY } from "@/lib/order-shipping";
+import { ConfirmSubmit } from "./confirm-submit";
 
 // Orders live in Stripe, not the database: every sale is a paid checkout
 // session. Reading them from Stripe shows the whole history, including
@@ -30,6 +32,11 @@ type Order = {
   shipTo: string[];
   status: { label: string; tone: "ok" | "warn" | "muted" };
   lumaprintsOrder: string | null;
+  paymentIntentId: string | null;
+  // The studio ships it itself, so it gets a Mark shipped button.
+  selfShipped: boolean;
+  shippedAt: string | null;
+  tracking: string | null;
   refunded: "full" | "partial" | null;
   dashboardUrl: string | null;
 };
@@ -54,6 +61,10 @@ function dateLabel(unix: number) {
   });
 }
 
+function shortDate(iso: string) {
+  return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" });
+}
+
 function toOrder(session: Stripe.Checkout.Session): Order {
   const meta = session.metadata ?? {};
   const kind: OrderKind = meta.commission_tier ? "commission" : meta.print_option_id ? "print" : "original";
@@ -76,8 +87,13 @@ function toOrder(session: Stripe.Checkout.Session): Order {
     : [];
 
   const lumaprintsOrder = pi?.metadata?.lumaprints_order_number ?? null;
+  const selfShipped = kind === "original" || (kind === "print" && !lumaprintsOrder);
+  const shippedAt = pi?.metadata?.[SHIPPED_AT_KEY] || null;
+  const tracking = pi?.metadata?.[TRACKING_KEY] || null;
   let status: Order["status"];
-  if (kind === "commission") {
+  if (selfShipped && shippedAt) {
+    status = { label: `Shipped ${shortDate(shippedAt)}`, tone: "ok" };
+  } else if (kind === "commission") {
     status = { label: "Deposit paid", tone: "muted" };
   } else if (kind === "original") {
     status = { label: "Barbara ships", tone: "warn" };
@@ -105,6 +121,10 @@ function toOrder(session: Stripe.Checkout.Session): Order {
     shipTo,
     status,
     lumaprintsOrder,
+    paymentIntentId: pi?.id ?? null,
+    selfShipped,
+    shippedAt,
+    tracking,
     refunded,
     dashboardUrl: pi ? `${dashboardBase}payments/${pi.id}` : null,
   };
@@ -116,8 +136,11 @@ const KIND_LABEL: Record<OrderKind, string> = {
   commission: "Commission deposit",
 };
 
-const FILTERS: { value: OrderKind | "all"; label: string }[] = [
+type Filter = OrderKind | "all" | "to-ship";
+
+const FILTERS: { value: Filter; label: string }[] = [
   { value: "all", label: "All" },
+  { value: "to-ship", label: "To ship" },
   { value: "original", label: "Originals" },
   { value: "print", label: "Prints" },
   { value: "commission", label: "Commissions" },
@@ -136,7 +159,41 @@ async function loadOrders(client: Stripe, after: string | undefined) {
   return { orders, nextAfter: page.has_more ? page.data.at(-1)?.id : undefined };
 }
 
-function OrderRow({ order, adminRoute }: { order: Order; adminRoute: string }) {
+function needsShipping(order: Order) {
+  return order.selfShipped && !order.shippedAt && order.refunded !== "full";
+}
+
+function ShipControls({ order, back }: { order: Order; back: string }) {
+  if (!order.selfShipped || !order.paymentIntentId) return null;
+  if (order.shippedAt) {
+    return (
+      <form method="post" action="/api/orders/ship" className="ov-ship">
+        <input type="hidden" name="payment_intent" value={order.paymentIntentId} />
+        <input type="hidden" name="item" value={order.item} />
+        <input type="hidden" name="back" value={back} />
+        <input type="hidden" name="undo" value="1" />
+        {order.tracking && <div className="fv-muted">Tracking: {order.tracking}</div>}
+        <ConfirmSubmit className="ov-linkbutton" message={`Mark ${order.item} as not shipped?`}>
+          Undo shipped
+        </ConfirmSubmit>
+      </form>
+    );
+  }
+  if (order.refunded === "full") return null;
+  return (
+    <form method="post" action="/api/orders/ship" className="ov-ship">
+      <input type="hidden" name="payment_intent" value={order.paymentIntentId} />
+      <input type="hidden" name="item" value={order.item} />
+      <input type="hidden" name="back" value={back} />
+      <input type="text" name="tracking" placeholder="Tracking number (optional)" aria-label={`Tracking number for ${order.item}`} />
+      <button type="submit" className="btn btn--style-primary btn--size-small">
+        Mark shipped
+      </button>
+    </form>
+  );
+}
+
+function OrderRow({ order, adminRoute, back }: { order: Order; adminRoute: string; back: string }) {
   return (
     <tr>
       <td>
@@ -171,6 +228,7 @@ function OrderRow({ order, adminRoute }: { order: Order; adminRoute: string }) {
       </td>
       <td>
         <span className={`ov-pill ov-pill--${order.status.tone}`}>{order.status.label}</span>
+        <ShipControls order={order} back={back} />
         <div className="ov-links fv-muted">
           {order.dashboardUrl && (
             <a href={order.dashboardUrl} target="_blank" rel="noreferrer">
@@ -202,6 +260,8 @@ export async function OrdersView({ initPageResult, params, searchParams }: Admin
   const after = first(searchParams?.after);
   const kindParam = first(searchParams?.kind);
   const kind = FILTERS.find((f) => f.value === kindParam)?.value ?? "all";
+  const ok = first(searchParams?.ok);
+  const flashError = first(searchParams?.error);
 
   let orders: Order[] = [];
   let nextAfter: string | undefined;
@@ -217,7 +277,8 @@ export async function OrdersView({ initPageResult, params, searchParams }: Admin
     }
   }
   const testMode = process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_") ?? false;
-  const shown = kind === "all" ? orders : orders.filter((o) => o.kind === kind);
+  const shown =
+    kind === "all" ? orders : kind === "to-ship" ? orders.filter(needsShipping) : orders.filter((o) => o.kind === kind);
   const href = (q: { kind?: string; after?: string }) => {
     const qs = new URLSearchParams();
     if (q.kind && q.kind !== "all") qs.set("kind", q.kind);
@@ -244,9 +305,14 @@ export async function OrdersView({ initPageResult, params, searchParams }: Admin
             Stripe is in test mode here, so these are test orders, not real sales.
           </div>
         )}
-        {error && (
+        {ok && (
+          <div className="fv-banner fv-banner--ok" role="status">
+            {ok}
+          </div>
+        )}
+        {(error ?? flashError) && (
           <div className="fv-banner fv-banner--error" role="alert">
-            {error}
+            {error ?? flashError}
           </div>
         )}
 
@@ -285,7 +351,7 @@ export async function OrdersView({ initPageResult, params, searchParams }: Admin
                 </thead>
                 <tbody>
                   {shown.map((order) => (
-                    <OrderRow key={order.id} order={order} adminRoute={adminRoute} />
+                    <OrderRow key={order.id} order={order} adminRoute={adminRoute} back={href({ kind, after })} />
                   ))}
                 </tbody>
               </table>

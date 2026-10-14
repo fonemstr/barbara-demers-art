@@ -395,5 +395,20 @@ html[data-theme="dark"] .analytics-view {
     &--warn { background: var(--theme-warning-100); color: var(--theme-warning-900); }
     &--muted { background: var(--theme-elevation-100); color: var(--theme-elevation-800); }
   }
+  .ov-ship {
+    display: flex; flex-wrap: wrap; gap: calc(var(--base) * 0.4); align-items: center;
+    margin-top: calc(var(--base) * 0.4);
+    input[type="text"] {
+      font: inherit; font-size: 14px; width: 15em; max-width: 100%;
+      padding: 4px 8px; border-radius: 4px;
+      border: 1px solid var(--theme-elevation-250);
+      background: var(--theme-input-bg, var(--theme-elevation-0)); color: var(--theme-text);
+    }
+    .btn { margin: 0; font-size: 14px; }
+  }
+  .ov-linkbutton {
+    font: inherit; font-size: 14px; padding: 0; border: 0; background: none; cursor: pointer;
+    color: var(--theme-elevation-600); text-decoration: underline;
+  }
   .ov-links { display: flex; gap: calc(var(--base) * 0.5); margin-top: calc(var(--base) * 0.3); }
 }
