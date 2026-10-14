@@ -186,6 +186,11 @@ function ShipControls({ order, back }: { order: Order; back: string }) {
       <input type="hidden" name="item" value={order.item} />
       <input type="hidden" name="back" value={back} />
       <input type="text" name="tracking" placeholder="Tracking number (optional)" aria-label={`Tracking number for ${order.item}`} />
+      {order.buyerEmail && (
+        <label className="ov-check">
+          <input type="checkbox" name="notify" value="1" defaultChecked /> Email the buyer
+        </label>
+      )}
       <button type="submit" className="btn btn--style-primary btn--size-small">
         Mark shipped
       </button>

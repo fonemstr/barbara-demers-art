@@ -1,29 +1,11 @@
 import { FROM_EMAIL, TO_EMAIL, resend } from "./resend";
 import { SITE_URL } from "./site-url";
+import { h1, link, p, shell, site } from "./email-layout";
 import { BUDDERLEE_POST } from "./budderlee-post";
 
 // Emails for The Budderlee Post. Stripe sends receipts, renewal notices,
 // failed-payment retries, and expiring-card warnings itself; these are
 // the human ones: the welcome, the manage link, and Barbara's heads-ups.
-
-const site = SITE_URL.replace(/^https?:\/\//, "");
-
-function shell(inner: string) {
-  return `
-  <div style="background:#fefcf4;padding:32px 16px;">
-    <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;padding:36px 32px;font-family:Georgia,'Times New Roman',serif;color:#3a3a33;">
-      ${inner}
-      <p style="margin:24px 0 0;font-size:16px;line-height:1.5;">
-        Barbara J Demers<br/>
-        <a href="${SITE_URL}" style="color:#8a7a2e;">${site}</a>
-      </p>
-    </div>
-  </div>`;
-}
-
-const p = (text: string) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;">${text}</p>`;
-const h1 = (text: string) => `<h1 style="margin:0 0 18px;font-size:26px;font-weight:normal;line-height:1.25;">${text}</h1>`;
-const link = (href: string, text: string) => `<a href="${href}" style="color:#8a7a2e;">${text}</a>`;
 
 async function send(to: string, subject: string, text: string, html: string, replyTo?: string) {
   if (!resend) {
