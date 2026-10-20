@@ -1,0 +1,23 @@
+# Once a day: syncs Budderlee Post payments from Stripe and, on the day
+# after the cutoff, emails Barbara the month's payment summary.
+# Requires the CRON_SECRET repository secret (shared with social-cron.yml).
+name: budderlee-post-payments
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      summary:
+        description: "Send the payment summary email now"
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync payments and send the summary when due
+        run: |
+          curl -fsS -m 290 \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://www.barbarajdemers.com/api/cron/budderlee-post-payments${{ inputs.summary && '?summary=1' || '' }}"

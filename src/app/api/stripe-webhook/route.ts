@@ -6,6 +6,7 @@ import {
   handlePostCheckoutCompleted,
   handlePostCustomerUpdated,
   handlePostInvoiceFailed,
+  handlePostInvoicePaid,
   handlePostSubscriptionEvent,
   isPostSession,
 } from "@/lib/budderlee-post-stripe";
@@ -44,6 +45,7 @@ export async function POST(request: Request) {
     "customer.subscription.deleted",
     "customer.subscription.paused",
     "customer.subscription.resumed",
+    "invoice.paid",
     "invoice.payment_failed",
     "customer.updated",
   ]);
@@ -66,6 +68,9 @@ export async function POST(request: Request) {
         case "customer.subscription.paused":
         case "customer.subscription.resumed":
           await handlePostSubscriptionEvent(payload, event.data.object, event.type, event.livemode);
+          break;
+        case "invoice.paid":
+          await handlePostInvoicePaid(payload, event.data.object);
           break;
         case "invoice.payment_failed":
           await handlePostInvoiceFailed(payload, event.data.object, event.livemode);

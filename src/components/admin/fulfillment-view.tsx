@@ -7,6 +7,7 @@ import React from "react";
 
 import { getBudderleePostSettings, getSignupSchedule } from "@/lib/budderlee-post";
 import { getIssueOverviews, getSubscriberCounts, type IssueOverview } from "@/lib/budderlee-post-fulfillment";
+import { getPaymentCycle } from "@/lib/budderlee-post-payments";
 import { ConfirmSubmit } from "./confirm-submit";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -93,11 +94,13 @@ export async function FulfillmentView({ initPageResult, params, searchParams }: 
   const ok = first(searchParams?.ok);
   const error = first(searchParams?.error);
 
-  const [settings, counts, issues] = await Promise.all([
+  const [settings, counts, issues, payments] = await Promise.all([
     getBudderleePostSettings(),
     getSubscriberCounts(req.payload),
     getIssueOverviews(req.payload),
+    getPaymentCycle(req.payload),
   ]);
+  const pastDueUnpaid = payments.unpaid.filter((s) => s.status === "past_due").length;
   const schedule = getSignupSchedule(settings.cutoffDay);
   const shippable = counts.active + (settings.includePastDue ? counts.past_due : 0);
 
@@ -124,6 +127,17 @@ export async function FulfillmentView({ initPageResult, params, searchParams }: 
             <div className="fv-tile__value">{shippable}</div>
             <div className="fv-muted">
               {counts.active} active{settings.includePastDue ? ` + ${counts.past_due} past due` : ""} · cap {settings.subscriberCap}
+            </div>
+          </div>
+          <div className="fv-tile">
+            <div className="fv-tile__label">Paid for {payments.mailing.label}</div>
+            <div className="fv-tile__value">
+              {payments.paid.length} of {payments.paid.length + payments.unpaid.length}
+            </div>
+            <div className="fv-muted">
+              renewals run the 1st to the {settings.cutoffDay}th
+              {pastDueUnpaid ? ` · ${pastDueUnpaid} past due` : ""} ·{" "}
+              <Link href={`${adminRoute}/collections/subscribers?sort=paidForMailing`}>who</Link>
             </div>
           </div>
           <div className="fv-tile">

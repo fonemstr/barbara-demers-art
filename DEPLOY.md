@@ -30,7 +30,7 @@ Pushes to `main` auto-deploy. The build command is `pnpm vercel-build`, which ru
 5. **Deploy.**
 6. Visit `/admin` once the deploy finishes to create Barbara's Payload admin account (first-visit prompt).
 7. **Register the Stripe webhook** at `https://<your-domain>/api/stripe-webhook` in the Stripe dashboard. Copy the signing secret into `STRIPE_WEBHOOK_SECRET` and redeploy.
-   The endpoint needs these events: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.subscription.paused`, `customer.subscription.resumed`, `invoice.payment_failed`, `customer.updated`. The last seven keep The Budderlee Post's subscriber list in step with Stripe.
+   The endpoint needs these events: `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `customer.subscription.paused`, `customer.subscription.resumed`, `invoice.paid`, `invoice.payment_failed`, `customer.updated`. The last eight keep The Budderlee Post's subscriber list in step with Stripe.
 8. **Verify** with a Stripe test-mode order before switching to live keys.
 
 ---

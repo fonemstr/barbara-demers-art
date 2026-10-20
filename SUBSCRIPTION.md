@@ -298,6 +298,7 @@ Stripe Tax is one switch away if the accountant says to collect.
 | Manage link | Resend | Requested on the manage page |
 | Package on its way (optional) | Resend | Barbara marks an issue shipped |
 | New subscriber, waitlist signup, cancellation, payment failure | Resend, to Barbara | Webhook and form events |
+| Monthly payments summary: who paid for next month's mailing, who hasn't, amount collected | Resend, to Barbara | Daily cron (`/api/cron/budderlee-post-payments`, GitHub Actions) on the day after the cutoff |
 
 ## 9. Build order and timeline
 

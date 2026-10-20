@@ -11,7 +11,7 @@ export const Subscribers: CollectionConfig = {
   admin: {
     group: "The Budderlee Post",
     useAsTitle: "email",
-    defaultColumns: ["email", "name", "status", "foundingMember", "currentPeriodEnd", "packagesSent"],
+    defaultColumns: ["email", "name", "status", "paidForMailing", "currentPeriodEnd", "packagesSent"],
     description:
       "Everyone subscribed to The Budderlee Post, kept in step with Stripe automatically. Change cards, addresses, and cancellations in Stripe or through the subscriber's own portal link; only Notes is yours to edit here.",
   },
@@ -88,6 +88,33 @@ export const Subscribers: CollectionConfig = {
           label: "Subscribed",
           type: "date",
           admin: { readOnly: true, date: { pickerAppearance: "dayAndTime" } },
+        },
+      ],
+    },
+    {
+      type: "row",
+      fields: [
+        {
+          name: "paidForMailing",
+          label: "Paid for",
+          type: "date",
+          admin: {
+            readOnly: true,
+            date: { pickerAppearance: "monthOnly", displayFormat: "MMMM yyyy" },
+            description: "The latest mailing their payments cover. Renewals between the 1st and the cutoff pay for next month's package.",
+          },
+        },
+        {
+          name: "lastPaymentAt",
+          label: "Last payment",
+          type: "date",
+          admin: { readOnly: true, date: { pickerAppearance: "dayAndTime" } },
+        },
+        {
+          name: "lastPaymentAmount",
+          label: "Last payment ($)",
+          type: "number",
+          admin: { readOnly: true },
         },
       ],
     },

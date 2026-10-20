@@ -681,6 +681,12 @@ export interface Subscriber {
   trialEnd?: string | null;
   startedAt?: string | null;
   /**
+   * The latest mailing their payments cover. Renewals between the 1st and the cutoff pay for next month's package.
+   */
+  paidForMailing?: string | null;
+  lastPaymentAt?: string | null;
+  lastPaymentAmount?: number | null;
+  /**
    * Synced from Stripe whenever the subscriber updates it.
    */
   shippingAddress?: {
@@ -1170,6 +1176,9 @@ export interface SubscribersSelect<T extends boolean = true> {
   currentPeriodEnd?: T;
   trialEnd?: T;
   startedAt?: T;
+  paidForMailing?: T;
+  lastPaymentAt?: T;
+  lastPaymentAmount?: T;
   shippingAddress?:
     | T
     | {
