@@ -170,6 +170,49 @@ export function getSignupSchedule(cutoffDay: number, now = new Date()): SignupSc
   };
 }
 
+/**
+ * The mailing a charge pays for, from the start of the billing period it
+ * opens: a period starting on or before the cutoff day pays for next
+ * month's package, a later one for the month after. Returned as noon UTC
+ * on the 1st, the way Issues store their mailing month, so it reads as
+ * the same month in any timezone.
+ */
+export function mailingPaidFor(cutoffDay: number, periodStart: Date): Date {
+  const { year, month, day } = partsIn(POST_TIMEZONE, periodStart);
+  const ahead = day <= cutoffDay ? 1 : 2;
+  return new Date(Date.UTC(year, month - 1 + ahead, 1, 12));
+}
+
+export type PaymentMailing = {
+  /** Noon UTC on the 1st of the mailing month, as mailingPaidFor returns. */
+  month: Date;
+  /** The month bounds in UTC, for querying paidForMailing. */
+  from: Date;
+  until: Date;
+  label: string;
+};
+
+/**
+ * The mailing whose renewals run this month. Every charge lands between
+ * the 1st and the cutoff, and pays for next month's package.
+ */
+export function currentPaymentMailing(now = new Date()): PaymentMailing {
+  const { year, month } = partsIn(POST_TIMEZONE, now);
+  // `month` is 1-based, so as a Date.UTC month index it is already next month.
+  const from = new Date(Date.UTC(year, month, 1));
+  return {
+    month: new Date(Date.UTC(year, month, 1, 12)),
+    from,
+    until: new Date(Date.UTC(year, month + 1, 1)),
+    label: `${MONTHS[from.getUTCMonth()]} ${from.getUTCFullYear()}`,
+  };
+}
+
+/** Today's calendar day in the studio's timezone. */
+export function studioDay(now = new Date()): number {
+  return partsIn(POST_TIMEZONE, now).day;
+}
+
 export type FoundingWindow = {
   /** True while signups still earn the Founding Member iron-on. */
   open: boolean;

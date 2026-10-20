@@ -39,7 +39,7 @@ Open <http://localhost:3000>.
 | `RESEND_SEGMENT_ID` | optional | Resend segment that newsletter signups are added to and that newsletters are sent to. Without it, signups land as plain account-level contacts and sends pick a segment by name (see Newsletter). |
 | `META_PAGE_ID`, `META_IG_USER_ID`, `META_PAGE_ACCESS_TOKEN` | for social posting | Facebook Page + linked Instagram account. Setup steps in `SOCIAL.md`. Without them, those platforms report a clear failure and everything else works. |
 | `PINTEREST_APP_ID`, `PINTEREST_APP_SECRET`, `PINTEREST_REFRESH_TOKEN`, `PINTEREST_BOARD_ID` | for social posting | Pinterest app credentials and the board that receives pins. See `SOCIAL.md`. |
-| `CRON_SECRET` | for scheduled social posts | Any random string; the same value goes in the GitHub repo secret `CRON_SECRET` so the scheduler workflow can call `/api/cron/social-posts`. |
+| `CRON_SECRET` | for scheduled social posts | Any random string; the same value goes in the GitHub repo secret `CRON_SECRET` so the scheduler workflows can call `/api/cron/social-posts` and `/api/cron/budderlee-post-payments`. |
 | `NEXT_PUBLIC_SITE_URL` | in production | Used as the origin for Stripe success/cancel URLs. |
 
 Graceful fallbacks:

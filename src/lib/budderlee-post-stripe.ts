@@ -1,6 +1,6 @@
 import type Stripe from "stripe";
 import type { Payload } from "payload";
-import { getBudderleePostSettings, getFoundingWindow, getSignupSchedule } from "./budderlee-post";
+import { getBudderleePostSettings, getFoundingWindow, getSignupSchedule, mailingPaidFor } from "./budderlee-post";
 import { notifyStudio, sendWelcomeEmail } from "./budderlee-post-emails";
 import { SITE_URL } from "./site-url";
 
@@ -101,6 +101,33 @@ function subscriptionFields(sub: Stripe.Subscription) {
   };
 }
 
+function invoiceSubscriptionId(invoice: Stripe.Invoice): string | null {
+  const subRef =
+    invoice.parent?.subscription_details?.subscription ?? (invoice as LegacyInvoice).subscription;
+  return (typeof subRef === "string" ? subRef : subRef?.id) ?? null;
+}
+
+type PaymentFields = { paidForMailing: string; lastPaymentAt: string; lastPaymentAmount: number };
+
+/** What a paid invoice records on the subscriber, or null for a $0 or unpaid one. */
+function paymentFields(invoice: Stripe.Invoice, cutoffDay: number): PaymentFields | null {
+  if (invoice.status !== "paid" || !invoice.amount_paid) return null;
+  const paidAt = invoice.status_transitions?.paid_at ?? invoice.created;
+  // The billing period the charge opens decides the mailing, so a renewal
+  // Stripe only collects on a later retry still counts for its own month.
+  const periodStart = invoice.lines?.data?.[0]?.period?.start ?? paidAt;
+  return {
+    paidForMailing: mailingPaidFor(cutoffDay, new Date(periodStart * 1000)).toISOString(),
+    lastPaymentAt: new Date(paidAt * 1000).toISOString(),
+    lastPaymentAmount: invoice.amount_paid / 100,
+  };
+}
+
+/** True when `fields` is a newer payment than the one already on the row. */
+function isNewerPayment(existing: { lastPaymentAt?: string | null }, fields: PaymentFields): boolean {
+  return !existing.lastPaymentAt || new Date(fields.lastPaymentAt) >= new Date(existing.lastPaymentAt);
+}
+
 async function findBySubscriptionId(payload: Payload, id: string) {
   const res = await payload.find({
     collection: "subscribers",
@@ -131,7 +158,7 @@ export async function handlePostCheckoutCompleted(
     console.error(`[budderlee-post] session ${session.id} completed without a subscription.`);
     return;
   }
-  const sub = await stripe.subscriptions.retrieve(subId);
+  const sub = await stripe.subscriptions.retrieve(subId, { expand: ["latest_invoice"] });
   const custId = customerId(session.customer) ?? customerId(sub.customer);
   const email = (session.customer_details?.email ?? session.customer_email ?? "").toLowerCase();
   const shippingDetails = session.collected_information?.shipping_details;
@@ -169,6 +196,12 @@ export async function handlePostCheckoutCompleted(
   }
 
   const fields = subscriptionFields(sub);
+  // A signup charged at checkout is paid before this runs, and its
+  // invoice.paid event may have arrived while there was no row to record it.
+  const firstPayment =
+    sub.latest_invoice && typeof sub.latest_invoice === "object"
+      ? paymentFields(sub.latest_invoice, settings.cutoffDay)
+      : null;
   const existing = await findBySubscriptionId(payload, sub.id);
   const data = {
     email,
@@ -179,6 +212,7 @@ export async function handlePostCheckoutCompleted(
     packagesSent: 0,
     startedAt: new Date().toISOString(),
     ...(address ? { shippingAddress: address } : {}),
+    ...(firstPayment ? firstPayment : {}),
     ...fields,
   };
   if (existing) {
@@ -249,9 +283,7 @@ export async function handlePostSubscriptionEvent(
 
 /** A renewal charge failed. Stripe retries and emails them; Barbara just hears about it. */
 export async function handlePostInvoiceFailed(payload: Payload, invoice: Stripe.Invoice, livemode: boolean) {
-  const subRef =
-    invoice.parent?.subscription_details?.subscription ?? (invoice as LegacyInvoice).subscription;
-  const subId = typeof subRef === "string" ? subRef : subRef?.id;
+  const subId = invoiceSubscriptionId(invoice);
   if (!subId) return;
   const existing = await findBySubscriptionId(payload, subId);
   if (!existing) return;
@@ -262,6 +294,46 @@ export async function handlePostInvoiceFailed(payload: Payload, invoice: Stripe.
     "Stripe will retry over the next week and has emailed them to update their card. Nothing to do unless it stays past due.",
     invoice.hosted_invoice_url ? `Invoice: ${invoice.hosted_invoice_url}` : "",
   ]);
+}
+
+/** A charge went through: record it and the mailing it pays for. */
+export async function handlePostInvoicePaid(payload: Payload, invoice: Stripe.Invoice) {
+  const subId = invoiceSubscriptionId(invoice);
+  if (!subId) return;
+  // No row yet means this is the checkout charge; the checkout handler
+  // records it from the subscription's latest invoice.
+  const existing = await findBySubscriptionId(payload, subId);
+  if (!existing) return;
+  const { cutoffDay } = await getBudderleePostSettings();
+  const fields = paymentFields(invoice, cutoffDay);
+  if (!fields || !isNewerPayment(existing, fields)) return;
+  await payload.update({ collection: "subscribers", id: existing.id, data: fields, overrideAccess: true });
+}
+
+/**
+ * Re-reads a subscriber's latest paid invoice from Stripe. The daily
+ * payments cron runs this for everyone, which backfills rows from before
+ * payments were recorded and repairs any missed webhook.
+ */
+export async function syncLatestPostPayment(
+  stripe: Stripe,
+  payload: Payload,
+  subscriber: { id: number; stripeSubscriptionId?: string | null; lastPaymentAt?: string | null; paidForMailing?: string | null },
+  cutoffDay: number,
+): Promise<boolean> {
+  if (!subscriber.stripeSubscriptionId) return false;
+  const res = await stripe.invoices.list({ subscription: subscriber.stripeSubscriptionId, status: "paid", limit: 1 });
+  const invoice = res.data[0];
+  const fields = invoice ? paymentFields(invoice, cutoffDay) : null;
+  if (!fields) return false;
+  const unchanged =
+    subscriber.lastPaymentAt &&
+    new Date(subscriber.lastPaymentAt).getTime() === new Date(fields.lastPaymentAt).getTime() &&
+    subscriber.paidForMailing &&
+    new Date(subscriber.paidForMailing).getTime() === new Date(fields.paidForMailing).getTime();
+  if (unchanged || !isNewerPayment(subscriber, fields)) return false;
+  await payload.update({ collection: "subscribers", id: subscriber.id, data: fields, overrideAccess: true });
+  return true;
 }
 
 /** The subscriber changed their address in the portal. */
