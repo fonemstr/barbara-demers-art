@@ -1,4 +1,4 @@
-import { getResidents } from "@/data/paintings";
+import { getResidentsNewestFirst } from "@/data/paintings";
 import { SectionTitle } from "@/components/budderlee/parts";
 import { ResidentCard } from "@/components/budderlee/resident-card";
 import { JsonLd } from "@/components/json-ld";
@@ -14,7 +14,7 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function ResidentsPage() {
-  const residents = await getResidents();
+  const residents = await getResidentsNewestFirst();
   return (
     <section className="mx-auto max-w-6xl px-6 py-14">
       <JsonLd

@@ -408,6 +408,17 @@ export async function getResidents(): Promise<Painting[]> {
   );
 }
 
+/**
+ * Newest residents first, for Meet the Residents: highest resident number
+ * first, with residents not yet numbered (the latest arrivals) ahead of them.
+ */
+export async function getResidentsNewestFirst(): Promise<Painting[]> {
+  const residents = await getBudderleePaintings();
+  return [...residents].sort(
+    (a, b) => (b.residentNumber ?? Infinity) - (a.residentNumber ?? Infinity),
+  );
+}
+
 export async function getResident(slug: string): Promise<Painting | undefined> {
   const p = await getPainting(slug);
   return p?.collection === "budderlee" ? p : undefined;
