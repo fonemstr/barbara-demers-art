@@ -7,7 +7,9 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export const revalidate = 60;
+// Rendered for every visit, never from a cached copy: a stale product
+// list would make what's in the basket look like it had left the shop.
+export const dynamic = "force-dynamic";
 
 export default async function BasketPage() {
   const [products, shippingSettings] = await Promise.all([getProducts(), getShippingSettings()]);
