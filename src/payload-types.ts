@@ -79,6 +79,7 @@ export interface Config {
     subscribers: Subscriber;
     shipments: Shipment;
     tales: Tale;
+    products: Product;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -98,6 +99,7 @@ export interface Config {
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     shipments: ShipmentsSelect<false> | ShipmentsSelect<true>;
     tales: TalesSelect<false> | TalesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -110,10 +112,12 @@ export interface Config {
   globals: {
     'budderlee-post': BudderleePost;
     'budderlee-page': BudderleePage;
+    'shop-settings': ShopSetting;
   };
   globalsSelect: {
     'budderlee-post': BudderleePostSelect<false> | BudderleePostSelect<true>;
     'budderlee-page': BudderleePageSelect<false> | BudderleePageSelect<true>;
+    'shop-settings': ShopSettingsSelect<false> | ShopSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -810,6 +814,67 @@ export interface Tale {
   createdAt: string;
 }
 /**
+ * Cards and other goods sold in the Budderlee Village Store (/budderlee/shop). Paintings and prints stay in Paintings.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  /**
+   * URL-friendly identifier. Lowercase, dashes instead of spaces (e.g. walter-christmas-card).
+   */
+  slug: string;
+  category: 'cards' | 'apparel' | 'gifts';
+  /**
+   * The first photo is the one shown in the shop. Add the inside of the card or the envelope as extra photos.
+   */
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * What it is: size, paper, what's written inside, envelopes included.
+   */
+  description?: string | null;
+  /**
+   * Optional. The resident pictured, named on the product page with a link to them.
+   */
+  resident?: (number | null) | Painting;
+  /**
+   * What a buyer can choose, each with its own price, e.g. "Single card" and "Pack of 10". A product with one option shows no choice.
+   */
+  variants: {
+    label: string;
+    /**
+     * In dollars, e.g. 6 or 4.50
+     */
+    price: number;
+    /**
+     * How many are on hand. Leave empty for no limit. Goes down by itself with each sale.
+     */
+    stock?: number | null;
+    id?: string | null;
+  }[];
+  /**
+   * Optional note on the shop card, e.g. "Order by December 12 for Christmas".
+   */
+  seasonal?: string | null;
+  /**
+   * Lower numbers come first in the shop.
+   */
+  sortOrder?: number | null;
+  /**
+   * Only published products are in the shop. Set back to Draft to put something away after the season.
+   */
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -880,6 +945,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tales';
         value: number | Tale;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1246,6 +1315,36 @@ export interface TalesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  category?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?: T;
+  resident?: T;
+  variants?:
+    | T
+    | {
+        label?: T;
+        price?: T;
+        stock?: T;
+        id?: T;
+      };
+  seasonal?: T;
+  sortOrder?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1355,6 +1454,25 @@ export interface BudderleePage {
   createdAt?: string | null;
 }
 /**
+ * Shipping for the Village Store at /budderlee/shop. The shop updates within a minute of saving.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-settings".
+ */
+export interface ShopSetting {
+  id: number;
+  /**
+   * One flat charge per order, however many things are in it. 0 = free shipping.
+   */
+  shipping: number;
+  /**
+   * Optional. Orders of this much or more (before tax and shipping) ship free. Leave empty to always charge shipping.
+   */
+  freeShippingOver?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "budderlee-post_select".
  */
@@ -1380,6 +1498,17 @@ export interface BudderleePostSelect<T extends boolean = true> {
 export interface BudderleePageSelect<T extends boolean = true> {
   originalsPhoto?: T;
   originalsIncludes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "shop-settings_select".
+ */
+export interface ShopSettingsSelect<T extends boolean = true> {
+  shipping?: T;
+  freeShippingOver?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -64,7 +64,9 @@ export async function POST(request: Request) {
     const title = (meta.painting_slug && (await getPainting(meta.painting_slug))?.title) || item;
     const quantity = session.line_items?.data[0]?.quantity ?? 1;
     const size = meta.print_size ? ` (${meta.print_size})` : "";
-    const phrase = !meta.print_option_id
+    const phrase = meta.shop_order
+      ? "Your order from the Budderlee Village Store"
+      : !meta.print_option_id
       ? `"${title}"`
       : quantity > 1
         ? `Your ${quantity} prints of "${title}"${size}`
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
       to,
       name: session.customer_details?.name ?? null,
       item: phrase,
-      plural: quantity > 1,
+      plural: !meta.shop_order && quantity > 1,
       tracking,
     });
     return failed

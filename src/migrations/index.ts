@@ -21,6 +21,7 @@ import * as migration_20261010_founding_iron_on_for_all from './20261010_foundin
 import * as migration_20261011_add_tales_and_budderlee_page from './20261011_add_tales_and_budderlee_page';
 import * as migration_20261011_move_pippa_story_to_tales from './20261011_move_pippa_story_to_tales';
 import * as migration_20261020_add_subscriber_payments from './20261020_add_subscriber_payments';
+import * as migration_20261021_add_shop_products from './20261021_add_shop_products';
 
 export const migrations = [
   {
@@ -137,5 +138,10 @@ export const migrations = [
     up: migration_20261020_add_subscriber_payments.up,
     down: migration_20261020_add_subscriber_payments.down,
     name: '20261020_add_subscriber_payments',
+  },
+  {
+    up: migration_20261021_add_shop_products.up,
+    down: migration_20261021_add_shop_products.down,
+    name: '20261021_add_shop_products',
   },
 ];
