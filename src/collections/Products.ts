@@ -7,13 +7,22 @@ import type { CollectionConfig } from "payload";
 async function revalidateShopPaths(slugs: (string | undefined)[]) {
   try {
     const { revalidatePath } = await import("next/cache");
-    revalidatePath("/budderlee/shop");
+    // The whole shop: the list, every product page and the basket.
+    revalidatePath("/budderlee/shop", "layout");
     for (const slug of slugs) {
       if (slug) revalidatePath(`/budderlee/shop/${slug}`);
     }
   } catch {
     // outside a request context (scripts, migrations): nothing to do
   }
+}
+
+export function toSlug(value: string) {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 export const Products: CollectionConfig = {
@@ -30,6 +39,14 @@ export const Products: CollectionConfig = {
       "Cards and other goods sold in the Budderlee Village Store (/budderlee/shop). Paintings and prints stay in Paintings.",
   },
   hooks: {
+    beforeValidate: [
+      ({ data }) => {
+        // A slug is the product's web address: keep it lowercase, with
+        // dashes, and no stray spaces, which would break the link.
+        if (data && typeof data.slug === "string") data.slug = toSlug(data.slug);
+        return data;
+      },
+    ],
     afterChange: [
       async ({ doc, previousDoc }) => {
         await revalidateShopPaths([doc?.slug, previousDoc?.slug]);

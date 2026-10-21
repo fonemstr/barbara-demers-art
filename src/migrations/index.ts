@@ -22,6 +22,7 @@ import * as migration_20261011_add_tales_and_budderlee_page from './20261011_add
 import * as migration_20261011_move_pippa_story_to_tales from './20261011_move_pippa_story_to_tales';
 import * as migration_20261020_add_subscriber_payments from './20261020_add_subscriber_payments';
 import * as migration_20261021_add_shop_products from './20261021_add_shop_products';
+import * as migration_20261021_tidy_product_slugs from './20261021_tidy_product_slugs';
 
 export const migrations = [
   {
@@ -143,5 +144,10 @@ export const migrations = [
     up: migration_20261021_add_shop_products.up,
     down: migration_20261021_add_shop_products.down,
     name: '20261021_add_shop_products',
+  },
+  {
+    up: migration_20261021_tidy_product_slugs.up,
+    down: migration_20261021_tidy_product_slugs.down,
+    name: '20261021_tidy_product_slugs',
   },
 ];

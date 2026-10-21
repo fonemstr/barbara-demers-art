@@ -21,21 +21,29 @@ export function BasketView({ products, shippingSettings }: { products: Product[]
     const variant = product?.variants.find((v) => v.id === line.variantId);
     return product && variant ? [{ line, product, variant }] : [];
   });
-  const missing = cart.length - lines.length;
-
-  // Drop anything that has left the shop so checkout isn't blocked by it.
-  useEffect(() => {
-    if (!mounted || missing === 0) return;
-    for (const l of cart) {
-      if (!products.some((p) => p.variants.some((v) => v.id === l.variantId))) setQuantity(l.variantId, 0);
-    }
-  }, [mounted, missing, cart, products]);
+  // Things the shop no longer offers are left out of the order but never
+  // removed without asking: the visitor sees them and can clear them.
+  const missing = cart.filter((l) => !lines.some((x) => x.line.variantId === l.variantId));
+  const missingNote = missing.length > 0 && (
+    <p className="mt-6 text-center text-[15px] text-[var(--bd-rust)]">
+      {missing.length === 1 ? "One thing" : `${missing.length} things`} in your basket{" "}
+      {missing.length === 1 ? "is" : "are"} no longer in the shop and won&rsquo;t be ordered.{" "}
+      <button
+        type="button"
+        onClick={() => missing.forEach((l) => setQuantity(l.variantId, 0))}
+        className="underline underline-offset-4"
+      >
+        Clear {missing.length === 1 ? "it" : "them"}
+      </button>
+    </p>
+  );
 
   if (!mounted) return <p className="mt-10 text-center italic">Opening your basket…</p>;
 
   if (lines.length === 0) {
     return (
       <div className="mt-10 text-center">
+        {missingNote}
         <p className="text-lg italic">Your basket is empty.</p>
         <Link href="/budderlee/shop" className={`${s.button} mt-6`}>
           Back to the Village Store
@@ -68,6 +76,7 @@ export function BasketView({ products, shippingSettings }: { products: Product[]
 
   return (
     <div className="mt-10">
+      {missingNote}
       <ul className="divide-y divide-[var(--bd-line)] border-y border-[var(--bd-line)]">
         {lines.map(({ line, product, variant }) => {
           const img = product.images[0];
