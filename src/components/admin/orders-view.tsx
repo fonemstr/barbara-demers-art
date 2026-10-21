@@ -17,7 +17,7 @@ import { ConfirmSubmit } from "./confirm-submit";
 
 const PAGE_SIZE = 50;
 
-type OrderKind = "original" | "print" | "commission";
+type OrderKind = "original" | "print" | "commission" | "shop";
 
 type Order = {
   id: string;
@@ -67,8 +67,17 @@ function shortDate(iso: string) {
 
 function toOrder(session: Stripe.Checkout.Session): Order {
   const meta = session.metadata ?? {};
-  const kind: OrderKind = meta.commission_tier ? "commission" : meta.print_option_id ? "print" : "original";
+  const kind: OrderKind = meta.commission_tier
+    ? "commission"
+    : meta.shop_order
+      ? "shop"
+      : meta.print_option_id
+        ? "print"
+        : "original";
   const line = session.line_items?.data[0];
+  // A Village Store order can hold several things; list them all.
+  const shopItems =
+    kind === "shop" ? (session.line_items?.data ?? []).map((li) => `${li.quantity} × ${li.description}`).join(", ") : null;
   const pi = typeof session.payment_intent === "object" ? session.payment_intent : null;
   const charge = pi && typeof pi.latest_charge === "object" ? pi.latest_charge : null;
 
@@ -87,7 +96,7 @@ function toOrder(session: Stripe.Checkout.Session): Order {
     : [];
 
   const lumaprintsOrder = pi?.metadata?.lumaprints_order_number ?? null;
-  const selfShipped = kind === "original" || (kind === "print" && !lumaprintsOrder);
+  const selfShipped = kind === "original" || kind === "shop" || (kind === "print" && !lumaprintsOrder);
   const shippedAt = pi?.metadata?.[SHIPPED_AT_KEY] || null;
   const tracking = pi?.metadata?.[TRACKING_KEY] || null;
   let status: Order["status"];
@@ -95,7 +104,7 @@ function toOrder(session: Stripe.Checkout.Session): Order {
     status = { label: `Shipped ${shortDate(shippedAt)}`, tone: "ok" };
   } else if (kind === "commission") {
     status = { label: "Deposit paid", tone: "muted" };
-  } else if (kind === "original") {
+  } else if (kind === "original" || kind === "shop") {
     status = { label: "Barbara ships", tone: "warn" };
   } else if (meta.print_fulfillment !== "lumaprints") {
     status = { label: "Barbara prints and ships", tone: "warn" };
@@ -112,9 +121,9 @@ function toOrder(session: Stripe.Checkout.Session): Order {
     id: session.id,
     created: session.created,
     kind,
-    item: line?.description ?? meta.painting_slug ?? "Order",
-    detail: kind === "commission" ? (meta.commission_subject ?? null) : (meta.print_size ?? null),
-    quantity: line?.quantity ?? 1,
+    item: kind === "shop" ? "Village Store order" : (line?.description ?? meta.painting_slug ?? "Order"),
+    detail: kind === "commission" ? (meta.commission_subject ?? null) : kind === "shop" ? shopItems : (meta.print_size ?? null),
+    quantity: kind === "shop" ? 1 : (line?.quantity ?? 1),
     total: session.amount_total,
     buyerName: session.customer_details?.name ?? null,
     buyerEmail: session.customer_details?.email ?? null,
@@ -134,6 +143,7 @@ const KIND_LABEL: Record<OrderKind, string> = {
   original: "Original",
   print: "Print",
   commission: "Commission deposit",
+  shop: "Village Store",
 };
 
 type Filter = OrderKind | "all" | "to-ship";
@@ -144,6 +154,7 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: "original", label: "Originals" },
   { value: "print", label: "Prints" },
   { value: "commission", label: "Commissions" },
+  { value: "shop", label: "Village Store" },
 ];
 
 async function loadOrders(client: Stripe, after: string | undefined) {

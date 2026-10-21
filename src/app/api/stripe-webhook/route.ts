@@ -11,6 +11,7 @@ import {
   isPostSession,
 } from "@/lib/budderlee-post-stripe";
 import { fulfillPrintWithLumaprints } from "@/lib/lumaprints-fulfillment";
+import { handleShopCheckoutCompleted, isShopSession } from "@/lib/shop-orders";
 
 // Stripe webhooks must read the raw body for signature verification.
 export const runtime = "nodejs";
@@ -81,6 +82,23 @@ export async function POST(request: Request) {
       }
     } catch (err) {
       console.error(`[stripe-webhook] ${event.type} (${event.id}) failed:`, err);
+      return NextResponse.json({ error: "Handler failed" }, { status: 500 });
+    }
+    return NextResponse.json({ received: true });
+  }
+
+  // Village Store orders lower stock in the database, so a missing
+  // database returns 500 and Stripe retries.
+  if (event.type === "checkout.session.completed" && isShopSession(event.data.object)) {
+    const payload = await getPayloadClient();
+    if (!payload) {
+      console.error(`[stripe-webhook] Payload unavailable for shop order ${event.data.object.id}.`);
+      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+    }
+    try {
+      await handleShopCheckoutCompleted(stripe, payload, event.data.object, event.livemode);
+    } catch (err) {
+      console.error(`[stripe-webhook] Shop order ${event.data.object.id} failed:`, err);
       return NextResponse.json({ error: "Handler failed" }, { status: 500 });
     }
     return NextResponse.json({ received: true });

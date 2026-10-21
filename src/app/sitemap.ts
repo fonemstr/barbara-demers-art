@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getTales } from "@/lib/tales";
+import { getProducts } from "@/lib/shop";
 import { paintingPath } from "@/lib/painting-path";
 import { getAllPaintings } from "@/data/paintings";
 import { getAllPosts } from "@/lib/blog";
@@ -26,10 +27,11 @@ const latest = (dates: (string | undefined)[]) => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [paintings, posts, tales] = await Promise.all([
+  const [paintings, posts, tales, products] = await Promise.all([
     getAllPaintings(),
     getAllPosts(),
     getTales(),
+    getProducts(),
   ]);
 
   // Listing pages change whenever their newest item does.
@@ -47,6 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/budderlee/residents`, lastModified: budderleeLastMod ?? galleryLastMod },
     { url: `${SITE_URL}/budderlee/tales`, lastModified: latest(tales.map((t) => t.publishedAt)) },
     { url: `${SITE_URL}/budderlee/post` },
+    { url: `${SITE_URL}/budderlee/shop` },
     { url: `${SITE_URL}/budderlee/post/manage` },
     { url: `${SITE_URL}/commissions` },
     { url: `${SITE_URL}/about` },
@@ -74,5 +77,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: t.publishedAt ? new Date(t.publishedAt) : undefined,
   }));
 
-  return [...staticPages, ...paintingPages, ...postPages, ...talePages];
+  const productPages: MetadataRoute.Sitemap = products.map((p) => ({
+    url: `${SITE_URL}/budderlee/shop/${p.slug}`,
+    ...(p.images.length ? { images: p.images.map((i) => toAbsolute(i.url)) } : {}),
+  }));
+
+  return [...staticPages, ...paintingPages, ...postPages, ...talePages, ...productPages];
 }
