@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { expirePaintingsCache } from "../lib/paintings-cache";
 
 function filenameToAlt(filename?: string): string | undefined {
   if (!filename) return undefined;
@@ -18,6 +19,20 @@ export const Media: CollectionConfig = {
     read: () => true,
   },
   hooks: {
+    // Paintings embed their images' URLs, so a replaced or deleted image
+    // must refresh the cached painting list.
+    afterChange: [
+      async ({ doc }) => {
+        await expirePaintingsCache();
+        return doc;
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        await expirePaintingsCache();
+        return doc;
+      },
+    ],
     beforeValidate: [
       ({ data, req }) => {
         if (!data || data.alt) return data;

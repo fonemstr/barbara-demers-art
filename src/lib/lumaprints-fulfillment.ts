@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { getPainting } from "@/data/paintings";
+import { getPaintingFromDb } from "@/data/paintings";
 import { SITE_URL } from "@/lib/site-url";
 import {
   lumaprintsConfig,
@@ -58,7 +58,7 @@ export async function fulfillPrintWithLumaprints(
 
     const slug = session.metadata?.painting_slug;
     const printOptionId = session.metadata?.print_option_id;
-    const painting = slug ? await getPainting(slug) : undefined;
+    const painting = slug ? await getPaintingFromDb(slug) : undefined;
     const printOption = painting?.prints?.find((opt) => opt.id === printOptionId);
     if (!painting || !printOption?.lumaprints) {
       return {

@@ -191,8 +191,8 @@ export async function POST(request: Request) {
                 `Nothing to do; Lumaprints prints and ships it. Track it at https://dashboard.lumaprints.com/order/list`,
               ];
         if (resend) {
-          const { getPainting } = await import("@/data/paintings");
-          const title = (await getPainting(slug))?.title ?? slug;
+          const { getPaintingFromDb } = await import("@/data/paintings");
+          const title = (await getPaintingFromDb(slug))?.title ?? slug;
           const amount =
             session.amount_total != null
               ? `$${(session.amount_total / 100).toFixed(2)}`
