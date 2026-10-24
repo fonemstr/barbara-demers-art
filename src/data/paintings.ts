@@ -1,4 +1,5 @@
 import { getPayloadClient } from "@/lib/payload";
+import { PAINTINGS_TAG } from "@/lib/paintings-cache";
 import {
   SUBJECT_GROUPS,
   SUBJECT_GROUP_LABELS,
@@ -343,25 +344,67 @@ function mapPayloadPainting(p: PayloadPainting): Painting {
   };
 }
 
-export async function getAllPaintings(): Promise<Painting[]> {
+async function queryAllPaintings(): Promise<Painting[]> {
   const payload = await getPayloadClient();
-  if (!payload) return seedPaintings;
+  if (!payload) throw new Error("Payload is not configured");
+  const result = await payload.find({
+    collection: "paintings",
+    depth: 2,
+    limit: 200,
+    sort: "-updatedAt",
+  });
+  return (result.docs as unknown as PayloadPainting[]).map(mapPayloadPainting);
+}
+
+// Built on first use: next/cache is lazy-imported because this module is
+// also loaded by the Payload CLI (via the collections) and client components.
+let cachedQueryAllPaintings: (() => Promise<Painting[]>) | undefined;
+
+async function queryAllPaintingsCached(): Promise<Painting[]> {
+  if (!cachedQueryAllPaintings) {
+    const { unstable_cache } = await import("next/cache");
+    cachedQueryAllPaintings = unstable_cache(
+      queryAllPaintings,
+      // The deployment ID keeps a new deploy from reading entries mapped by
+      // the previous deploy's code.
+      ["paintings", "all", process.env.VERCEL_DEPLOYMENT_ID ?? "local"],
+      // Edits expire the tag (Paintings and Media hooks); the hourly
+      // revalidate is only a backstop for changes that bypass the hooks.
+      { tags: [PAINTINGS_TAG], revalidate: 3600 },
+    );
+  }
+  return cachedQueryAllPaintings();
+}
+
+/**
+ * Every painting, from Next's data cache. Each page render calls this
+ * several times (layout metadata, layout, page), so it must not hit the
+ * database each time.
+ */
+export async function getAllPaintings(): Promise<Painting[]> {
+  if (!(await getPayloadClient())) return seedPaintings;
 
   try {
-    const result = await payload.find({
-      collection: "paintings",
-      depth: 2,
-      limit: 200,
-      sort: "-updatedAt",
-    });
-    return (result.docs as unknown as PayloadPainting[]).map(mapPayloadPainting);
+    // A failed query throws inside the cache, so the seed fallback is never
+    // cached.
+    return await queryAllPaintingsCached();
   } catch (err) {
     console.error("[paintings] Payload query failed, using seed:", err);
     return seedPaintings;
   }
 }
 
+/** One painting, looked up in the cached list. For page renders. */
 export async function getPainting(slug: string): Promise<Painting | undefined> {
+  const all = await getAllPaintings();
+  return all.find((p) => p.slug === slug);
+}
+
+/**
+ * One painting, read straight from the database. For checkout, webhooks
+ * and fulfillment, where price and sold status must be current.
+ */
+export async function getPaintingFromDb(slug: string): Promise<Painting | undefined> {
   const payload = await getPayloadClient();
   if (!payload) return seedPaintings.find((p) => p.slug === slug);
 

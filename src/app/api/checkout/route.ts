@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { paintingPath } from "@/lib/painting-path";
 import {
-  getPainting,
+  getPaintingFromDb,
   PRINT_SHIPPING_RATE,
   SHIPPING_RATES,
 } from "@/data/paintings";
@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing slug" }, { status: 400 });
     }
 
-    const painting = await getPainting(slug);
+    const painting = await getPaintingFromDb(slug);
     if (!painting) {
       return NextResponse.json({ error: "Painting not found" }, { status: 404 });
     }

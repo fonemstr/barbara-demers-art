@@ -5,10 +5,14 @@ import { deliverSocialPost } from "../lib/social-delivery";
 import { buildAnnouncementCaption } from "../lib/social-captions";
 import { SITE_URL } from "../lib/site-url";
 import { STAR_SIGNS, starSignForDate } from "../lib/zodiac";
+import { expirePaintingsCache } from "../lib/paintings-cache";
 
 // Lazy-imported so `payload` CLI runs (migrations, etc.) don't pull in
 // Next's runtime.
 async function revalidatePaintingPaths(slugs: (string | undefined)[]) {
+  // Before the paths, so their rebuilds read the edit rather than the
+  // cached list.
+  await expirePaintingsCache();
   // Revalidation only works inside a Next request; scripts and CLI runs
   // must still be able to save, so never let it fail the write.
   try {

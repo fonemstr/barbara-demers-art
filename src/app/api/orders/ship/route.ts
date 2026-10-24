@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getPayloadClient } from "@/lib/payload";
 import { adminFromRequest, isSameOrigin } from "@/lib/budderlee-post-fulfillment";
 import { stripe } from "@/lib/stripe";
-import { getPainting } from "@/data/paintings";
+import { getPaintingFromDb } from "@/data/paintings";
 import { SHIPPED_AT_KEY, TRACKING_KEY, sendShippedEmail } from "@/lib/order-shipping";
 
 // "Mark shipped" (and its undo) on the Orders page. Admin only. Orders
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     if (!session || !to) return back(`Marked ${item} shipped, but there's no buyer email to send to.`, "error");
 
     const meta = session.metadata ?? {};
-    const title = (meta.painting_slug && (await getPainting(meta.painting_slug))?.title) || item;
+    const title = (meta.painting_slug && (await getPaintingFromDb(meta.painting_slug))?.title) || item;
     const quantity = session.line_items?.data[0]?.quantity ?? 1;
     const size = meta.print_size ? ` (${meta.print_size})` : "";
     const phrase = meta.shop_order
