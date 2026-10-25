@@ -5,12 +5,12 @@ import { useRef } from "react";
 import s from "./budderlee-page.module.css";
 
 // The Budderlee Post arriving: the envelope lands addressed, flips to its
-// sealed back, the wax seal breaks, the flap opens and Walter's month rises
+// sealed back, the wax seal breaks, the flap opens and Theodore's month rises
 // out while the envelope fades away. Pure CSS animation (see the module);
 // the only script is the gentle tilt toward the pointer. Reduced motion
 // shows the settled end state.
 
-const FLAT_LAY = "/budderlee/post/walter-month-flat-lay.webp";
+const FLAT_LAY = "/budderlee/post/theodore-month-flat-lay.webp";
 const SEAL = "/budderlee/seal.webp";
 
 export function PostEnvelope() {
@@ -38,9 +38,9 @@ export function PostEnvelope() {
             <div className={s.contents}>
               <Image
                 src={FLAT_LAY}
-                alt="Walter's month from The Budderlee Post: the Tales from Budderlee gazette, his resident art card, a paper doll, a shortbread recipe card, the Budderlee sticker and a Walter iron-on"
-                width={1678}
-                height={1376}
+                alt="Theodore's month from The Budderlee Post: the Tales from Budderlee gazette, his resident art card, a paper doll, a pumpkin and potato soup recipe card, a Theodore sticker and the Budderlee sticker"
+                width={1233}
+                height={1484}
                 sizes="(min-width: 768px) 500px, 100vw"
                 priority
               />
