@@ -58,7 +58,7 @@ export const metadata = {
 // the admin; the global's afterChange hook revalidates this path too.
 export const revalidate = 60;
 
-// Every regular item, framed on Walter's month photo. Each box is the
+// Every regular item, framed on Theodore's month photo. Each box is the
 // item's outline in the photo, as fractions of its width and height.
 const UNPACK: UnpackStep[] = [
   {
@@ -71,31 +71,31 @@ const UNPACK: UnpackStep[] = [
     kicker: "01",
     title: "Resident art card",
     body: "A 5×7 card-stock print of the month's painting. On the back: the resident's number, birthday, star sign, job in the village and friends.",
-    box: [0.385, 0.355, 0.755, 0.97],
+    box: [0.075, 0.379, 0.619, 0.71],
   },
   {
     kicker: "02",
     title: "Tales from Budderlee",
     body: "A new chapter of the village story, told through that month's resident. Each one picks up where the last left off.",
-    box: [0, 0.02, 0.47, 0.62],
+    box: [0, 0, 0.943, 0.413],
   },
   {
     kicker: "03",
     title: "Recipe card",
-    body: "A tested, original recipe with the character's stamp on it. Walter brings his shortbread biscuits.",
-    box: [0.64, 0.015, 1, 0.625],
+    body: "A tested, original recipe with the character's stamp on it. Theodore brings his pumpkin and potato harvest soup.",
+    box: [0.611, 0.379, 1, 0.703],
   },
   {
     kicker: "04",
     title: "Paper doll",
     body: "Cut out the resident and stand them up, with a fold-back base and a few of their favorite things.",
-    box: [0.38, 0, 0.715, 0.375],
+    box: [0.521, 0.622, 0.935, 0.993],
   },
   {
     kicker: "05",
     title: "Sticker, and a note from Barbara",
     body: "A die-cut sticker that's different every month, plus a note from Barbara: a welcome in your first package and a thank-you in every one after.",
-    box: [0.725, 0.6, 0.945, 0.856],
+    box: [0.132, 0.642, 0.594, 1],
   },
 ];
 
@@ -199,7 +199,7 @@ export default async function BudderleePostPage() {
         <div id="unpack" className="mx-auto mb-12 max-w-2xl scroll-mt-6 text-center">
           <SectionTitle>What&rsquo;s in the envelope</SectionTitle>
           <p className="mt-4 text-lg leading-relaxed">
-            This is Walter&rsquo;s month, Resident No. 001, exactly as it ships. Scroll to unpack it
+            This is Theodore&rsquo;s month, Resident No. 002, exactly as it ships. Scroll to unpack it
             piece by piece.
           </p>
         </div>

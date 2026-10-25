@@ -12,10 +12,10 @@ export type UnpackStep = {
   box: [number, number, number, number];
 };
 
-const PHOTO = { src: "/budderlee/post/walter-month-flat-lay.webp", width: 1678, height: 1376 };
+const PHOTO = { src: "/budderlee/post/theodore-month-flat-lay.webp", width: 1233, height: 1484 };
 const MARGIN = 48;
 
-// Scrolling through the steps zooms Walter's month onto each item in turn.
+// Scrolling through the steps zooms Theodore's month onto each item in turn.
 // Each step frames its item's outline so nothing is ever cropped, whatever
 // the viewer's size.
 export function UnpackViewer({ steps }: { steps: UnpackStep[] }) {
@@ -84,7 +84,7 @@ export function UnpackViewer({ steps }: { steps: UnpackStep[] }) {
           src={PHOTO.src}
           width={PHOTO.width}
           height={PHOTO.height}
-          alt="Everything in Walter's month of The Budderlee Post, laid out together"
+          alt="Everything in Theodore's month of The Budderlee Post, laid out together"
           loading="lazy"
           onLoad={() => frame(activeRef.current, true)}
         />
