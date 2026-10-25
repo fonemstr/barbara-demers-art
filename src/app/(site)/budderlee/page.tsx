@@ -185,8 +185,8 @@ export default async function BudderleeWelcomePage() {
       <section className={s.letterBand}>
         <div className={s.letterImage}>
           <Image
-            src="/budderlee/post/theodore-month-flat-lay.webp"
-            alt="A month of The Budderlee Post: the Tales from Budderlee gazette, Theodore's art card, a paper doll, a recipe card and two stickers"
+            src="/budderlee/post/theodore-month.webp"
+            alt="A month of The Budderlee Post: the Tales from Budderlee gazette, Theodore's art card, a paper doll, a recipe card, a sticker and an iron-on"
             fill
             sizes="(min-width: 768px) 55vw, 100vw"
           />
