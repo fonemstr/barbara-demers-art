@@ -18,7 +18,7 @@ function confirmationEmail(name: string | undefined, nextMailing: string) {
       nextMailing +
       ".",
     "",
-    "When signups open you'll hear from me first, and as a waitlist member you'll get the Founding Member iron-on in your first package.",
+    "When signups open you'll hear from me first.",
     "",
     `Read more: ${pageUrl}`,
     "",
@@ -41,8 +41,7 @@ function confirmationEmail(name: string | undefined, nextMailing: string) {
         The first mailing is planned for ${nextMailing}.
       </p>
       <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">
-        When signups open you'll hear from me first, and as a waitlist
-        member you'll get the Founding Member iron-on in your first package.
+        When signups open you'll hear from me first.
       </p>
       <p style="margin:0 0 24px;font-size:16px;line-height:1.8;">
         <a href="${pageUrl}" style="color:#8a7a2e;">Read more about ${BUDDERLEE_POST.name}</a>

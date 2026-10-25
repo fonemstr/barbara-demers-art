@@ -10,7 +10,7 @@ import s from "./budderlee-page.module.css";
 // the only script is the gentle tilt toward the pointer. Reduced motion
 // shows the settled end state.
 
-const FLAT_LAY = "/budderlee/post/theodore-month-flat-lay.webp";
+const FLAT_LAY = "/budderlee/post/theodore-month.webp";
 const SEAL = "/budderlee/seal.webp";
 
 export function PostEnvelope() {
@@ -38,9 +38,9 @@ export function PostEnvelope() {
             <div className={s.contents}>
               <Image
                 src={FLAT_LAY}
-                alt="Theodore's month from The Budderlee Post: the Tales from Budderlee gazette, his resident art card, a paper doll, a pumpkin and potato soup recipe card, a Theodore sticker and the Budderlee sticker"
-                width={1233}
-                height={1484}
+                alt="Theodore's month from The Budderlee Post: the Tales from Budderlee gazette, his resident art card, a paper doll, a pumpkin and potato soup recipe card, a Theodore sticker and a Budderlee iron-on"
+                width={1484}
+                height={1233}
                 sizes="(min-width: 768px) 500px, 100vw"
                 priority
               />

@@ -13,7 +13,6 @@ import {
   formatDollars,
   getActiveSubscriberCount,
   getBudderleePostSettings,
-  getFoundingWindow,
   getSignupSchedule,
 } from "@/lib/budderlee-post";
 
@@ -71,31 +70,31 @@ const UNPACK: UnpackStep[] = [
     kicker: "01",
     title: "Resident art card",
     body: "A 5×7 card-stock print of the month's painting. On the back: the resident's number, birthday, star sign, job in the village and friends.",
-    box: [0.075, 0.379, 0.619, 0.71],
+    box: [0.379, 0.381, 0.71, 0.925],
   },
   {
     kicker: "02",
     title: "Tales from Budderlee",
     body: "A new chapter of the village story, told through that month's resident. Each one picks up where the last left off.",
-    box: [0, 0, 0.943, 0.413],
+    box: [0, 0.057, 0.413, 1],
   },
   {
     kicker: "03",
     title: "Recipe card",
     body: "A tested, original recipe with the character's stamp on it. Theodore brings his pumpkin and potato harvest soup.",
-    box: [0.611, 0.379, 1, 0.703],
+    box: [0.379, 0, 0.703, 0.389],
   },
   {
     kicker: "04",
     title: "Paper doll",
     body: "Cut out the resident and stand them up, with a fold-back base and a few of their favorite things.",
-    box: [0.521, 0.622, 0.935, 0.993],
+    box: [0.622, 0.065, 0.993, 0.479],
   },
   {
     kicker: "05",
-    title: "Sticker, and a note from Barbara",
-    body: "A die-cut sticker that's different every month, plus a note from Barbara: a welcome in your first package and a thank-you in every one after.",
-    box: [0.132, 0.642, 0.594, 1],
+    title: "Extras, and a note from Barbara",
+    body: "Something different every month. Theodore's month brings a die-cut Theodore sticker and a Budderlee iron-on. There's always a note from Barbara too: a welcome in your first package and a thank-you in every one after.",
+    box: [0.642, 0.406, 1, 0.868],
   },
 ];
 
@@ -125,11 +124,6 @@ const FAQ = [
     a: () =>
       "Not yet. U.S. addresses only to start, with shipping included in the price. Canada is on the list to look at once the first few mailings have gone out.",
   },
-  {
-    q: "What does it mean to be a founding member?",
-    a: (_: string, __: number, foundingLastDay?: string) =>
-      `Everyone who subscribes ${foundingLastDay ? `by ${foundingLastDay}` : "at launch"} is a founding member and gets an exclusive Founding Member iron-on in their first package. It's a one-time design that won't be printed again.`,
-  },
 ];
 
 function ordinal(n: number) {
@@ -140,8 +134,6 @@ function ordinal(n: number) {
 
 export default async function BudderleePostPage() {
   const settings = await getBudderleePostSettings();
-  const foundingWindow = getFoundingWindow(settings.foundingWindowEnds);
-  const founding = foundingWindow?.open ? foundingWindow : undefined;
   const price = formatDollars(settings.priceCents);
 
   // Open means "open and not full". The checkout route re-checks the cap
@@ -284,17 +276,6 @@ export default async function BudderleePostPage() {
         </ul>
       </section>
 
-      {/* FOUNDING MEMBER GIFT */}
-      {founding && settings.phase !== "closed" && (
-        <section className="bg-[color:var(--bd-sage)] px-6 py-12 text-center">
-          <h2 className="text-[32px] leading-tight">Founding Member gift</h2>
-          <Ornament />
-          <p className="mx-auto mt-4 max-w-xl text-[18px] leading-relaxed">
-            {`Subscribe by ${founding.label}, and your first envelope includes the Walter iron-on: an exclusive, one-time design that won't be printed again. It comes in addition to everything above.`}
-          </p>
-        </section>
-      )}
-
       {/* SIGN UP */}
       <section id="signup" className="mx-auto max-w-3xl scroll-mt-6 px-6 py-14">
         <div className="mb-8 text-center">
@@ -338,7 +319,7 @@ export default async function BudderleePostPage() {
             <div key={f.q} className="border-t border-[color:var(--bd-line)] py-5">
               <dt className="text-[22px] leading-tight text-on-surface">{f.q}</dt>
               <dd className="mt-2 leading-relaxed text-on-surface-muted">
-                {f.a(settings.nextMailing, settings.cutoffDay, founding?.label)}
+                {f.a(settings.nextMailing, settings.cutoffDay)}
               </dd>
             </div>
           ))}
